@@ -74,3 +74,29 @@ main .blog-article .article-body{
 }
 
 .best-score-confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}.best-score-confetti i{position:absolute;top:-18px;width:9px;height:16px;background:var(--ink);border-radius:2px;animation:bestConfettiFall 2s ease-in forwards}.best-score-confetti i:nth-child(3n){background:#b7a17f}.best-score-confetti i:nth-child(3n+1){background:#fff}.best-score-confetti i:nth-child(4n){width:6px;height:11px;border-radius:50%;background:#8c8379}@keyframes bestConfettiFall{0%{transform:translate3d(0,-20px,0) rotate(0);opacity:1}100%{transform:translate3d(35px,105vh,0) rotate(620deg);opacity:.85}}@media(prefers-reduced-motion:reduce){.best-score-confetti{display:none}}
+
+/* Keep mobile navigation on-brand instead of browser-default blue */
+.site-nav a,
+.site-nav a:link,
+.site-nav a:visited,
+.site-nav button,
+.site-nav button:visited,
+nav a,
+nav a:link,
+nav a:visited,
+nav button{
+  color:var(--ink) !important;
+  -webkit-text-fill-color:var(--ink);
+  text-decoration:none;
+}
+.site-nav a:active,
+.site-nav a:hover,
+.site-nav button:active,
+.site-nav button:hover,
+nav a:active,
+nav a:hover,
+nav button:active,
+nav button:hover{
+  color:var(--ink) !important;
+  -webkit-text-fill-color:var(--ink);
+}
