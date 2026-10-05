@@ -178,3 +178,10 @@ nav button:hover{
 .result-hero .submitbox label strong{color:#fff!important}
 .result-hero .submitbox .input{background:#fff;color:var(--ink);border:2px solid #fff}
 .result-hero .submitbox .input::placeholder{color:#77716a;opacity:1}
+
+.result-hero .submitbox{background:var(--bg);color:var(--ink);border-radius:20px;padding:18px;margin-top:20px}
+.result-hero .submitbox label,
+.result-hero .submitbox label strong{color:var(--ink)!important}
+.result-hero .submitbox .input{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.result-hero .submitbox .input::placeholder{color:#8a847c;opacity:1}
+.result-hero .submitbox .btn.primary{background:var(--dark);color:#fff;border-color:var(--dark)}
