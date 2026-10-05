@@ -173,3 +173,8 @@ nav button:hover{
 
 .result-hero .score-reveal-inline{margin-top:28px;padding:24px 0 0;border:0;border-top:1px solid #ffffff26;border-radius:0;min-height:0;background:transparent}
 .result-hero .score-reveal-inline .score-build-row{border-bottom-color:#ffffff1f}
+
+.result-hero .submitbox label,
+.result-hero .submitbox label strong{color:#fff!important}
+.result-hero .submitbox .input{background:#fff;color:var(--ink);border:2px solid #fff}
+.result-hero .submitbox .input::placeholder{color:#77716a;opacity:1}
