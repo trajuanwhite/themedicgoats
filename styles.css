@@ -11,3 +11,5 @@
 .donate-cta{display:block;text-decoration:none;text-align:center;margin:28px 0;padding:16px 20px}
 
 .venmo-handle{text-align:center;padding:4px 0 20px;color:var(--muted);font-size:14px}.venmo-handle strong{color:var(--ink)}
+
+.venmo-scan{margin-top:24px;padding-top:24px;border-top:1px solid var(--line);text-align:center}.venmo-scan h3{font-size:24px;margin:8px 0 18px}.venmo-qr{width:264px;max-width:100%;min-height:264px;margin:0 auto 12px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:20px;display:grid;place-items:center}.venmo-qr canvas{display:block;max-width:100%;height:auto}.venmo-scan small{color:var(--muted);font-weight:800}
