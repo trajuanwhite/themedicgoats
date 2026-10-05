@@ -185,3 +185,6 @@ nav button:hover{
 .result-hero .submitbox .input{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .result-hero .submitbox .input::placeholder{color:#8a847c;opacity:1}
 .result-hero .submitbox .btn.primary{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+.game-modal-actions.single{display:block}
+.game-modal-actions.single .btn{width:100%}
