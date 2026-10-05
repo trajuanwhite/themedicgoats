@@ -100,3 +100,6 @@ nav button:hover{
   color:var(--ink) !important;
   -webkit-text-fill-color:var(--ink);
 }
+
+/* Differentials difficulty header */
+.difficulty-hero{background:var(--dark);color:#fff;border-radius:28px;padding:42px 38px;margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}.difficulty-hero .kicker{color:#bdb2a6}.difficulty-hero h1{font-size:clamp(42px,6vw,68px);line-height:.94;letter-spacing:-.05em;margin:10px 0 0}.difficulty-hero .btn{flex:0 0 auto}@media(max-width:720px){.difficulty-hero{padding:30px 22px;border-radius:24px;display:block}.difficulty-hero h1{font-size:clamp(40px,12vw,58px);margin-bottom:24px}.difficulty-hero .btn{width:100%}}
