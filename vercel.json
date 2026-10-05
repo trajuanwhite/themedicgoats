@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/donate","destination":"/donate.html"}]}
+{"rewrites":[{"source":"/donate","destination":"/donate.html"},{"source":"/rapid-differentials","destination":"/index.html"},{"source":"/blog/:path*","destination":"/index.html"}]}
