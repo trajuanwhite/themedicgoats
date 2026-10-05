@@ -170,3 +170,6 @@ nav button:hover{
 .score-reveal-card .submitbox{border-top-color:#ffffff20}
 .score-reveal-card .submitbox label{color:#fff}
 .score-reveal-card .input{background:#fff;color:var(--ink);border-color:#ffffff40}
+
+.result-hero .score-reveal-inline{margin-top:28px;padding:24px 0 0;border:0;border-top:1px solid #ffffff26;border-radius:0;min-height:0;background:transparent}
+.result-hero .score-reveal-inline .score-build-row{border-bottom-color:#ffffff1f}
