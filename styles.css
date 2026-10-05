@@ -115,3 +115,6 @@ nav button:hover{
 
 /* Guided reassessment after each new finding */
 #workingDifferential{scroll-margin-top:92px}.reassess-prompt{background:var(--accent);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:0 0 14px;color:var(--ink)}.reassess-prompt>strong{display:block;font-size:17px;line-height:1.3;margin:5px 0 10px}.reassess-options{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:750}.reassess-options span{display:block}
+
+/* Put the differential directly below patient findings during reassessment */
+.assessment-workspace .assessment-card{order:1}.assessment-workspace .differential-card{order:2}.assessment-workspace.reassessing .differential-card{order:1}.assessment-workspace.reassessing .assessment-card{order:2}
