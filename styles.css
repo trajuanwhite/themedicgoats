@@ -156,3 +156,8 @@ nav button:hover{
 @keyframes bonusSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes scorePop{0%{opacity:0;transform:scale(.82)}100%{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.score-build-row.bonus-earned,.final-score-pop{animation:none}}
+
+.score-tally-number{font-size:clamp(42px,8vw,68px);font-weight:950;letter-spacing:-.05em;line-height:1;margin:16px 0 18px;font-variant-numeric:tabular-nums}
+.score-build-row.penalty-earned{animation:bonusSlide .35s ease both}
+.score-build-row.penalty-earned>strong{color:var(--bad)}
+.final-score-label{font-size:12px;font-weight:950;letter-spacing:.14em;color:var(--muted);margin:18px 0 8px}
