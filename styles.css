@@ -109,3 +109,6 @@ nav button:hover{
 
 /* Required reassessment action */
 .keep-number-one{width:100%;margin-bottom:14px;padding:18px 20px;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:3px;box-shadow:0 8px 20px rgba(23,19,15,.14)}.keep-number-one .keep-label{font-size:11px;font-weight:900;letter-spacing:.12em;opacity:.7}.keep-number-one strong{font-size:18px;line-height:1.2}.keep-number-one .keep-diagnosis{font-size:13px;line-height:1.35;opacity:.78}
+
+/* Differential management actions */
+.differential-action-dark{background:var(--dark);border-color:var(--dark);color:#fff;-webkit-text-fill-color:#fff}.differential-action-dark:hover,.differential-action-dark:active{background:var(--dark);border-color:var(--dark);color:#fff;-webkit-text-fill-color:#fff}
