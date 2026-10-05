@@ -9,3 +9,5 @@
 @media(max-width:720px){.support-hero{min-height:470px;padding:38px 24px;border-radius:24px}.support-layout,.impact-grid{grid-template-columns:1fr}.support-layout{padding:45px 0}.support-story{padding:20px 2px}.support-card{padding:28px 22px}.impact-grid article{padding-bottom:30px}.support-closing{padding-top:70px}}
 
 .donate-cta{display:block;text-decoration:none;text-align:center;margin:28px 0;padding:16px 20px}
+
+.venmo-handle{text-align:center;padding:4px 0 20px;color:var(--muted);font-size:14px}.venmo-handle strong{color:var(--ink)}
