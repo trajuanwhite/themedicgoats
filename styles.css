@@ -118,3 +118,6 @@ nav button:hover{
 
 /* Put the differential directly below patient findings during reassessment */
 .assessment-workspace .assessment-card{order:1}.assessment-workspace .differential-card{order:2}.assessment-workspace.reassessing .differential-card{order:1}.assessment-workspace.reassessing .assessment-card{order:2}
+
+/* Separate inactive diagnoses from the ranked differential */
+.ruled-out-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.ruled-out-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;color:var(--muted)}.ruled-out-item+.ruled-out-item{border-top:1px solid var(--line)}.ruled-out-item span{text-decoration:line-through;opacity:.72}.ruled-out-item .btn{flex:0 0 auto;padding:8px 12px}
