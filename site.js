@@ -46,6 +46,16 @@ function training(){
  trainingPlay.onclick=setup;
  trainingBoard.onclick=leaderboard;
 }
+function rapidDifferentialsLanding(){
+ clearInterval(timer);gameTop();
+ app.innerHTML=`<section class="page-heading"><div class="kicker">THE MEDIC GOATS • RAPID DIFFERENTIAL</div><h1>Can you find the diagnosis?</h1><p>Build your differential from dispatch, reassess as new findings appear, and protect your score.</p></section>
+ <section class="feature-card">
+   <div class="feature-copy"><span class="eyebrow">CLINICAL REASONING CHALLENGE</span><h2>Can you beat the score?</h2><p>Start with dispatch information only. Choose your differential, request the assessments you need, and re-rank as the patient picture develops.</p><div class="row mobile"><button class="btn light" id="directPlay">Play Differentials →</button><button class="btn ghost-light" id="directBoard">View Leaderboard</button></div></div>
+   <div class="score-preview"><span>RAPID DIFFERENTIAL</span><strong>2,000</strong><small>STARTING POINTS</small><div class="preview-line"></div><p>TIME + EFFICIENCY + CLINICAL REASONING</p></div>
+ </section>`;
+ directPlay.onclick=setup;
+ directBoard.onclick=leaderboard;
+}
 function ftoArticle(){
  clearInterval(timer);
  history.pushState({},'', '/blog/be-the-fto-you-needed-making-field-training-better');
@@ -77,4 +87,4 @@ function education(){
  ftoArticleCard.onclick=ftoArticle;
 }
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>({home:siteHome,game:training,education:education,leaderboard:leaderboard}[b.dataset.view]||siteHome)());
-if(location.pathname==='/blog/be-the-fto-you-needed-making-field-training-better') ftoArticle(); else if(location.pathname==='/rapid-differentials') setup(); else siteHome();
+if(location.pathname==='/blog/be-the-fto-you-needed-making-field-training-better') ftoArticle(); else if(location.pathname==='/rapid-differentials') rapidDifferentialsLanding(); else siteHome();
