@@ -161,3 +161,12 @@ nav button:hover{
 .score-build-row.penalty-earned{animation:bonusSlide .35s ease both}
 .score-build-row.penalty-earned>strong{color:var(--bad)}
 .final-score-label{font-size:12px;font-weight:950;letter-spacing:.14em;color:var(--muted);margin:18px 0 8px}
+
+.score-reveal-card{background:var(--dark);color:#fff;border-color:var(--dark)}
+.score-reveal-card .kicker,.score-reveal-card .muted,.score-reveal-card .score-reveal-status,.score-reveal-card .final-score-label{color:#cfc7bd}
+.score-reveal-card .score-build-row{border-bottom-color:#ffffff1f}
+.score-reveal-card .score-build-row small{color:#aaa197}
+.score-reveal-card .score,.score-reveal-card .score-tally-number{color:#fff}
+.score-reveal-card .submitbox{border-top-color:#ffffff20}
+.score-reveal-card .submitbox label{color:#fff}
+.score-reveal-card .input{background:#fff;color:var(--ink);border-color:#ffffff40}
