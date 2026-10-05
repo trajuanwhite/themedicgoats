@@ -77,4 +77,4 @@ function education(){
  ftoArticleCard.onclick=ftoArticle;
 }
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>({home:siteHome,game:training,education:education,leaderboard:leaderboard}[b.dataset.view]||siteHome)());
-if(location.pathname==='/blog/be-the-fto-you-needed-making-field-training-better') ftoArticle(); else siteHome();
+if(location.pathname==='/blog/be-the-fto-you-needed-making-field-training-better') ftoArticle(); else if(location.pathname==='/rapid-differentials') setup(); else siteHome();
