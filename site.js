@@ -13,7 +13,7 @@ function siteHome(){
    <div class="score-preview"><span>RAPID DIFFERENTIAL</span><strong>2,000</strong><small>STARTING POINTS</small><div class="preview-line"></div><p>TIME + EFFICIENCY + CLINICAL REASONING</p></div>
  </section>
  <section class="training-grid">
-   <article class="editorial-card"><div class="kicker">COMING NEXT</div><h3>MegaCode</h3><p>Run high-stakes resuscitations where timing, sequencing, rhythm recognition, and team leadership matter.</p><span>ACLS • RESUSCITATION</span></article>
+   <a class="editorial-card" href="/rapid-megacode" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid MegaCode →</h3><p>Seven seconds per decision. Three goats. Make the right moves, build your score, and finish the code.</p><span>ACLS • RESUSCITATION</span></a>
    <article class="editorial-card"><div class="kicker">COMING NEXT</div><h3>EKG Challenge</h3><p>Build speed and confidence recognizing rhythms and interpreting real-world prehospital ECGs.</p><span>CARDIOLOGY • ECG</span></article>
  </section>
  <section class="manifesto"><div class="kicker">WHY THE MEDIC GOATS</div><h2>Knowing the answer isn't enough.<br><em>You have to recognize it in the field.</em></h2><p>We build education around clinical reasoning—not memorizing a slide deck. Learn the medicine, understand the why, then practice making the call.</p></section>
@@ -39,7 +39,7 @@ function training(){
    <div class="score-preview"><span>RAPID DIFFERENTIAL</span><strong>2,000</strong><small>STARTING POINTS</small><div class="preview-line"></div><p>TIME + EFFICIENCY + CLINICAL REASONING</p></div>
  </section>
  <section class="training-grid">
-   <article class="editorial-card"><div class="kicker">COMING NEXT</div><h3>MegaCode</h3><p>Run high-stakes resuscitations where timing, sequencing, rhythm recognition, and team leadership matter.</p><span>ACLS • RESUSCITATION</span></article>
+   <a class="editorial-card" href="/rapid-megacode" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid MegaCode →</h3><p>Seven seconds per decision. Three goats. Make the right moves, build your score, and finish the code.</p><span>ACLS • RESUSCITATION</span></a>
    <article class="editorial-card"><div class="kicker">COMING NEXT</div><h3>EKG Challenge</h3><p>Build speed and confidence recognizing rhythms and interpreting real-world prehospital ECGs.</p><span>CARDIOLOGY • ECG</span></article>
  </section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
