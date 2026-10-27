@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/rapid-rhythms-live",
+      "destination": "/rapid-rhythms-live.html"
+    },
+    {
       "source": "/training",
       "destination": "/index.html"
     },
