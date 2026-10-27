@@ -22,9 +22,46 @@ function openBlog(slug){
  app.innerHTML='<section class="page-heading"><div class="kicker">THE MEDIC GOATS • TEACHING WHILE LEARNING</div><p><a href="/blog" class="blog-back">← All articles</a></p><h1>'+esc(p.title)+'</h1><p>'+esc(p.category)+' • '+esc(p.date?.slice(0,10))+'</p></section><article class="medic-blog-article">'+p.html+'</article><section id="medicKnowledgeCheck" class="medic-knowledge-check"></section><section class="blog-bottom"><a href="/blog" class="btn primary">← Back to Blog</a></section>';
  renderKnowledgeCheck(p);
 }
+const blogTopics=[['All topics','all'],['Airway & Respiratory','airway'],['Cardiology & EKG','cardiology'],['Sepsis & Shock','shock'],['FTO & Education','education']];
+const topicWords={
+ airway:'airway respiratory breathing ventilation ventilator oxygen oxygenation intubation etco2 end tidal end-tidal carbon dioxide capnography waveform co2 rsi',
+ cardiology:'cardiology cardiac ecg ekg electrocardiogram stemi arrhythmia rhythm sgarbossa bundle branch coronary infarction heart pulmonary embolism',
+ shock:'shock sepsis septic perfusion hypotension vasodilation vasopressor fluids resuscitation',
+ education:'education fto field training preceptor coaching evaluation teaching trainee mentorship'
+};
+const searchAliases={capnography:['etco2','end tidal','end-tidal','carbon dioxide','waveform'],etco2:['capnography','end tidal','end-tidal','carbon dioxide'],ekg:['ecg','electrocardiogram'],ecg:['ekg','electrocardiogram'],fto:['field training','preceptor'],stemi:['myocardial infarction','st elevation'],rsi:['intubation','rapid sequence']};
+const normalizeBlogText=value=>String(value||'').toLowerCase().replace(/<[^>]*>/g,' ').replace(/&[a-z]+;/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\\s+/g,' ').trim();
+const blogSearchText=p=>normalizeBlogText([p.title,p.category,p.description||'',(p.tags||[]).join(' '),p.html||''].join(' '));
+function blogMatchesTopic(p,topic){
+ if(topic==='all')return true;
+ const text=blogSearchText(p);
+ if(topic==='airway')return /airway|respirat|intubat|etco2|capnograph|ventilat|oxygen/.test(text);
+ if(topic==='cardiology')return /cardiol|cardiac|ecg|ekg|stemi|sgarbossa|bundle branch|coronary|rhythm/.test(text);
+ if(topic==='shock')return /sepsis|septic|shock|hypotension|vasopress|perfusion/.test(text);
+ return /fto|preceptor|field training|trainee|mentorship|coaching|educator/.test(text);
+}
 function listBlog(){
  clearInterval(timer);document.title='Blog | The Medic Goats';
- app.innerHTML='<section class="page-heading"><div class="kicker">THE MEDIC GOATS • TEACHING WHILE LEARNING</div><h1>Clinical Education & Insights</h1><p>Understanding the why behind the medicine, from the field to the classroom.</p></section><section class="medic-blog-grid">'+posts.map(p=>'<a class="medic-blog-card" href="/blog/'+encodeURIComponent(p.slug)+'"><span>'+esc(p.category)+'</span><h2>'+esc(p.title)+'</h2><p>Read article →</p></a>').join('')+'</section>';
+ app.innerHTML='<section class="page-heading"><div class="kicker">THE MEDIC GOATS • TEACHING WHILE LEARNING</div><h1>Clinical Education & Insights</h1><p>Understanding the why behind the medicine, from the field to the classroom.</p></section><section class="blog-library" aria-label="Search the education library"><label for="blogLibrarySearch">SEARCH THE EDUCATION LIBRARY</label><div class="blog-search-wrap"><input id="blogLibrarySearch" type="search" placeholder="Search capnography, EKG, airway, FTO…" autocomplete="off" aria-controls="blogLibraryResults"><button id="blogLibraryClear" type="button" hidden>Clear</button></div><div id="blogTopicFilters" class="blog-topic-filters" role="group" aria-label="Filter articles by topic">'+blogTopics.map(([name,id])=>'<button type="button" data-topic="'+id+'" class="'+(id==='all'?'selected':'')+'" aria-pressed="'+(id==='all')+'">'+esc(name)+'</button>').join('')+'</div><p id="blogLibraryCount" class="blog-library-count" role="status" aria-live="polite"></p></section><section id="blogLibraryResults" class="medic-blog-grid"></section>';
+ const input=document.getElementById('blogLibrarySearch'),clear=document.getElementById('blogLibraryClear'),count=document.getElementById('blogLibraryCount'),grid=document.getElementById('blogLibraryResults'),filters=document.getElementById('blogTopicFilters');
+ let topic='all';
+ function render(){
+  const words=normalizeBlogText(input.value).split(' ').filter(Boolean);
+  const matches=posts.filter(p=>{
+   if(!blogMatchesTopic(p,topic))return false;
+   const haystack=blogSearchText(p);
+   return words.every(w=>[w,...(searchAliases[w]||[])].some(term=>haystack.includes(normalizeBlogText(term))));
+  });
+  clear.hidden=!input.value;
+  count.textContent=matches.length+' '+(matches.length===1?'article':'articles')+' found';
+  grid.innerHTML=matches.length?matches.map(p=>'<a class="medic-blog-card" href="/blog/'+encodeURIComponent(p.slug)+'"><span>'+esc(p.category)+'</span><h2>'+esc(p.title)+'</h2><p>Read article →</p></a>').join(''):'<div class="blog-no-results"><h2>No matching articles</h2><p>Try a different keyword or select All topics.</p><button class="btn" type="button" id="blogResetSearch">Show all articles</button></div>';
+  const reset=document.getElementById('blogResetSearch');if(reset)reset.onclick=()=>{input.value='';topic='all';syncFilters();render();input.focus();};
+ }
+ function syncFilters(){filters.querySelectorAll('[data-topic]').forEach(btn=>{const selected=btn.dataset.topic===topic;btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected));});}
+ input.addEventListener('input',render);
+ clear.onclick=()=>{input.value='';render();input.focus();};
+ filters.addEventListener('click',e=>{const btn=e.target.closest('[data-topic]');if(!btn)return;topic=btn.dataset.topic;syncFilters();render();});
+ render();
 }
 function route(){let path=decodeURIComponent(location.pathname);if(path==='/blog'||path==='/blog/')listBlog();else if(path.startsWith('/blog/'))openBlog(path.slice(6).replace(/\/$/,''));}
 // Non-blog navigation is handled by site.js, which sets the correct /training and /education URLs.
