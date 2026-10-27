@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/training",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/education",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/leaderboard",
+      "destination": "/index.html"
+    },
+    {
       "source": "/rapid-megacode-live",
       "destination": "/rapid-megacode-live.html"
     },
