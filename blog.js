@@ -1,5 +1,5 @@
 (function(){
-const posts=window.MEDIC_BLOG_POSTS||[];
+const posts=[...(window.MEDIC_BLOG_POSTS||[])].sort((a,b)=>new Date(String(b.date||'').replace(' ','T')).getTime()-new Date(String(a.date||'').replace(' ','T')).getTime());
 const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function openBlog(slug){
  clearInterval(timer);
