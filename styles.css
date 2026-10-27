@@ -276,3 +276,22 @@ nav .navlink[data-view="leaderboard"]{display:none!important}
 .home-preview-answers b{color:#dfb88b;font-size:11px}
 .home-preview-bottom{margin-top:13px}
 .home-preview-bottom span{font-size:17px;color:#f0d0a6}
+
+/* Searchable Medic Goats education library */
+.blog-library{max-width:1180px;margin:0 auto;padding:12px 24px 0}
+.blog-library>label{display:block;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.13em;margin-bottom:12px}
+.blog-search-wrap{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:0 14px;min-height:54px;gap:10px}
+.blog-search-wrap:focus-within{border-color:#a88a6b;box-shadow:0 0 0 3px rgba(168,138,107,.12)}
+.blog-search-wrap input{flex:1;min-width:0;width:100%;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:15px;padding:15px 0}
+.blog-search-wrap input::-webkit-search-cancel-button{cursor:pointer}
+.blog-search-wrap button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:8px}
+.blog-search-wrap button[hidden]{display:none}
+.blog-topic-filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.blog-topic-filters button{background:transparent;color:var(--ink);border:1px solid #cfc6ba;border-radius:100px;padding:9px 14px;font:inherit;font-size:12px;font-weight:750;cursor:pointer;transition:background .15s,border-color .15s}
+.blog-topic-filters button:hover{border-color:#8f7965}
+.blog-topic-filters button.selected{background:var(--dark);border-color:var(--dark);color:#f7f2ea}
+.blog-library-count{font-size:13px;color:var(--muted);margin:20px 0 0}
+.blog-no-results{grid-column:1/-1;text-align:center;padding:55px 20px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.blog-no-results h2{margin:0 0 10px;font-size:25px}
+.blog-no-results p{color:var(--muted);margin-bottom:20px}
+@media(max-width:600px){.blog-library{padding:10px 18px 0}.blog-topic-filters{gap:7px}.blog-topic-filters button{padding:8px 11px;font-size:11px}}
