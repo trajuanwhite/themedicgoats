@@ -226,3 +226,16 @@ nav button:hover{
 
 /* Keep the leaderboard accessible from training while removing its top navigation tab. */
 nav .navlink[data-view="leaderboard"]{display:none!important}
+
+
+/* Training page: leaderboards follow the light editorial design */
+.training-leaderboards{margin:34px 0;padding:clamp(22px,4vw,36px);background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:24px}
+.training-leaderboards h2{margin:12px 0 8px;color:var(--ink)}
+.training-leaderboards .leaderboard-intro{color:var(--muted);margin:0 0 24px}
+.leaderboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.leaderboard-game{min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:clamp(17px,3vw,24px)}
+.leaderboard-game h3{margin:8px 0 5px;color:var(--ink);font-size:22px}
+.leaderboard-game>p{color:var(--muted);font-size:13px;margin:0 0 14px}
+.leaderboard-list{padding:0;margin:0;list-style:none;color:var(--ink)}
+.leaderboard-link{display:inline-block;margin-top:20px;color:var(--ink);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:700px){.leaderboard-grid{grid-template-columns:1fr}}
