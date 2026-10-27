@@ -39,20 +39,28 @@ function training(){
  <section class="training-grid">
    <a class="editorial-card" href="/rapid-rhythms" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid Rhythms →</h3><p>No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock.</p><span>CARDIOLOGY • RHYTHM RECOGNITION</span></a>
  </section>
- <section aria-label="Rapid MegaCode leaderboard" style="margin:34px 0;padding:clamp(22px,4vw,36px);background:#211c18;color:#f5eee5;border-radius:24px"><div class="kicker" style="color:#d7b794">THE COMPETITION</div><h2 style="margin:12px 0 8px;color:#fff">Leaderboard</h2><p style="color:#d1c3b4;margin:0 0 20px">Top Rapid MegaCode solo scores. Think you can take the lead?</p><ol id="trainingMegaBoard" style="padding:0;margin:0;list-style:none"><li style="color:#d1c3b4">Loading top scores…</li></ol><a href="/rapid-megacode" style="display:inline-block;margin-top:22px;color:#f2d3ae;font-weight:800;text-decoration:underline">Challenge the leaderboard →</a></section>
+ <section aria-label="Game leaderboards" style="margin:34px 0;padding:clamp(22px,4vw,36px);background:#211c18;color:#f5eee5;border-radius:24px">
+ <div class="kicker" style="color:#d7b794">THE COMPETITION</div><h2 style="margin:12px 0 8px;color:#fff">Leaderboards</h2><p style="color:#d1c3b4;margin:0 0 22px">Two games. Two rankings. Can you reach the top?</p>
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:24px">
+ <div style="border:1px solid #564538;border-radius:17px;padding:20px"><h3 style="color:#fff;margin:0 0 5px">Rapid MegaCode</h3><p style="color:#cbb9a5;font-size:13px;margin:0 0 14px">Top 10 solo scores</p><ol id="trainingMegaBoard" style="padding:0;margin:0;list-style:none"><li>Loading scores…</li></ol><a href="/rapid-megacode" style="display:inline-block;margin-top:20px;color:#f2d3ae;font-weight:800">Play MegaCode →</a></div>
+ <div style="border:1px solid #564538;border-radius:17px;padding:20px"><h3 style="color:#fff;margin:0 0 5px">Rapid Rhythms</h3><p style="color:#cbb9a5;font-size:13px;margin:0 0 14px">Top 10 solo scores</p><ol id="trainingRhythmBoard" style="padding:0;margin:0;list-style:none"><li>Loading scores…</li></ol><a href="/rapid-rhythms" style="display:inline-block;margin-top:20px;color:#f2d3ae;font-weight:800">Play Rhythms →</a></div>
+ </div></section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
  loadTrainingLeaderboard();
 }
 async function loadTrainingLeaderboard(){
- const list=document.getElementById("trainingMegaBoard");if(!list)return;
- try{
-  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
-  if(!client)throw Error("Leaderboard unavailable");
-  const {data,error}=await client.from("rapid_megacode_scores").select("player_name,score").order("score",{ascending:false}).limit(10);
-  if(error)throw error;if(!list.isConnected)return;list.replaceChildren();
-  if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first to compete.";li.style.color="#d1c3b4";list.append(li);return}
-  data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 4px;border-bottom:1px solid #55473a";const name=document.createElement("span");name.textContent=(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.textContent=Number(p.score||0).toLocaleString()+" pts";points.style.color="#f2d3ae";li.append(name,points);list.append(li)});
- }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable."}
+ const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
+ const boards=[["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"]];
+ await Promise.all(boards.map(async([id,table])=>{
+  const list=document.getElementById(id);if(!list)return;
+  try{
+   if(!client)throw Error("Leaderboard unavailable");
+   const {data,error}=await client.from(table).select("player_name,score").order("score",{ascending:false}).limit(10);
+   if(error)throw error;if(!list.isConnected)return;list.replaceChildren();
+   if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first!";li.style.color="#d1c3b4";list.append(li);return}
+   data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #55473a";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";name.textContent=(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:#f2d3ae";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
+  }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable."}
+ }));
 }
 function rapidDifferentialsLanding(){
  clearInterval(timer);gameTop();
