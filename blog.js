@@ -8,29 +8,12 @@ function renderKnowledgeCheck(post){
  const host=document.getElementById('medicKnowledgeCheck');if(!host)return;
  let index=0,answers=Array(5).fill(null),finished=false;
  function draw(){
- if(finished){const score=answers.filter((a,i)=>a===questions[i][2]).length;host.innerHTML='<div class="kq-kicker">THE MEDIC GOATS • KNOWLEDGE CHECK</div><h2>Knowledge Check Complete</h2><div class="kq-score">'+(score*20)+'%</div><p>'+score+' of 5 correct</p><div class="kq-review">'+questions.map((q,i)=>'<p><strong>'+(i+1)+'. '+esc(q[0])+'</strong><br>'+((answers[i]===q[2])?'✓ Correct':'✕ '+esc(q[1][q[2]]))+'<br><small>'+esc(q[3])+'</small></p>').join('')+'</div><label for="kqName">Name on your certificate</label><input id="kqName" maxlength="60" placeholder="Your name" autocomplete="name"><p class="kq-note">Educational completion only. Not accredited continuing education credit.</p><div class="kq-actions"><button class="btn primary" id="kqDownload">Download Instagram Story (1080 × 1920)</button><button class="btn" id="kqRetry">Retake quiz</button></div><p id="kqError" role="status"></p>';host.querySelector('#kqDownload').onclick=()=>{const name=host.querySelector('#kqName').value.trim();if(!name){host.querySelector('#kqError').textContent='Enter your name to download your certificate.';return;}downloadCertificate(post,name,score);};host.querySelector('#kqRetry').onclick=()=>{index=0;answers=Array(5).fill(null);finished=false;draw();};return;}
- const q=questions[index];host.innerHTML='<div class="kq-kicker">THE MEDIC GOATS • KNOWLEDGE CHECK</div><h2>Test what you learned</h2><p>Five questions • Your score becomes a shareable Story certificate.</p><div class="kq-progress">QUESTION '+(index+1)+' OF 5</div><div class="kq-track"><div style="width:'+((index+1)*20)+'%"></div></div><h3>'+esc(q[0])+'</h3><div class="kq-choices">'+q[1].map((v,i)=>'<button type="button" class="kq-choice'+(answers[index]===i?' active':'')+'" data-choice="'+i+'">'+esc(v)+'</button>').join('')+'</div><div class="kq-actions"><button class="btn" id="kqBack" '+(index===0?'disabled':'')+'>Previous</button><button class="btn primary" id="kqNext" '+(answers[index]===null?'disabled':'')+'>'+(index===4?'See results':'Next question')+'</button></div>';
+ if(finished){const score=answers.filter((a,i)=>a===questions[i][2]).length;host.innerHTML='<div class="kq-kicker">THE MEDIC GOATS • KNOWLEDGE CHECK</div><h2>Knowledge Check Complete</h2><div class="kq-score">'+(score*20)+'%</div><p>'+score+' of 5 correct</p><div class="kq-review">'+questions.map((q,i)=>'<p><strong>'+(i+1)+'. '+esc(q[0])+'</strong><br>'+((answers[i]===q[2])?'✓ Correct':'✕ Correct answer: '+esc(q[1][q[2]]))+'<br><small>'+esc(q[3])+'</small></p>').join('')+'</div><div class="kq-actions"><button class="btn primary" id="kqRetry">Retake quiz</button></div>';host.querySelector('#kqRetry').onclick=()=>{index=0;answers=Array(5).fill(null);finished=false;draw();};return;}
+ const q=questions[index];host.innerHTML='<div class="kq-kicker">THE MEDIC GOATS • KNOWLEDGE CHECK</div><h2>Test what you learned</h2><p>Five questions • Review your answers and explanations at the end.</p><div class="kq-progress">QUESTION '+(index+1)+' OF 5</div><div class="kq-track"><div style="width:'+((index+1)*20)+'%"></div></div><h3>'+esc(q[0])+'</h3><div class="kq-choices">'+q[1].map((v,i)=>'<button type="button" class="kq-choice'+(answers[index]===i?' active':'')+'" data-choice="'+i+'">'+esc(v)+'</button>').join('')+'</div><div class="kq-actions"><button class="btn" id="kqBack" '+(index===0?'disabled':'')+'>Previous</button><button class="btn primary" id="kqNext" '+(answers[index]===null?'disabled':'')+'>'+(index===4?'See results':'Next question')+'</button></div>';
  host.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{answers[index]=Number(b.dataset.choice);draw();});host.querySelector('#kqBack').onclick=()=>{if(index>0){index--;draw();}};host.querySelector('#kqNext').onclick=()=>{if(answers[index]===null)return;if(index===4)finished=true;else index++;draw();};
  }
  draw();
 }
-function downloadCertificate(post,name,score){
- const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;const c=canvas.getContext('2d');
- c.fillStyle='#211d19';c.fillRect(0,0,1080,1920);c.strokeStyle='#87674d';c.lineWidth=3;c.strokeRect(55,55,970,1810);
- c.textAlign='center';c.fillStyle='#c9a583';c.font='bold 38px Arial';c.fillText('THE MEDIC GOATS',540,225);c.fillRect(430,275,220,4);
- c.font='30px Arial';c.fillText('KNOWLEDGE CHECK',540,385);c.fillStyle='#f5ebdd';c.font='bold 62px Arial';c.fillText('Certificate of',540,515);c.fillText('Completion',540,590);
- c.fillStyle='#d6c5b2';c.font='30px Arial';c.fillText('AWARDED TO',540,730);
- function wrap(text,y,maxWidth,lineHeight,font,color,maxLines){c.font=font;c.fillStyle=color;const words=String(text).split(/\s+/);let line='',lines=[];for(const w of words){const test=line?line+' '+w:w;if(c.measureText(test).width>maxWidth&&line){lines.push(line);line=w;}else line=test;}if(line)lines.push(line);if(lines.length>maxLines){lines=lines.slice(0,maxLines);while(c.measureText(lines[maxLines-1]+'…').width>maxWidth)lines[maxLines-1]=lines[maxLines-1].slice(0,-1);lines[maxLines-1]+='…';}lines.forEach((l,i)=>c.fillText(l,540,y+i*lineHeight));}
- wrap(name,830,850,68,'bold 54px Arial','#fff',2);
- c.fillStyle='#c9a583';c.fillRect(280,985,520,2);wrap(post.title,1090,850,57,'bold 42px Arial','#f5ebdd',3);
- c.fillStyle='#d9b38b';c.font='bold 180px Arial';c.fillText((score*20)+'%',540,1455);
- c.fillStyle='#d6c5b2';c.font='36px Arial';c.fillText(score+' OF 5 CORRECT',540,1535);
- c.font='25px Arial';c.fillText('Educational completion • Not accredited CE credit',540,1665);
- c.fillStyle='#c9a583';c.font='bold 28px Arial';c.fillText('@THEMEDICGOATS',540,1770);
- c.font='24px Arial';c.fillText('THEMEDICGOATS.COM  •  Teaching While Learning',540,1810);
- canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Medic-Goats-Knowledge-Check-'+post.slug+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);},'image/png');
-}
-
 function openBlog(slug){
  clearInterval(timer);
  const p=posts.find(x=>x.slug===slug);
