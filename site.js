@@ -26,7 +26,7 @@ function siteHome(){
    </div>
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
- heroTrain.onclick=closingTrain.onclick=()=>navigate("game");
+ heroTrain.onclick=closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
  heroLearn.onclick=allEducation.onclick=()=>navigate("education");
 }
 function training(){
