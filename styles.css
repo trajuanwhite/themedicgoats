@@ -223,3 +223,6 @@ nav button:hover{
 .medic-knowledge-check input{width:100%;font:inherit;padding:14px;border:1px solid #87674d;border-radius:10px;background:#f5ebdd;color:#211d19}
 .medic-knowledge-check .kq-note{font-size:13px}
 @media(max-width:600px){.medic-knowledge-check{padding:22px;margin:0 0 40px}.kq-actions .btn{width:100%}}
+
+/* Keep the leaderboard accessible from training while removing its top navigation tab. */
+nav .navlink[data-view="leaderboard"]{display:none!important}
