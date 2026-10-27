@@ -37,8 +37,9 @@ function training(){
    <div class="feature-copy"><span class="eyebrow">LIVE NOW • RESUSCITATION CHALLENGE</span><h2>Rapid MegaCode</h2><p>Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-megacode" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid MegaCode →</a></div></div>
    <div class="score-preview"><span>RAPID MEGACODE</span><strong>7s + 7s</strong><small>READ • DECIDE</small><div class="preview-line"></div><p>THREE GOATS • RESUSCITATION • LEADERBOARD</p></div>
  </section>
- <section class="training-grid">
-   <a class="editorial-card" href="/rapid-rhythms" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid Rhythms →</h3><p>No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock.</p><span>CARDIOLOGY • RHYTHM RECOGNITION</span></a>
+ <section class="feature-card" style="margin-top:24px">
+   <div class="feature-copy"><span class="eyebrow">LIVE NOW • CARDIOLOGY CHALLENGE</span><h2>Rapid Rhythms</h2><p>No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-rhythms" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid Rhythms →</a></div></div>
+   <div class="score-preview"><span>RAPID RHYTHMS</span><strong>7s + 7s</strong><small>READ • IDENTIFY</small><div class="preview-line"></div><p>THREE GOATS • CARDIOLOGY • LEADERBOARD</p></div>
  </section>
  <section class="training-leaderboards" aria-label="Game leaderboards">
  <div class="kicker">THE COMPETITION</div><h2>Leaderboards</h2><p class="leaderboard-intro">Two games. Two rankings. Can you reach the top?</p>
