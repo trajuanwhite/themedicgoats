@@ -25,6 +25,10 @@
       "destination": "/blog-share/sepsis-vasodilation-fluids-vasopressors.html"
     },
     {
+      "source": "/blog/right-ventricular-strain-ecg-s1q3t3-pulmonary-embolism",
+      "destination": "/blog-share/right-ventricular-strain-ecg-s1q3t3-pulmonary-embolism.html"
+    },
+    {
       "source": "/blog/:path*",
       "destination": "/index.html"
     }
