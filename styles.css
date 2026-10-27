@@ -252,3 +252,14 @@ nav .navlink[data-view="leaderboard"]{display:none!important}
 .leaderboard-list li{border-bottom-color:#51483e!important}
 .leaderboard-list strong{color:#f7f2ea!important}
 .leaderboard-link{color:#f2dcc0}
+
+/* Homepage: compact, inviting light training game teasers */
+.home-game-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:28px 0 44px}
+.home-game-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:clamp(24px,3.5vw,38px);background:var(--card);border:1px solid var(--line);border-radius:22px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.home-game-card:hover{transform:translateY(-3px);border-color:#b6a795;box-shadow:0 12px 28px rgba(23,19,15,.07)}
+.home-game-card h3{font-size:clamp(26px,3vw,36px);letter-spacing:-.035em;line-height:1.12;margin:18px 0 12px;color:var(--ink)}
+.home-game-card>p{font-size:15px;line-height:1.65;color:var(--muted);margin:0 0 26px}
+.home-game-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;width:100%;margin-top:auto}
+.home-game-footer>span{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--muted)}
+.home-game-footer .btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+@media(max-width:700px){.home-game-grid{grid-template-columns:1fr;gap:14px}.home-game-card{padding:24px}}
