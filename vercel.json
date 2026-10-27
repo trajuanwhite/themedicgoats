@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/rapid-megacode",
+      "destination": "/rapid-megacode.html"
+    },
+    {
       "source": "/blog",
       "destination": "/blog-share/index.html"
     },
