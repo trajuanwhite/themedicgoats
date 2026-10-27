@@ -25,8 +25,8 @@ function siteHome(){
    </div>
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
- heroTrain.onclick=closingTrain.onclick=training;
- heroLearn.onclick=allEducation.onclick=education;
+ heroTrain.onclick=closingTrain.onclick=()=>navigate("game");
+ heroLearn.onclick=allEducation.onclick=()=>navigate("education");
 }
 function training(){
  clearInterval(timer);
@@ -78,7 +78,11 @@ function ftoArticle(){
 function education(){
  clearInterval(timer);
  app.innerHTML=`<section class="page-heading"><div class="kicker">THE MEDIC GOATS • EDUCATION</div><h1>Learn the medicine.<br>Understand the why.</h1><p>Our existing articles are being brought into a cleaner education library. The full archive is coming next.</p></section><section class="article-grid"><article class="article-card"><span>CARDIOLOGY & EKG</span><h3>Cardiology & EKG</h3><p>Rhythm recognition, 12-lead interpretation, physiology, and treatment decisions.</p></article><article class="article-card"><span>AIRWAY & RESPIRATORY</span><h3>Airway & Respiratory</h3><p>Ventilation, oxygenation, capnography, airway management, and respiratory emergencies.</p></article><article class="article-card"><span>MEDICAL & TRAUMA</span><h3>Field Medicine</h3><p>Clinical reasoning for the medical and trauma calls that challenge prehospital clinicians.</p></article></section><button class="btn primary" id="backHome" style="margin-top:24px">← Back Home</button>`;
- backHome.onclick=siteHome;
+ backHome.onclick=()=>navigate("home");
 }
-document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>({home:siteHome,game:training,education:education,leaderboard:leaderboard}[b.dataset.view]||siteHome)());
-if(location.pathname==='/blog/be-the-fto-you-needed-making-field-training-better') ftoArticle(); else if(location.pathname==='/rapid-differentials') rapidDifferentialsLanding(); else siteHome();
+const routes={home:"/",game:"/training",education:"/education",leaderboard:"/leaderboard"};
+function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view]||siteHome)();}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
+window.addEventListener("popstate",()=>renderRoute());
+function renderRoute(){const path=location.pathname;if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
+renderRoute();
