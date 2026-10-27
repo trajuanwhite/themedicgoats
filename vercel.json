@@ -1,1 +1,28 @@
-{"rewrites":[{"source":"/donate","destination":"/donate.html"},{"source":"/rapid-differentials","destination":"/index.html"},{"source":"/blog/:path*","destination":"/index.html"}]}
+{
+  "rewrites": [
+    {
+      "source": "/donate",
+      "destination": "/donate.html"
+    },
+    {
+      "source": "/rapid-differentials",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/blog/resuscitate-before-you-intubate-preventing-peri-intubation-hypotension",
+      "destination": "/blog-share/resuscitate-before-you-intubate-preventing-peri-intubation-hypotension.html"
+    },
+    {
+      "source": "/blog/be-the-fto-you-needed-making-field-training-better",
+      "destination": "/blog-share/be-the-fto-you-needed-making-field-training-better.html"
+    },
+    {
+      "source": "/blog/etco2-the-vital-sign-you-should-be-watching",
+      "destination": "/blog-share/etco2-the-vital-sign-you-should-be-watching.html"
+    },
+    {
+      "source": "/blog/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}
