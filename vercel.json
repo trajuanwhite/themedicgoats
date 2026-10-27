@@ -21,6 +21,10 @@
       "destination": "/blog-share/etco2-the-vital-sign-you-should-be-watching.html"
     },
     {
+      "source": "/blog/sepsis-vasodilation-fluids-vasopressors",
+      "destination": "/blog-share/sepsis-vasodilation-fluids-vasopressors.html"
+    },
+    {
       "source": "/blog/:path*",
       "destination": "/index.html"
     }
