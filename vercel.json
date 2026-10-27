@@ -1,12 +1,16 @@
 {
   "rewrites": [
     {
+      "source": "/blog",
+      "destination": "/blog-share/index.html"
+    },
+    {
       "source": "/donate",
       "destination": "/donate.html"
     },
     {
       "source": "/rapid-differentials",
-      "destination": "/index.html"
+      "destination": "/rapid-differentials-share.html"
     },
     {
       "source": "/blog/resuscitate-before-you-intubate-preventing-peri-intubation-hypotension",
