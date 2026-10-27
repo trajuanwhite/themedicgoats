@@ -9,11 +9,10 @@ function siteHome(){
  </section>
  <section class="section-intro"><div><div class="kicker">TRAINING</div><h2>Practice the decisions<br>that matter.</h2></div><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
  <section class="feature-card">
-   <div class="feature-copy"><span class="eyebrow">LIVE NOW • CLINICAL REASONING</span><h2>Can you find the diagnosis?</h2><p>Build a differential from dispatch. Request the assessments you need. Re-rank as the patient picture develops. Protect your score and climb the leaderboard.</p><div class="row mobile"><button class="btn light" id="playFeature">Play Differentials →</button><button class="btn ghost-light" id="featureBoard">View Leaderboard</button></div></div>
-   <div class="score-preview"><span>RAPID DIFFERENTIAL</span><strong>2,000</strong><small>STARTING POINTS</small><div class="preview-line"></div><p>TIME + EFFICIENCY + CLINICAL REASONING</p></div>
+   <div class="feature-copy"><span class="eyebrow">LIVE NOW • RESUSCITATION CHALLENGE</span><h2>Rapid MegaCode</h2><p>Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-megacode" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center">Play Rapid MegaCode →</a></div></div>
+   <div class="score-preview"><span>RAPID MEGACODE</span><strong>7s + 7s</strong><small>READ • DECIDE</small><div class="preview-line"></div><p>THREE GOATS • RESUSCITATION • LEADERBOARD</p></div>
  </section>
  <section class="training-grid">
-   <a class="editorial-card" href="/rapid-megacode" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid MegaCode →</h3><p>Seven seconds per decision. Three goats. Make the right moves, build your score, and finish the code.</p><span>ACLS • RESUSCITATION</span></a>
    <a class="editorial-card" href="/rapid-rhythms" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid Rhythms →</h3><p>No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock.</p><span>CARDIOLOGY • RHYTHM RECOGNITION</span></a>
  </section>
  <section class="manifesto"><div class="kicker">WHY THE MEDIC GOATS</div><h2>Knowing the answer isn't enough.<br><em>You have to recognize it in the field.</em></h2><p>We build education around clinical reasoning—not memorizing a slide deck. Learn the medicine, understand the why, then practice making the call.</p></section>
@@ -26,8 +25,7 @@ function siteHome(){
    </div>
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
- heroTrain.onclick=playFeature.onclick=closingTrain.onclick=setup;
- featureBoard.onclick=leaderboard;
+ heroTrain.onclick=closingTrain.onclick=training;
  heroLearn.onclick=allEducation.onclick=education;
 }
 function training(){
@@ -35,16 +33,13 @@ function training(){
  app.innerHTML=`
  <section class="page-heading"><div class="kicker">THE MEDIC GOATS • TRAINING</div><h1>Practice the decisions<br>that matter.</h1><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
  <section class="feature-card">
-   <div class="feature-copy"><span class="eyebrow">LIVE NOW • CLINICAL REASONING</span><h2>Can you find the diagnosis?</h2><p>Build a differential from dispatch. Request the assessments you need. Re-rank as the patient picture develops. Protect your score and climb the leaderboard.</p><div class="row mobile"><button class="btn light" id="trainingPlay">Play Differentials →</button><button class="btn ghost-light" id="trainingBoard">View Leaderboard</button></div></div>
-   <div class="score-preview"><span>RAPID DIFFERENTIAL</span><strong>2,000</strong><small>STARTING POINTS</small><div class="preview-line"></div><p>TIME + EFFICIENCY + CLINICAL REASONING</p></div>
+   <div class="feature-copy"><span class="eyebrow">LIVE NOW • RESUSCITATION CHALLENGE</span><h2>Rapid MegaCode</h2><p>Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-megacode" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center">Play Rapid MegaCode →</a></div></div>
+   <div class="score-preview"><span>RAPID MEGACODE</span><strong>7s + 7s</strong><small>READ • DECIDE</small><div class="preview-line"></div><p>THREE GOATS • RESUSCITATION • LEADERBOARD</p></div>
  </section>
  <section class="training-grid">
-   <a class="editorial-card" href="/rapid-megacode" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid MegaCode →</h3><p>Seven seconds per decision. Three goats. Make the right moves, build your score, and finish the code.</p><span>ACLS • RESUSCITATION</span></a>
    <a class="editorial-card" href="/rapid-rhythms" style="text-decoration:none;color:inherit;display:block"><div class="kicker">PLAY NOW • QUICK PLAY</div><h3>Rapid Rhythms →</h3><p>No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock.</p><span>CARDIOLOGY • RHYTHM RECOGNITION</span></a>
  </section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
- trainingPlay.onclick=setup;
- trainingBoard.onclick=leaderboard;
 }
 function rapidDifferentialsLanding(){
  clearInterval(timer);gameTop();
