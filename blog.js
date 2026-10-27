@@ -30,7 +30,7 @@ const topicWords={
  education:'education fto field training preceptor coaching evaluation teaching trainee mentorship'
 };
 const searchAliases={capnography:['etco2','end tidal','end-tidal','carbon dioxide','waveform'],etco2:['capnography','end tidal','end-tidal','carbon dioxide'],ekg:['ecg','electrocardiogram'],ecg:['ekg','electrocardiogram'],fto:['field training','preceptor'],stemi:['myocardial infarction','st elevation'],rsi:['intubation','rapid sequence']};
-const normalizeBlogText=value=>String(value||'').toLowerCase().replace(/<[^>]*>/g,' ').replace(/&[a-z]+;/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\\s+/g,' ').trim();
+const normalizeBlogText=value=>String(value||'').toLowerCase().replace(/<[^>]*>/g,' ').replace(/&[a-z]+;/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
 const blogSearchText=p=>normalizeBlogText([p.title,p.category,p.description||'',(p.tags||[]).join(' '),p.html||''].join(' '));
 function blogMatchesTopic(p,topic){
  if(topic==='all')return true;
