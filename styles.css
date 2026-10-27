@@ -196,3 +196,30 @@ nav button:hover{
 .medic-blog-grid .medic-blog-card,.medic-blog-grid .medic-blog-card:visited{color:#f5f0e9!important}
 .medic-blog-grid .medic-blog-card h2,.medic-blog-grid .medic-blog-card h3{color:#f5f0e9!important;opacity:1}
 .medic-blog-grid .medic-blog-card span,.medic-blog-grid .medic-blog-card p{color:#d4b695!important}
+
+
+/* Blog knowledge checks and Instagram Story certificates */
+.medic-knowledge-check{max-width:790px;margin:0 auto 52px;padding:32px;border-radius:22px;background:#211d19;color:#f5ebdd;border:1px solid #87674d}
+.medic-knowledge-check h2{font-size:clamp(26px,4vw,38px);margin:12px 0}
+.medic-knowledge-check h3{font-size:21px;line-height:1.4;margin:25px 0}
+.medic-knowledge-check p{line-height:1.55;color:#d6c5b2}
+.kq-kicker,.kq-progress{font-size:12px;letter-spacing:.14em;font-weight:800;color:#c9a583}
+.kq-progress{margin-top:25px}
+.kq-track{height:6px;background:#4b4036;border-radius:20px;margin:10px 0 20px;overflow:hidden}
+.kq-track>div{height:100%;background:#c9a583;transition:width .2s}
+.kq-choices{display:grid;gap:10px}
+.kq-choice{font:inherit;text-align:left;color:#f5ebdd;background:#302a25;border:1px solid #5e4d3e;border-radius:12px;padding:16px;cursor:pointer}
+.kq-choice:hover,.kq-choice.active{background:#4b392a;border-color:#c9a583}
+.kq-choice:focus-visible{outline:3px solid #c9a583;outline-offset:2px}
+.kq-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.kq-actions .btn{background:#c9a583;color:#211d19;border-color:#c9a583;text-align:center}
+.kq-actions .btn:not(.primary){background:transparent;color:#f5ebdd;border-color:#87674d}
+.kq-score{font-size:clamp(72px,13vw,110px);font-weight:900;color:#c9a583;line-height:1.1}
+.kq-review{padding:14px 18px;border-radius:12px;background:#302a25;margin:22px 0}
+.kq-review p{border-bottom:1px solid #5e4d3e;padding-bottom:14px}
+.kq-review p:last-child{border-bottom:0}
+.kq-review small{color:#c9a583}
+.medic-knowledge-check label{display:block;margin:20px 0 9px;font-weight:700}
+.medic-knowledge-check input{width:100%;font:inherit;padding:14px;border:1px solid #87674d;border-radius:10px;background:#f5ebdd;color:#211d19}
+.medic-knowledge-check .kq-note{font-size:13px}
+@media(max-width:600px){.medic-knowledge-check{padding:22px;margin:0 0 40px}.kq-actions .btn{width:100%}}
