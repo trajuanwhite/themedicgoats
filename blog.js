@@ -27,7 +27,7 @@ function listBlog(){
  app.innerHTML='<section class="page-heading"><div class="kicker">THE MEDIC GOATS • TEACHING WHILE LEARNING</div><h1>Clinical Education & Insights</h1><p>Understanding the why behind the medicine, from the field to the classroom.</p></section><section class="medic-blog-grid">'+posts.map(p=>'<a class="medic-blog-card" href="/blog/'+encodeURIComponent(p.slug)+'"><span>'+esc(p.category)+'</span><h2>'+esc(p.title)+'</h2><p>Read article →</p></a>').join('')+'</section>';
 }
 function route(){let path=decodeURIComponent(location.pathname);if(path==='/blog'||path==='/blog/')listBlog();else if(path.startsWith('/blog/'))openBlog(path.slice(6).replace(/\/$/,''));}
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.view!=='blog')history.replaceState({},'', '/');}));
+// Non-blog navigation is handled by site.js, which sets the correct /training and /education URLs.
 const nav=document.querySelector('[data-view="blog"]');if(nav)nav.onclick=()=>{history.pushState({},'','/blog');listBlog();};
 document.addEventListener('click',e=>{const a=e.target.closest('a[href^="/blog"]');if(!a)return;e.preventDefault();history.pushState({},'',a.getAttribute('href'));route();window.scrollTo(0,0);});
 window.addEventListener('popstate',()=>{if(location.pathname.startsWith('/blog'))route();else location.reload();});
