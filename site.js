@@ -44,8 +44,8 @@ function training(){
  <section class="training-leaderboards" aria-label="Game leaderboards">
  <div class="kicker">THE COMPETITION</div><h2>Leaderboards</h2><p class="leaderboard-intro">Two games. Two rankings. Can you reach the top?</p>
  <div class="leaderboard-grid">
- <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>Top 10 solo scores</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
- <div class="leaderboard-game"><div class="kicker">CARDIOLOGY</div><h3>Rapid Rhythms</h3><p>Top 10 solo scores</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
+ <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>Top 3 solo scores</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
+ <div class="leaderboard-game"><div class="kicker">CARDIOLOGY</div><h3>Rapid Rhythms</h3><p>Top 3 solo scores</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
  </div></section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
  loadTrainingLeaderboard();
@@ -57,7 +57,7 @@ async function loadTrainingLeaderboard(){
   const list=document.getElementById(id);if(!list)return;
   try{
    if(!client)throw Error("Leaderboard unavailable");
-   const {data,error}=await client.from(table).select("player_name,score").order("score",{ascending:false}).limit(10);
+   const {data,error}=await client.from(table).select("player_name,score").order("score",{ascending:false}).limit(3);
    if(error)throw error;if(!list.isConnected)return;list.replaceChildren();
    if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first!";li.style.color="var(--muted)";list.append(li);return}
    data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";name.textContent=(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
