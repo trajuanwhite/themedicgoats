@@ -263,3 +263,16 @@ nav .navlink[data-view="leaderboard"]{display:none!important}
 .home-game-footer>span{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--muted)}
 .home-game-footer .btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 @media(max-width:700px){.home-game-grid{grid-template-columns:1fr;gap:14px}.home-game-card{padding:24px}}
+
+
+/* Static in-game snapshots embedded in the light homepage teaser cards */
+.home-game-preview{width:100%;box-sizing:border-box;background:#211d1a;color:#f7f1e9;border:1px solid #4b4036;border-radius:16px;padding:18px;margin:0 0 24px;overflow:hidden;box-shadow:0 8px 22px rgba(23,19,15,.12)}
+.home-preview-top,.home-preview-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9px;font-weight:800;letter-spacing:.09em;color:#d7b995}
+.home-preview-top span:last-child{white-space:nowrap;letter-spacing:0;font-size:13px}
+.home-preview-scene{background:#342e28;border:1px solid #51463c;border-radius:10px;padding:13px;margin-top:14px;font-size:12px;line-height:1.5;color:#eee2d4}
+.home-preview-question{font-size:16px;font-weight:800;line-height:1.35;margin:14px 0 10px;color:#fff}
+.home-preview-answers{display:grid;gap:7px}
+.home-preview-answers>div{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;background:#39322c;border:1px solid #5b4d40;border-radius:8px;font-size:11px;line-height:1.35;color:#f4ece2}
+.home-preview-answers b{color:#dfb88b;font-size:11px}
+.home-preview-bottom{margin-top:13px}
+.home-preview-bottom span{font-size:17px;color:#f0d0a6}
