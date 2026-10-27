@@ -239,3 +239,16 @@ nav .navlink[data-view="leaderboard"]{display:none!important}
 .leaderboard-list{padding:0;margin:0;list-style:none;color:var(--ink)}
 .leaderboard-link{display:inline-block;margin-top:20px;color:var(--ink);font-weight:800;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:700px){.leaderboard-grid{grid-template-columns:1fr}}
+
+
+/* Dark editorial leaderboard, consistent with the Training page */
+.training-leaderboards{background:var(--dark);color:#f7f2ea;border-color:var(--dark)}
+.training-leaderboards h2{color:#fff}
+.training-leaderboards .kicker{color:#c8b8a6}
+.training-leaderboards .leaderboard-intro{color:#d2c8bb}
+.leaderboard-game{background:#29231e;border-color:#51483e}
+.leaderboard-game h3,.leaderboard-list{color:#f7f2ea}
+.leaderboard-game>p{color:#c8bdb1}
+.leaderboard-list li{border-bottom-color:#51483e!important}
+.leaderboard-list strong{color:#f7f2ea!important}
+.leaderboard-link{color:#f2dcc0}
