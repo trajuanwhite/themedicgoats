@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/rapid-rhythms",
+      "destination": "/ekg-challenge.html"
+    },
+    {
       "source": "/ekg-challenge",
       "destination": "/ekg-challenge.html"
     },
