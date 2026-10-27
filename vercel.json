@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/ekg-challenge",
+      "destination": "/ekg-challenge.html"
+    },
+    {
       "source": "/rapid-megacode",
       "destination": "/rapid-megacode.html"
     },
