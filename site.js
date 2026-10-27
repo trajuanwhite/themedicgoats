@@ -8,13 +8,9 @@ function siteHome(){
    <div class="row mobile hero-actions"><button class="btn light" id="heroTrain">Start Training →</button><button class="text-link" id="heroLearn">Explore Education</button></div>
  </section>
  <section class="section-intro"><div><div class="kicker">TRAINING</div><h2>Practice the decisions<br>that matter.</h2></div><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
- <section class="feature-card">
-   <div class="feature-copy"><span class="eyebrow">LIVE NOW • RESUSCITATION CHALLENGE</span><h2>Rapid MegaCode</h2><p>Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-megacode" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid MegaCode →</a></div></div>
-   <div class="score-preview"><span>RAPID MEGACODE</span><strong>7s + 7s</strong><small>READ • DECIDE</small><div class="preview-line"></div><p>THREE GOATS • RESUSCITATION • LEADERBOARD</p></div>
- </section>
- <section class="feature-card" style="margin-top:24px">
-   <div class="feature-copy"><span class="eyebrow">LIVE NOW • CARDIOLOGY CHALLENGE</span><h2>Rapid Rhythms</h2><p>No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-rhythms" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid Rhythms →</a></div></div>
-   <div class="score-preview"><span>RAPID RHYTHMS</span><strong>7s + 7s</strong><small>READ • IDENTIFY</small><div class="preview-line"></div><p>THREE GOATS • CARDIOLOGY • LEADERBOARD</p></div>
+ <section class="home-game-grid" aria-label="Quick training games">
+   <article class="home-game-card"><div class="kicker">RESUSCITATION • PLAY NOW</div><h3>Rapid MegaCode</h3><p>Think you can make the right call under pressure? You've got seven seconds to read the situation and seven to decide. Three goats. No second guesses.</p><div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-megacode">Take the challenge →</a></div></article>
+   <article class="home-game-card"><div class="kicker">CARDIOLOGY • PLAY NOW</div><h3>Rapid Rhythms</h3><p>How fast can you recognize a rhythm without seeing the strip? Read the clinical clues, trust your knowledge, and race the clock.</p><div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-rhythms">Test your rhythm skills →</a></div></article>
  </section>
  <section class="manifesto"><div class="kicker">WHY THE MEDIC GOATS</div><h2>Knowing the answer isn't enough.<br><em>You have to recognize it in the field.</em></h2><p>We build education around clinical reasoning—not memorizing a slide deck. Learn the medicine, understand the why, then practice making the call.</p></section>
  <section class="education-block">
