@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    {"source": "/rapid-meds-live", "destination": "/rapid-meds-live.html"},
     {"source": "/rapid-cardiology-live", "destination": "/rapid-cardiology-live.html"},
     {"source": "/rapid-cardiology", "destination": "/rapid-cardiology.html"},
     {
