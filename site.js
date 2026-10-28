@@ -57,8 +57,23 @@ async function loadTrainingLeaderboard(){
   const list=document.getElementById(id);if(!list)return;
   try{
    if(!client)throw Error("Leaderboard unavailable");
-   const {data,error}=await client.from(table).select("player_name,score").order("score",{ascending:false}).limit(3);
-   if(error)throw error;if(!list.isConnected)return;list.replaceChildren();
+   // Rank each player only once, using their highest score. Fetch additional pages
+   // when repeat entries would otherwise occupy more than one podium position.
+   const data=[],seen=new Set();let offset=0;
+   while(data.length<3){
+    const {data:batch,error}=await client.from(table).select("player_name,score").order("score",{ascending:false}).range(offset,offset+99);
+    if(error)throw error;
+    if(!batch?.length)break;
+    for(const p of batch){
+     const key=String(p.player_name||"Anonymous").trim().replace(/\\s+/g," ").toLocaleLowerCase();
+     if(seen.has(key))continue;
+     seen.add(key);data.push(p);
+     if(data.length===3)break;
+    }
+    if(batch.length<100)break;
+    offset+=100;
+   }
+   if(!list.isConnected)return;list.replaceChildren();
    if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first!";li.style.color="var(--muted)";list.append(li);return}
    data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";name.textContent=(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
   }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable."}
