@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    {"source": "/rapid-cardiology", "destination": "/rapid-cardiology.html"},
     {
       "source": "/rapid-rhythms-live",
       "destination": "/rapid-rhythms-live.html"
