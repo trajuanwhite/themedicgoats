@@ -48,7 +48,7 @@ function training(){
  #trainingLeadersStrip > span.is-active{opacity:1;visibility:visible;transform:translateX(0);pointer-events:auto}
  @media(prefers-reduced-motion:reduce){#trainingLeadersStrip > span{transition:none;transform:none}}
  </style>
- <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px;width:50%;max-width:100%;box-sizing:border-box">
+ <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin:0 auto 22px;width:50%;max-width:100%;box-sizing:border-box">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
  <div><div class="kicker">LEADERBOARD • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="margin-top:10px">
  <span class="is-active"><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
