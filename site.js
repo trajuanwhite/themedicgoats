@@ -5,7 +5,7 @@ function siteHome(){
    <div class="kicker">THE MEDIC GOATS • EMS EDUCATION</div>
    <h1>Train like the<br>call is real.</h1>
    <p>Clinical reasoning, EMS education, and training built for the clinicians who show up when it matters.</p>
-   <div class="row mobile hero-actions"><button class="btn light" id="heroTrain">Start Training →</button><button class="text-link" id="heroLearn">Explore Education</button></div>
+   <div class="row mobile hero-actions"><button class="btn light" id="heroTrain">Start Training →</button><button class="text-link" id="heroLearn">Explore Training</button></div>
  </section>
  <section class="section-intro"><div><div class="kicker">TRAINING</div><h2>Practice the decisions<br>that matter.</h2></div><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
  <section class="home-game-grid" aria-label="Quick training games">
@@ -18,7 +18,7 @@ function siteHome(){
  </section>
  <section class="manifesto"><div class="kicker">WHY THE MEDIC GOATS</div><h2>Knowing the answer isn't enough.<br><em>You have to recognize it in the field.</em></h2><p>We build education around clinical reasoning—not memorizing a slide deck. Learn the medicine, understand the why, then practice making the call.</p></section>
  <section class="education-block">
-   <div class="section-intro compact"><div><div class="kicker">EDUCATION</div><h2>Learn the medicine.<br>Understand the why.</h2></div><button class="btn" id="allEducation">Explore Education →</button></div>
+   <div class="section-intro compact"><div><div class="kicker">EDUCATION</div><h2>Learn the medicine.<br>Understand the why.</h2></div><button class="btn" id="allEducation">Explore Training →</button></div>
    <div class="article-grid">
     <article class="article-card"><span>CARDIOLOGY & EKG</span><h3>Read the patient, not just the monitor.</h3><p>Practical cardiology built around recognition, physiology, and field decisions.</p></article>
     <article class="article-card"><span>AIRWAY & RESPIRATORY</span><h3>Know what your numbers are telling you.</h3><p>Airway, ventilation, oxygenation, and capnography without losing the clinical picture.</p></article>
@@ -27,7 +27,7 @@ function siteHome(){
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
  heroTrain.onclick=closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
- heroLearn.onclick=allEducation.onclick=()=>navigate("education");
+ heroLearn.onclick=allEducation.onclick=()=>navigate("game");
 }
 function training(){
  clearInterval(timer);
@@ -103,9 +103,9 @@ function education(){
  app.innerHTML=`<section class="page-heading"><div class="kicker">THE MEDIC GOATS • EDUCATION</div><h1>Learn the medicine.<br>Understand the why.</h1><p>Explore interactive presentations and practical education built for EMS clinicians.</p></section><section class="medic-presentations" aria-labelledby="medicPresentationTitle"><div class="kicker">INTERACTIVE PRESENTATIONS</div><h2 id="medicPresentationTitle">Airway Rodeo</h2><p>Explore this airway education presentation, including videos embedded within the slides. Use the presentation controls to navigate and play the videos.</p><div class="medic-canva-frame"><iframe loading="lazy" title="Airway Rodeo — interactive airway education presentation" src="https://www.canva.com/design/DAHQAufcGEQ/D3l7niOFpGSjeF5hgh3SIw/view?embed" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><a class="medic-canva-open" href="https://www.canva.com/design/DAHQAufcGEQ/D3l7niOFpGSjeF5hgh3SIw/view" target="_blank" rel="noopener noreferrer">Open presentation in Canva ↗</a><p class="medic-canva-credit">Airway Rodeo (White) • TraJuan T. White</p></section><section class="article-grid"><article class="article-card"><span>CARDIOLOGY & EKG</span><h3>Cardiology & EKG</h3><p>Rhythm recognition, 12-lead interpretation, physiology, and treatment decisions.</p></article><article class="article-card"><span>AIRWAY & RESPIRATORY</span><h3>Airway & Respiratory</h3><p>Ventilation, oxygenation, capnography, airway management, and respiratory emergencies.</p></article><article class="article-card"><span>MEDICAL & TRAUMA</span><h3>Field Medicine</h3><p>Clinical reasoning for the medical and trauma calls that challenge prehospital clinicians.</p></article></section><button class="btn primary" id="backHome" style="margin-top:24px">← Back Home</button>`;
  backHome.onclick=()=>navigate("home");
 }
-const routes={home:"/",game:"/training",education:"/education",leaderboard:"/training"};
+const routes={home:"/",game:"/training",leaderboard:"/training"};
 function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,education:education,leaderboard:training}[view]||siteHome)();}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
 window.addEventListener("popstate",()=>renderRoute());
-function renderRoute(){const path=location.pathname;if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
+function renderRoute(){const path=location.pathname;if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
 renderRoute();
