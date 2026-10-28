@@ -33,14 +33,21 @@ function training(){
  clearInterval(timer);
  app.innerHTML=`
  <section class="page-heading"><div class="kicker">THE MEDIC GOATS • TRAINING</div><h1>Practice the decisions<br>that matter.</h1><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
- <section class="training-leaderboards" aria-label="Game leaderboards">
- <div class="kicker">THE COMPETITION</div><h2>Leaderboards</h2><p class="leaderboard-intro">Three games. Three rankings. Can you reach the top?</p>
- <div class="leaderboard-grid" id="trainingLeaderboardCarousel" aria-live="off">
- <div class="leaderboard-game" data-rotating-board><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>Top 3 solo scores</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
- <div class="leaderboard-game" data-rotating-board><div class="kicker">CARDIOLOGY</div><h3>Rapid Rhythms</h3><p>Top 3 solo scores</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
-<div class="leaderboard-game" data-rotating-board><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>Top 3 solo scores</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
- </div><div id="trainingBoardControls" style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px"><button type="button" id="trainingBoardPrev" aria-label="Previous leaderboard" style="padding:8px 14px;border:1px solid currentColor;border-radius:8px;background:transparent;color:inherit;cursor:pointer">‹</button><span id="trainingBoardPosition" aria-live="polite">1 / 3</span><button type="button" id="trainingBoardNext" aria-label="Next leaderboard" style="padding:8px 14px;border:1px solid currentColor;border-radius:8px;background:transparent;color:inherit;cursor:pointer">›</button></div><p style="text-align:center;font-size:12px;opacity:.7">Automatically switches every 7 seconds</p></section>
-
+ <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px">
+ <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+ <div><div class="kicker">THE COMPETITION • CURRENT #1</div><div id="trainingLeadersStrip" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
+ <span><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
+ <span><strong>Rapid Rhythms</strong> <span id="leaderRhythm">Loading…</span></span>
+ <span><strong>Rapid Cardiology</strong> <span id="leaderCardiology">Loading…</span></span>
+ </div></div>
+ <button type="button" id="trainingOpenBoards" aria-expanded="false" aria-controls="trainingFullBoards" style="padding:10px 16px;border-radius:10px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;font-weight:700">View Full Leaderboards</button>
+ </div>
+ <div id="trainingFullBoards" hidden style="margin-top:18px">
+ <div class="leaderboard-grid">
+ <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>Top 3 solo scores</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
+ <div class="leaderboard-game"><div class="kicker">ECG INTERPRETATION</div><h3>Rapid Rhythms</h3><p>Top 3 solo scores</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
+ <div class="leaderboard-game"><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>Top 3 solo scores</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
+ </div></div></section>
  <section class="feature-card">
    <div class="feature-copy"><span class="eyebrow">LIVE NOW • RESUSCITATION CHALLENGE</span><h2>Rapid MegaCode</h2><p>Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-megacode" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid MegaCode →</a></div></div>
    <div class="score-preview"><span>RAPID MEGACODE</span><strong>7s + 7s</strong><small>READ • DECIDE</small><div class="preview-line"></div><p>THREE GOATS • RESUSCITATION • LEADERBOARD</p></div>
@@ -55,22 +62,10 @@ function training(){
  </section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
  loadTrainingLeaderboard();
- const carousel=document.getElementById("trainingLeaderboardCarousel");
- const panels=[...carousel.querySelectorAll("[data-rotating-board]")];
- const position=document.getElementById("trainingBoardPosition");
- let current=0;
- const showBoard=n=>{
-  current=(n+panels.length)%panels.length;
-  panels.forEach((panel,i)=>{panel.hidden=i!==current;panel.style.display=i===current?"":"none"});
-  position.textContent=(current+1)+" / "+panels.length;
- };
- showBoard(0);
- const prev=document.getElementById("trainingBoardPrev"),next=document.getElementById("trainingBoardNext");
- let rotation;
- const restart=()=>{clearInterval(rotation);rotation=setInterval(()=>{if(!carousel.isConnected){clearInterval(rotation);return}showBoard(current+1)},7000)};
- prev.onclick=()=>{showBoard(current-1);restart()};
- next.onclick=()=>{showBoard(current+1);restart()};
- restart();
+ const toggle=document.getElementById("trainingOpenBoards");
+ const full=document.getElementById("trainingFullBoards");
+ toggle.onclick=()=>{const opening=full.hidden;full.hidden=!opening;toggle.setAttribute("aria-expanded",String(opening));toggle.textContent=opening?"Hide Leaderboards":"View Full Leaderboards"};
+
 }
 async function loadTrainingLeaderboard(){
  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
@@ -95,10 +90,14 @@ async function loadTrainingLeaderboard(){
     if(batch.length<100)break;
     offset+=100;
    }
-   if(!list.isConnected)return;list.replaceChildren();
+   if(!list.isConnected)return;
+   const leaderId=id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology";
+   const leader=document.getElementById(leaderId);
+   if(leader)leader.textContent=data.length?(data[0].player_name||"Anonymous")+" • "+Number(data[0].score||0).toLocaleString()+" pts":"No scores yet";
+   list.replaceChildren();
    if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first!";li.style.color="var(--muted)";list.append(li);return}
    data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";name.textContent=(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
-  }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable."}
+  }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable.";const leader=document.getElementById(id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology");if(leader)leader.textContent="Unavailable"}
  }));
 }
 function rapidDifferentialsLanding(){
