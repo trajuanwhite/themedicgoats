@@ -33,6 +33,14 @@ function training(){
  clearInterval(timer);
  app.innerHTML=`
  <section class="page-heading"><div class="kicker">THE MEDIC GOATS • TRAINING</div><h1>Practice the decisions<br>that matter.</h1><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
+ <section class="training-leaderboards" aria-label="Game leaderboards">
+ <div class="kicker">THE COMPETITION</div><h2>Leaderboards</h2><p class="leaderboard-intro">Three games. Three rankings. Can you reach the top?</p>
+ <div class="leaderboard-grid" id="trainingLeaderboardCarousel" aria-live="off">
+ <div class="leaderboard-game" data-rotating-board><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>Top 3 solo scores</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
+ <div class="leaderboard-game" data-rotating-board><div class="kicker">CARDIOLOGY</div><h3>Rapid Rhythms</h3><p>Top 3 solo scores</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
+<div class="leaderboard-game" data-rotating-board><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>Top 3 solo scores</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
+ </div><div id="trainingBoardControls" style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px"><button type="button" id="trainingBoardPrev" aria-label="Previous leaderboard" style="padding:8px 14px;border:1px solid currentColor;border-radius:8px;background:transparent;color:inherit;cursor:pointer">‹</button><span id="trainingBoardPosition" aria-live="polite">1 / 3</span><button type="button" id="trainingBoardNext" aria-label="Next leaderboard" style="padding:8px 14px;border:1px solid currentColor;border-radius:8px;background:transparent;color:inherit;cursor:pointer">›</button></div><p style="text-align:center;font-size:12px;opacity:.7">Automatically switches every 7 seconds</p></section>
+
  <section class="feature-card">
    <div class="feature-copy"><span class="eyebrow">LIVE NOW • RESUSCITATION CHALLENGE</span><h2>Rapid MegaCode</h2><p>Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-megacode" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid MegaCode →</a></div></div>
    <div class="score-preview"><span>RAPID MEGACODE</span><strong>7s + 7s</strong><small>READ • DECIDE</small><div class="preview-line"></div><p>THREE GOATS • RESUSCITATION • LEADERBOARD</p></div>
@@ -45,15 +53,24 @@ function training(){
    <div class="feature-copy"><span class="eyebrow">LIVE NOW • CARDIAC ANATOMY CHALLENGE</span><h2>Rapid Cardiology</h2><p>Test coronary arteries, blood flow through the heart, valves, perfusion, and cardiac anatomy. Seven seconds to read, seven seconds to answer. Three goats, speed points, and a separate leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-cardiology" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid Cardiology →</a></div></div>
    <div class="score-preview"><span>RAPID CARDIOLOGY</span><strong>7s + 7s</strong><small>READ • ANSWER</small><div class="preview-line"></div><p>THREE GOATS • CARDIAC ANATOMY • LEADERBOARD</p></div>
  </section>
- <section class="training-leaderboards" aria-label="Game leaderboards">
- <div class="kicker">THE COMPETITION</div><h2>Leaderboards</h2><p class="leaderboard-intro">Three games. Three rankings. Can you reach the top?</p>
- <div class="leaderboard-grid">
- <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>Top 3 solo scores</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
- <div class="leaderboard-game"><div class="kicker">CARDIOLOGY</div><h3>Rapid Rhythms</h3><p>Top 3 solo scores</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
-<div class="leaderboard-game"><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>Top 3 solo scores</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
- </div></section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
  loadTrainingLeaderboard();
+ const carousel=document.getElementById("trainingLeaderboardCarousel");
+ const panels=[...carousel.querySelectorAll("[data-rotating-board]")];
+ const position=document.getElementById("trainingBoardPosition");
+ let current=0;
+ const showBoard=n=>{
+  current=(n+panels.length)%panels.length;
+  panels.forEach((panel,i)=>{panel.hidden=i!==current;panel.style.display=i===current?"":"none"});
+  position.textContent=(current+1)+" / "+panels.length;
+ };
+ showBoard(0);
+ const prev=document.getElementById("trainingBoardPrev"),next=document.getElementById("trainingBoardNext");
+ let rotation;
+ const restart=()=>{clearInterval(rotation);rotation=setInterval(()=>{if(!carousel.isConnected){clearInterval(rotation);return}showBoard(current+1)},7000)};
+ prev.onclick=()=>{showBoard(current-1);restart()};
+ next.onclick=()=>{showBoard(current+1);restart()};
+ restart();
 }
 async function loadTrainingLeaderboard(){
  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
