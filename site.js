@@ -42,10 +42,16 @@ function training(){
  @keyframes trainingDescriptionIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
  @media(prefers-reduced-motion:reduce){.training-game-gallery [data-game-preview]{transition:none;transform:none}.feature-copy [data-game-description].description-enter{animation:none}}
  </style>
+ <style>
+ #trainingLeadersStrip{display:grid!important;overflow:hidden;min-height:30px}
+ #trainingLeadersStrip > span{grid-area:1/1;opacity:0;visibility:hidden;transform:translateX(22px);transition:opacity .6s ease,transform .6s ease,visibility .6s;pointer-events:none}
+ #trainingLeadersStrip > span.is-active{opacity:1;visibility:visible;transform:translateX(0);pointer-events:auto}
+ @media(prefers-reduced-motion:reduce){#trainingLeadersStrip > span{transition:none;transform:none}}
+ </style>
  <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
- <div><div class="kicker">THE COMPETITION • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
- <span><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
+ <div><div class="kicker">THE COMPETITION • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="margin-top:10px">
+ <span class="is-active"><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
  <span><strong>Rapid Rhythms</strong> <span id="leaderRhythm">Loading…</span></span>
  <span><strong>Rapid Cardiology</strong> <span id="leaderCardiology">Loading…</span></span>
  </div></div>
@@ -83,6 +89,14 @@ function training(){
  </section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
  loadTrainingLeaderboard();
+ const leaderSlides=[...document.querySelectorAll("#trainingLeadersStrip > span")];
+ let leaderSlide=0;
+ const leaderTimer=setInterval(()=>{
+  if(!document.getElementById("trainingLeadersStrip")?.isConnected){clearInterval(leaderTimer);return}
+  leaderSlides[leaderSlide].classList.remove("is-active");
+  leaderSlide=(leaderSlide+1)%leaderSlides.length;
+  leaderSlides[leaderSlide].classList.add("is-active");
+ },7000);
  const gameDescriptions=[["Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.","Challenge friends in multiplayer! Host a room and compete in SOLO BATTLE or split into teams to see who makes the best calls under pressure.","Every decision counts. Earn points for correct, fast answers, see your final score, and find out who takes the top spot."],["No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock. Protect your three goats, earn points, and climb the leaderboard.","Bring your crew into a multiplayer room. Go head-to-head in SOLO BATTLE or join teams and combine your scores to win.","Beat the clock, build your score, and see where you finish. Can you climb the rankings and claim the top spot?"],["Test coronary arteries, blood flow through the heart, valves, perfusion, and cardiac anatomy. Seven seconds to read, seven seconds to answer. Three goats, speed points, and a separate leaderboard.","Put your cardiac knowledge to the test with friends. Play SOLO BATTLE or team up in multiplayer and compete for the highest combined score.","Fast answers and accuracy pay off. See your final points, compare results, and challenge yourself to beat your best score."]];
  document.querySelectorAll(".training-game-gallery").forEach((gallery,gameIndex)=>{
   const frames=[...gallery.querySelectorAll("[data-game-preview]")];
