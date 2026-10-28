@@ -32,7 +32,7 @@ function siteHome(){
 function training(){
  clearInterval(timer);
  app.innerHTML=`
- <section class="page-heading"><div class="kicker">THE MEDIC GOATS • TRAINING</div><h1>Practice the decisions<br>that matter.</h1><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
+ <section class="page-heading"><div class="kicker">THE MEDIC GOATS • GAMES</div><h1>Make learning fun.<br>Bring out your competitive side.</h1><p>Challenge yourself, compete with friends, and sharpen your EMS knowledge through fast-paced games that make every question count.</p></section>
  <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
  <div><div class="kicker">THE COMPETITION • CURRENT #1</div><div id="trainingLeadersStrip" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
