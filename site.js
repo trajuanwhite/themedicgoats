@@ -61,11 +61,11 @@ async function loadTrainingLeaderboard(){
    // when repeat entries would otherwise occupy more than one podium position.
    const data=[],seen=new Set();let offset=0;
    while(data.length<3){
-    const {data:batch,error}=await client.from(table).select("player_name,score").order("score",{ascending:false}).range(offset,offset+99);
+    const {data:batch,error}=await client.from(table).select("player_name,score,player_id").order("score",{ascending:false}).range(offset,offset+99);
     if(error)throw error;
     if(!batch?.length)break;
     for(const p of batch){
-     const key=String(p.player_name||"Anonymous").trim().replace(/\\s+/g," ").toLocaleLowerCase();
+     const key=p.player_id?"id:"+p.player_id:"legacy:"+String(p.player_name||"Anonymous").trim().replace(/\s+/g," ").toLocaleLowerCase();
      if(seen.has(key))continue;
      seen.add(key);data.push(p);
      if(data.length===3)break;
