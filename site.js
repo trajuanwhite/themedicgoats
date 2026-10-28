@@ -82,7 +82,7 @@ function training(){
   let active=0;
   const names=["GAMEPLAY","MULTIPLAYER","RESULTS"];
   const rotate=()=>{if(!gallery.isConnected)return;active=(active+1)%frames.length;frames.forEach((frame,i)=>{frame.hidden=i!==active;frame.style.display=i===active?"":"none"});label.textContent=names[active]+" • "+(active+1)+" / 3";if(description)description.textContent=gameDescriptions[gameIndex][active]};
-  const handle=setInterval(()=>{if(!gallery.isConnected){clearInterval(handle);return}rotate()},7000);
+  const handle=setInterval(()=>{if(!gallery.isConnected){clearInterval(handle);return}rotate()},12000);
  });
  const toggle=document.getElementById("trainingOpenBoards");
  const full=document.getElementById("trainingFullBoards");
