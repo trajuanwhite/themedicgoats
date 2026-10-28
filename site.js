@@ -33,6 +33,15 @@ function training(){
  clearInterval(timer);
  app.innerHTML=`
  <section class="page-heading"><div class="kicker">THE MEDIC GOATS • GAMES</div><h1>Make learning fun.<br>Bring out your competitive side.</h1><p>Challenge yourself, compete with friends, and sharpen your EMS knowledge through fast-paced games that make every question count.</p></section>
+ <style>
+ .training-game-gallery{display:grid;overflow:hidden}
+ .training-game-gallery [data-game-preview]{grid-column:1;grid-row:1;opacity:0;visibility:hidden;transform:translateX(28px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.2,1),visibility .65s;pointer-events:none}
+ .training-game-gallery [data-game-preview].is-active{opacity:1;visibility:visible;transform:translateX(0);pointer-events:auto;z-index:1}
+ .training-game-gallery [data-preview-position]{grid-column:1;grid-row:2}
+ .feature-copy [data-game-description].description-enter{animation:trainingDescriptionIn .65s ease both}
+ @keyframes trainingDescriptionIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+ @media(prefers-reduced-motion:reduce){.training-game-gallery [data-game-preview]{transition:none;transform:none}.feature-copy [data-game-description].description-enter{animation:none}}
+ </style>
  <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
  <div><div class="kicker">THE COMPETITION • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
@@ -80,8 +89,9 @@ function training(){
   const label=gallery.querySelector("[data-preview-position]");
   const description=gallery.closest(".feature-card")?.querySelector("[data-game-description]");
   let active=0;
+  frames.forEach((frame,i)=>{frame.hidden=false;frame.style.display="";frame.classList.toggle("is-active",i===0)});
   const names=["GAMEPLAY","MULTIPLAYER","RESULTS"];
-  const rotate=()=>{if(!gallery.isConnected)return;active=(active+1)%frames.length;frames.forEach((frame,i)=>{frame.hidden=i!==active;frame.style.display=i===active?"":"none"});label.textContent=names[active]+" • "+(active+1)+" / 3";if(description)description.textContent=gameDescriptions[gameIndex][active]};
+  const rotate=()=>{if(!gallery.isConnected)return;active=(active+1)%frames.length;frames.forEach((frame,i)=>frame.classList.toggle("is-active",i===active));label.textContent=names[active]+" • "+(active+1)+" / 3";if(description){description.textContent=gameDescriptions[gameIndex][active];description.classList.remove("description-enter");void description.offsetWidth;description.classList.add("description-enter")}};
   const handle=setInterval(()=>{if(!gallery.isConnected){clearInterval(handle);return}rotate()},12000);
  });
  const toggle=document.getElementById("trainingOpenBoards");
