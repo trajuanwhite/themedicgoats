@@ -41,18 +41,23 @@ function training(){
    <div class="feature-copy"><span class="eyebrow">LIVE NOW • CARDIOLOGY CHALLENGE</span><h2>Rapid Rhythms</h2><p>No rhythm strips. Read the clues, identify the rhythm, and beat the seven-second clock. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-rhythms" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid Rhythms →</a></div></div>
    <div class="score-preview"><span>RAPID RHYTHMS</span><strong>7s + 7s</strong><small>READ • IDENTIFY</small><div class="preview-line"></div><p>THREE GOATS • CARDIOLOGY • LEADERBOARD</p></div>
  </section>
+ <section class="feature-card" style="margin-top:24px">
+   <div class="feature-copy"><span class="eyebrow">LIVE NOW • CARDIAC ANATOMY CHALLENGE</span><h2>Rapid Cardiology</h2><p>Test coronary arteries, blood flow through the heart, valves, perfusion, and cardiac anatomy. Seven seconds to read, seven seconds to answer. Three goats, speed points, and a separate leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-cardiology" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid Cardiology →</a></div></div>
+   <div class="score-preview"><span>RAPID CARDIOLOGY</span><strong>7s + 7s</strong><small>READ • ANSWER</small><div class="preview-line"></div><p>THREE GOATS • CARDIAC ANATOMY • LEADERBOARD</p></div>
+ </section>
  <section class="training-leaderboards" aria-label="Game leaderboards">
- <div class="kicker">THE COMPETITION</div><h2>Leaderboards</h2><p class="leaderboard-intro">Two games. Two rankings. Can you reach the top?</p>
+ <div class="kicker">THE COMPETITION</div><h2>Leaderboards</h2><p class="leaderboard-intro">Three games. Three rankings. Can you reach the top?</p>
  <div class="leaderboard-grid">
  <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>Top 3 solo scores</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
  <div class="leaderboard-game"><div class="kicker">CARDIOLOGY</div><h3>Rapid Rhythms</h3><p>Top 3 solo scores</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
+<div class="leaderboard-game"><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>Top 3 solo scores</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
  </div></section>
  <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
  loadTrainingLeaderboard();
 }
 async function loadTrainingLeaderboard(){
  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
- const boards=[["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"]];
+ const boards=[["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"]];
  await Promise.all(boards.map(async([id,table])=>{
   const list=document.getElementById(id);if(!list)return;
   try{
