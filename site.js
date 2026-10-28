@@ -35,7 +35,7 @@ function training(){
  <section class="page-heading"><div class="kicker">THE MEDIC GOATS • GAMES</div><h1>Make learning fun.<br>Bring out your competitive side.</h1><p>Challenge yourself, compete with friends, and sharpen your EMS knowledge through fast-paced games that make every question count.</p></section>
  <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
- <div><div class="kicker">THE COMPETITION • CURRENT GOATS</div><div id="trainingLeadersStrip" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
+ <div><div class="kicker">THE COMPETITION • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
  <span><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
  <span><strong>Rapid Rhythms</strong> <span id="leaderRhythm">Loading…</span></span>
  <span><strong>Rapid Cardiology</strong> <span id="leaderCardiology">Loading…</span></span>
@@ -113,10 +113,10 @@ async function loadTrainingLeaderboard(){
    if(!list.isConnected)return;
    const leaderId=id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology";
    const leader=document.getElementById(leaderId);
-   if(leader)leader.textContent=data.length?"🐐 GOAT: "+(data[0].player_name||"Anonymous")+" • "+Number(data[0].score||0).toLocaleString()+" pts":"No GOAT crowned yet";
+   if(leader)leader.textContent=data.length?(data[0].player_name||"Anonymous")+" • "+Number(data[0].score||0).toLocaleString()+" pts":"No GOAT crowned yet";
    list.replaceChildren();
    if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first!";li.style.color="var(--muted)";list.append(li);return}
-   data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";name.textContent=i===0?"🐐 GOAT · "+(p.player_name||"Anonymous"):(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
+   data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";name.textContent=(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
   }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable.";const leader=document.getElementById(id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology");if(leader)leader.textContent="Unavailable"}
  }));
 }
