@@ -15,12 +15,28 @@ function renderDailyBlogFeature(){
  const link=document.createElement("a");link.className="btn light";link.href="/blog/"+encodeURIComponent(post.slug);link.textContent="Read the Blog →";
  host.replaceChildren(category,title,excerpt,link);
 }
+// Set the official giveaway closing time here (ISO 8601 with timezone offset).
+// Until confirmed, the giveaway remains featured and no end date is implied.
+const MEDIC_GIVEAWAY_END_AT = null;
+function updateHomeFeature(){
+ const deadline=MEDIC_GIVEAWAY_END_AT?Date.parse(MEDIC_GIVEAWAY_END_AT):NaN;
+ const ended=Number.isFinite(deadline)&&Date.now()>=deadline;
+ const giveaway=document.getElementById("giveawayFeature");
+ const daily=document.getElementById("dailyBlogFeature");
+ const kicker=document.getElementById("homeFeatureKicker");
+ const hero=document.getElementById("homeFeatureHero");
+ if(!giveaway||!daily)return;
+ giveaway.hidden=ended;
+ daily.hidden=!ended;
+ if(ended){if(kicker)kicker.textContent="THE MEDIC GOATS • BLOG OF THE DAY";if(hero)hero.setAttribute("aria-label","Blog of the Day");renderDailyBlogFeature();}
+}
 function siteHome(){
  clearInterval(timer);
  app.innerHTML=`
- <section class="brand-hero blog-day-hero" aria-label="10K follower giveaway">
-  <div class="kicker">THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY</div>
+ <section class="brand-hero blog-day-hero" id="homeFeatureHero" aria-label="10K follower giveaway">
+  <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY</div>
   <div id="giveawayFeature"><h1>10,000 followers. One big thank you.</h1><p>We're celebrating this milestone with Intublade. A special giveaway is coming for the community that made it possible.</p><a class="btn light" href="/giveaway">Giveaway Details →</a></div>
+  <div id="dailyBlogFeature" hidden></div>
  </section>
  
  <section class="home-game-grid" aria-label="Quick training games">
@@ -32,7 +48,7 @@ function siteHome(){
    <div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-rhythms">Test your rhythm skills →</a></div></article>
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
- renderDailyBlogFeature();
+ updateHomeFeature();
  closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function training(){
