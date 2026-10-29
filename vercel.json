@@ -1,8 +1,25 @@
 {
   "rewrites": [
-    {"source": "/rapid-meds-live", "destination": "/rapid-meds-live.html"},
-    {"source": "/rapid-cardiology-live", "destination": "/rapid-cardiology-live.html"},
-    {"source": "/rapid-cardiology", "destination": "/rapid-cardiology.html"},
+    {
+      "source": "/giveaway",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/giveaway/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/rapid-meds-live",
+      "destination": "/rapid-meds-live.html"
+    },
+    {
+      "source": "/rapid-cardiology-live",
+      "destination": "/rapid-cardiology-live.html"
+    },
+    {
+      "source": "/rapid-cardiology",
+      "destination": "/rapid-cardiology.html"
+    },
     {
       "source": "/rapid-rhythms-live",
       "destination": "/rapid-rhythms-live.html"
