@@ -43,12 +43,18 @@ function training(){
  @media(prefers-reduced-motion:reduce){.training-game-gallery [data-game-preview]{transition:none;transform:none}.feature-copy [data-game-description].description-enter{animation:none}}
  </style>
  <style>
- @media(max-width:700px){.training-leaderboards{width:100%!important}}\n #trainingLeadersStrip{display:grid!important;overflow:hidden;min-height:30px}
+ @media(max-width:700px){.training-leaderboards{width:100%!important}}\n
+ .training-leaderboards .leaderboard-grid{grid-template-columns:repeat(3,minmax(0,1fr));text-align:left}
+ .training-leaderboards .leaderboard-list li{min-width:0}
+ .training-leaderboards .leaderboard-list li span{overflow-wrap:break-word;word-break:normal}
+ @media(max-width:850px){.training-leaderboards .leaderboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+ @media(max-width:600px){.training-leaderboards .leaderboard-grid{grid-template-columns:1fr}}
+ #trainingLeadersStrip{display:grid!important;overflow:hidden;min-height:30px}
  #trainingLeadersStrip > span{grid-area:1/1;opacity:0;visibility:hidden;transform:translateX(22px);transition:opacity .6s ease,transform .6s ease,visibility .6s;pointer-events:none}
  #trainingLeadersStrip > span.is-active{opacity:1;visibility:visible;transform:translateX(0);pointer-events:auto}
  @media(prefers-reduced-motion:reduce){#trainingLeadersStrip > span{transition:none;transform:none}}
  </style>
- <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px;width:50%;max-width:100%;box-sizing:border-box;text-align:center">
+ <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px;width:100%;max-width:100%;box-sizing:border-box;text-align:center">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
  <div style="flex:1;min-width:0;text-align:center"><div class="kicker">LEADERBOARD • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="margin-top:10px">
  <span class="is-active"><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
