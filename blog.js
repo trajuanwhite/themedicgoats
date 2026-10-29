@@ -14,30 +14,43 @@ function renderKnowledgeCheck(post){
  }
  draw();
 }
-function storyText(ctx,text,x,y,maxWidth,lineHeight,maxLines){
- const words=String(text||'').split(/\\s+/);let line='',lines=[];
- for(const word of words){const next=line?line+' '+word:word;if(ctx.measureText(next).width>maxWidth&&line){lines.push(line);line=word;}else line=next;}
+function storyLines(ctx,text,maxWidth){
+ const words=String(text||'').trim().split(/\s+/);const lines=[];let line='';
+ for(const word of words){
+  const candidate=line?line+' '+word:word;
+  if(ctx.measureText(candidate).width<=maxWidth){line=candidate;continue;}
+  if(line){lines.push(line);line='';}
+  let chunk='';
+  for(const char of word){if(chunk&&ctx.measureText(chunk+char).width>maxWidth){lines.push(chunk);chunk='';}chunk+=char;}
+  line=chunk;
+ }
  if(line)lines.push(line);
- if(lines.length>maxLines){lines=lines.slice(0,maxLines);while(ctx.measureText(lines[maxLines-1]+'…').width>maxWidth)lines[maxLines-1]=lines[maxLines-1].slice(0,-1);lines[maxLines-1]+='…';}
- lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));return y+lines.length*lineHeight;
+ return lines;
+}
+function drawStoryLines(ctx,lines,x,y,lineHeight,maxLines){
+ const shown=lines.slice(0,maxLines);
+ if(lines.length>maxLines&&shown.length){let last=shown[shown.length-1];while(last&&ctx.measureText(last+'…').width>900)last=last.slice(0,-1);shown[shown.length-1]=last+'…';}
+ shown.forEach((line,i)=>ctx.fillText(line,x,y+i*lineHeight));
+ return y+(shown.length-1)*lineHeight;
 }
 function buildBlogStory(p){
  const c=document.createElement('canvas');c.width=1080;c.height=1920;const ctx=c.getContext('2d');
  ctx.fillStyle='#17130f';ctx.fillRect(0,0,1080,1920);
  const x=90,w=900;
  ctx.fillStyle='#c9aa88';ctx.font='700 29px Arial,sans-serif';ctx.fillText('THE MEDIC GOATS',x,175);ctx.textAlign='right';ctx.fillText('BLOG',990,175);ctx.textAlign='left';
- ctx.fillStyle='#c9aa88';ctx.font='700 30px Arial,sans-serif';ctx.fillText(String(p.category||'CLINICAL EDUCATION').toUpperCase(),x,375);
- const title=String(p.title||'');let size=76;let bottom;
- do{ctx.font='bold '+size+'px Arial,sans-serif';bottom=storyTextMeasure(ctx,title,w,size*1.13);if(bottom>8)size-=4;else break;}while(size>48);
- ctx.fillStyle='#f4f1ec';ctx.font='bold '+size+'px Arial,sans-serif';const titleEnd=storyText(ctx,title,x,465,w,size*1.13,8);
- ctx.fillStyle='#d8d0c6';ctx.font='39px Arial,sans-serif';const descY=Math.max(titleEnd+70,980);storyText(ctx,p.description||'Explore this EMS education article.',x,descY,w,60,5);
+ ctx.font='700 30px Arial,sans-serif';ctx.fillText(String(p.category||'CLINICAL EDUCATION').toUpperCase(),x,345,w);
+ const title=String(p.title||'');let size=76,lines=[];
+ while(size>=42){ctx.font='bold '+size+'px Arial,sans-serif';lines=storyLines(ctx,title,w);if(lines.length<=7)break;size-=3;}
+ ctx.fillStyle='#f4f1ec';ctx.font='bold '+size+'px Arial,sans-serif';
+ const titleBottom=drawStoryLines(ctx,lines,x,440,size*1.14,7);
+ ctx.fillStyle='#d8d0c6';ctx.font='38px Arial,sans-serif';
+ const descY=Math.max(titleBottom+100,1030);drawStoryLines(ctx,storyLines(ctx,p.description||'Explore this EMS education article.',w),x,descY,57,4);
  ctx.fillStyle='#f4f1ec';ctx.beginPath();ctx.roundRect(x,1390,630,112,24);ctx.fill();ctx.fillStyle='#17130f';ctx.font='bold 35px Arial,sans-serif';ctx.fillText('READ THE FULL ARTICLE  →',x+38,1460);
  ctx.strokeStyle='#6d5b49';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,1610);ctx.lineTo(990,1610);ctx.stroke();
  ctx.fillStyle='#f4f1ec';ctx.font='bold 34px Arial,sans-serif';ctx.fillText('THE MEDIC GOATS',x,1710);
  ctx.fillStyle='#c9aa88';ctx.font='29px Arial,sans-serif';ctx.fillText('THEMEDICGOATS.COM',x,1770);
  return c;
 }
-function storyTextMeasure(ctx,text,maxWidth,lineHeight){let lines=1,line='';for(const word of String(text).split(/\\s+/)){const next=line?line+' '+word:word;if(ctx.measureText(next).width>maxWidth&&line){lines++;line=word;}else line=next;}return lines;}
 function blogShareStatus(message){const el=document.getElementById('blogShareStatus');if(el)el.textContent=message;}
 async function shareBlogStory(p){
  const url=location.origin+'/blog/'+encodeURIComponent(p.slug);
