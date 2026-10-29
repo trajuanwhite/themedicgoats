@@ -343,3 +343,10 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 #homeFeatureHero #homeFeatureKicker,#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{transition:opacity .26s ease-in-out,transform .26s ease-in-out;opacity:1;transform:translateY(0)}
 #homeFeatureHero.home-feature-fading #homeFeatureKicker,#homeFeatureHero.home-feature-fading #giveawayFeature,#homeFeatureHero.home-feature-fading #dailyBlogFeature,#homeFeatureHero.home-feature-fading #gamesFeature{opacity:0;transform:translateY(5px)}
 @media(prefers-reduced-motion:reduce){#homeFeatureHero #homeFeatureKicker,#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{transition:none;transform:none}}
+
+/* Put rotating feature action buttons beside the content, not beneath it */
+@media(min-width:800px){
+ #homeFeatureHero{position:relative;padding-right:clamp(190px,23vw,290px)}
+ #homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{position:static}
+ #homeFeatureHero #giveawayFeature>a.btn,#homeFeatureHero #dailyBlogFeature>a.btn,#homeFeatureHero #gamesFeature>a.btn{position:absolute;right:clamp(28px,5vw,54px);top:50%;transform:translateY(-50%);white-space:nowrap;margin:0;z-index:2}
+}
