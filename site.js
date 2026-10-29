@@ -22,7 +22,7 @@ function siteHome(){
   <div class="kicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
   <div id="dailyBlogFeature"><h1>Blog of the Day</h1><p>Discover a featured EMS education article.</p><a class="btn light" href="/blog">Explore Blog →</a></div>
  </section>
- <section class="section-intro"><div><div class="kicker">TRAINING</div><h2>Practice the decisions<br>that matter.</h2></div><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
+ <section class="section-intro"><div><h2>Games</h2></div></section>
  <section class="home-game-grid" aria-label="Quick training games">
    <article class="home-game-card"><div class="kicker">RESUSCITATION • PLAY NOW</div><h3>Rapid MegaCode</h3><p>Think you can make the right call under pressure? Here's a glimpse of what awaits.</p>
    <div class="home-game-preview" aria-label="Preview of a Rapid MegaCode question"><div class="home-preview-top"><span>RAPID MEGACODE</span><span>🐐 🐐 🐐</span></div><div class="home-preview-scene">You find an adult unresponsive and not breathing normally. Scene safety is confirmed.</div><div class="home-preview-question">What should you do first?</div><div class="home-preview-answers"><div><b>A</b> Assess responsiveness, breathing, and pulse promptly</div><div><b>B</b> Apply defibrillator pads before assessment</div><div><b>C</b> Administer epinephrine immediately</div><div><b>D</b> Prepare an advanced airway</div></div><div class="home-preview-bottom">7 SECONDS TO DECIDE <span>7.0s</span></div></div>
