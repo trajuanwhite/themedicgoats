@@ -320,3 +320,5 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 .medic-presentations .medic-canva-credit{font-size:12px;margin-top:8px}
 @media(max-width:600px){.medic-presentations{padding:0 18px;margin-top:40px}.medic-canva-frame{border-radius:10px}}
 \n/* Homepage: compact featured blog of the day */\n.blog-day-hero{min-height:0;justify-content:center;padding:clamp(28px,5vw,54px)}\n.blog-day-hero h1{font-size:clamp(34px,5.5vw,64px);line-height:1.04;letter-spacing:-.045em;max-width:900px;margin:14px 0 20px}\n.blog-day-hero p{max-width:760px;margin:0 0 28px}\n.daily-blog-category{color:#c9ad8c;font-size:13px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;margin-top:22px}\n.blog-day-hero a.btn{display:inline-flex;align-items:center;text-decoration:none;width:fit-content}\n
+/* Blog sharing */
+.blog-share-actions{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 8px}.blog-share-actions .btn{font-size:15px}.blog-share-status{color:var(--muted);font-size:14px;line-height:1.5;overflow-wrap:anywhere;margin:8px 0 24px}
