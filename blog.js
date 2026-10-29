@@ -35,7 +35,7 @@ function drawStoryLines(ctx,lines,x,y,lineHeight,maxLines){
 }
 function buildBlogStory(p){
  const c=document.createElement('canvas');c.width=1080;c.height=1920;const ctx=c.getContext('2d');
- ctx.fillStyle='#1d1d1b';ctx.fillRect(0,0,1080,1920);
+ ctx.fillStyle='#0c0c0c';ctx.fillRect(0,0,1080,1920);
  const x=95,w=890;
  ctx.fillStyle='#f4f1ec';ctx.font='bold 34px Arial,sans-serif';ctx.fillText('THE MEDIC GOATS',x,180);
  ctx.fillStyle='#c9aa88';ctx.font='29px Arial,sans-serif';ctx.textAlign='right';ctx.fillText('BLOG',985,180);ctx.textAlign='left';
