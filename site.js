@@ -18,9 +18,9 @@ function renderDailyBlogFeature(){
 function siteHome(){
  clearInterval(timer);
  app.innerHTML=`
- <section class="brand-hero blog-day-hero" aria-label="Blog of the Day">
-  <div class="kicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
-  <div id="dailyBlogFeature"><h1>Blog of the Day</h1><p>Discover a featured EMS education article.</p><a class="btn light" href="/blog">Explore Blog →</a></div>
+ <section class="brand-hero blog-day-hero" aria-label="10K follower giveaway">
+  <div class="kicker">THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY</div>
+  <div id="giveawayFeature"><h1>10,000 followers. One big thank you.</h1><p>We're celebrating this milestone with Intublade. A special giveaway is coming for the community that made it possible.</p><a class="btn light" href="/giveaway">Giveaway Details →</a></div>
  </section>
  
  <section class="home-game-grid" aria-label="Quick training games">
@@ -201,9 +201,13 @@ function education(){
  app.innerHTML=`<section class="page-heading"><div class="kicker">THE MEDIC GOATS • EDUCATION</div><h1>Learn the medicine.<br>Understand the why.</h1><p>Explore interactive presentations and practical education built for EMS clinicians.</p></section><section class="medic-presentations" aria-labelledby="medicPresentationTitle"><div class="kicker">INTERACTIVE PRESENTATIONS</div><h2 id="medicPresentationTitle">Airway Rodeo</h2><p>Explore this airway education presentation, including videos embedded within the slides. Use the presentation controls to navigate and play the videos.</p><div class="medic-canva-frame"><iframe loading="lazy" title="Airway Rodeo — interactive airway education presentation" src="https://www.canva.com/design/DAHQAufcGEQ/D3l7niOFpGSjeF5hgh3SIw/view?embed" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><a class="medic-canva-open" href="https://www.canva.com/design/DAHQAufcGEQ/D3l7niOFpGSjeF5hgh3SIw/view" target="_blank" rel="noopener noreferrer">Open presentation in Canva ↗</a><p class="medic-canva-credit">Airway Rodeo (White) • TraJuan T. White</p></section><section class="article-grid"><article class="article-card"><span>CARDIOLOGY & EKG</span><h3>Cardiology & EKG</h3><p>Rhythm recognition, 12-lead interpretation, physiology, and treatment decisions.</p></article><article class="article-card"><span>AIRWAY & RESPIRATORY</span><h3>Airway & Respiratory</h3><p>Ventilation, oxygenation, capnography, airway management, and respiratory emergencies.</p></article><article class="article-card"><span>MEDICAL & TRAUMA</span><h3>Field Medicine</h3><p>Clinical reasoning for the medical and trauma calls that challenge prehospital clinicians.</p></article></section><button class="btn primary" id="backHome" style="margin-top:24px">← Back Home</button>`;
  backHome.onclick=()=>navigate("home");
 }
+function giveawayLanding(){
+ clearInterval(timer);
+ app.innerHTML=`<section class="brand-hero blog-day-hero" aria-label="Intublade giveaway"><div class="kicker">THE MEDIC GOATS × INTUBLADE</div><h1>10K FOLLOWER GIVEAWAY</h1><p>10,000 followers and counting. Thank you for being part of The Medic Goats community.</p></section><section class="medic-blog-article"><h2>Something special is coming.</h2><p>We've partnered with Intublade for a giveaway celebrating this milestone. The prize details, eligibility requirements, official rules, and entry deadline will be announced here before entries open.</p><p><strong>Entries are not open yet.</strong> Once the giveaway is ready, this page will have an Instagram-handle entry form and a live countdown to the closing deadline.</p><p>Follow <a href="https://www.instagram.com/themedicgoats/" target="_blank" rel="noopener noreferrer">@themedicgoats</a> for the announcement.</p><a class="btn primary" href="/">← Back to Home</a></section>`;
+}
 const routes={home:"/",game:"/training",leaderboard:"/training"};
 function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,education:education,leaderboard:training}[view]||siteHome)();}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
 window.addEventListener("popstate",()=>renderRoute());
-function renderRoute(){const path=location.pathname;if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
+function renderRoute(){const path=location.pathname;if(path==="/giveaway"||path==="/giveaway/")return giveawayLanding();if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
 renderRoute();
