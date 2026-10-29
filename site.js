@@ -1,11 +1,26 @@
+function renderDailyBlogFeature(){
+ const host=document.getElementById("dailyBlogFeature");
+ const posts=(window.MEDIC_BLOG_POSTS||[]).filter(p=>p.title&&p.slug);
+ if(!host||!posts.length)return;
+ const day=Math.floor(Date.now()/86400000);
+ // Seeded shuffle per rotation cycle gives one shared selection per UTC day.
+ const ordered=[...posts].sort((a,b)=>a.slug.localeCompare(b.slug));
+ const cycle=Math.floor(day/ordered.length);
+ let seed=(cycle+1)*2654435761>>>0;
+ for(let i=ordered.length-1;i>0;i--){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;const j=(seed>>>0)%(i+1);[ordered[i],ordered[j]]=[ordered[j],ordered[i]]}
+ const post=ordered[day%ordered.length];
+ const category=document.createElement("div");category.className="daily-blog-category";category.textContent=post.category||"Clinical Education";
+ const title=document.createElement("h1");title.textContent=post.title;
+ const excerpt=document.createElement("p");excerpt.textContent=post.description||"Explore today's featured EMS education article.";
+ const link=document.createElement("a");link.className="btn light";link.href="/blog/"+encodeURIComponent(post.slug);link.textContent="Read the Blog →";
+ host.replaceChildren(category,title,excerpt,link);
+}
 function siteHome(){
  clearInterval(timer);
  app.innerHTML=`
- <section class="brand-hero">
-   <div class="kicker">THE MEDIC GOATS • EMS EDUCATION</div>
-   <h1>Train like the<br>call is real.</h1>
-   <p>Clinical reasoning, EMS education, and training built for the clinicians who show up when it matters.</p>
-   <div class="row mobile hero-actions"><button class="btn light" id="heroTrain">Start Training →</button><button class="text-link" id="heroLearn">Explore Training</button></div>
+ <section class="brand-hero blog-day-hero" aria-label="Blog of the Day">
+  <div class="kicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
+  <div id="dailyBlogFeature"><h1>Blog of the Day</h1><p>Discover a featured EMS education article.</p><a class="btn light" href="/blog">Explore Blog →</a></div>
  </section>
  <section class="section-intro"><div><div class="kicker">TRAINING</div><h2>Practice the decisions<br>that matter.</h2></div><p>Interactive training designed around the way EMS clinicians actually think, assess, prioritize, and act in the field.</p></section>
  <section class="home-game-grid" aria-label="Quick training games">
@@ -26,8 +41,9 @@ function siteHome(){
    </div>
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
- heroTrain.onclick=closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
- heroLearn.onclick=allEducation.onclick=()=>navigate("game");
+ renderDailyBlogFeature();
+ closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
+ allEducation.onclick=()=>navigate("game");
 }
 function training(){
  clearInterval(timer);
