@@ -343,13 +343,3 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 #homeFeatureHero #homeFeatureKicker,#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{transition:opacity .26s ease-in-out,transform .26s ease-in-out;opacity:1;transform:translateY(0)}
 #homeFeatureHero.home-feature-fading #homeFeatureKicker,#homeFeatureHero.home-feature-fading #giveawayFeature,#homeFeatureHero.home-feature-fading #dailyBlogFeature,#homeFeatureHero.home-feature-fading #gamesFeature{opacity:0;transform:translateY(5px)}
 @media(prefers-reduced-motion:reduce){#homeFeatureHero #homeFeatureKicker,#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{transition:none;transform:none}}
-
-/* Keep every rotating homepage slide at the same card height as Games */
-#homeFeatureHero{min-height:390px;box-sizing:border-box;position:relative;justify-content:center;padding-bottom:78px}
-#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{width:100%;min-height:210px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
-#homeFeatureHero #giveawayFeature[hidden],#homeFeatureHero #dailyBlogFeature[hidden],#homeFeatureHero #gamesFeature[hidden]{display:none!important}
-#homeFeatureHero .home-feature-controls{position:absolute;bottom:22px;left:0;right:0;margin-top:0}
-#homeFeatureHero h1{font-size:clamp(32px,4.6vw,54px);line-height:1.08;margin:12px 0 16px}
-#homeFeatureHero p{font-size:clamp(15px,1.6vw,19px);margin-bottom:18px}
-#homeFeatureHero .giveaway-clock{margin-bottom:10px}
-@media(max-width:640px){#homeFeatureHero{min-height:440px;padding-bottom:78px}#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{min-height:260px}}
