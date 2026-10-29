@@ -330,3 +330,11 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 .giveaway-clock-unit span{font-size:10px;letter-spacing:.13em;font-weight:800;color:#c7a988}
 .giveaway-demo-note{font-size:12px!important;opacity:.75;margin:4px 0 20px!important}
 @media(max-width:480px){.giveaway-clock{gap:6px}.giveaway-clock-unit{padding:12px 3px}.giveaway-clock-unit span{font-size:8px;letter-spacing:.04em}}
+
+/* Rotating homepage feature */
+#homeFeatureHero [hidden]{display:none!important}
+.home-feature-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:24px}
+.home-feature-controls>button{background:transparent;border:1px solid currentColor;border-radius:50%;color:inherit;width:34px;height:34px;font-size:24px;cursor:pointer;line-height:1}
+#homeFeatureDots{display:flex;gap:9px;align-items:center}
+.home-feature-dot{width:9px;height:9px;border:1px solid currentColor;border-radius:50%;background:transparent;opacity:.55;cursor:pointer;padding:0}
+.home-feature-dot.active{background:currentColor;opacity:1}
