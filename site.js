@@ -36,7 +36,7 @@ function startGiveawayCountdown(){
  medicGiveawayCountdownInterval=setInterval(renderGiveawayCountdown,1000);
 }
 
-let homeFeatureRotationInterval=null,homeFeatureIndex=0;
+let homeFeatureRotationInterval=null,homeFeatureIndex=0,homeFeatureFadeTimeout=null,homeFeatureActiveId=null;
 function updateHomeFeature(){
  const ended=MEDIC_GIVEAWAY_END_AT&&Date.now()>=Date.parse(MEDIC_GIVEAWAY_END_AT);
  const slides=[...(!ended?[["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"]]:[]),["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"]];
@@ -44,8 +44,18 @@ function updateHomeFeature(){
  renderDailyBlogFeature();
  homeFeatureIndex=((homeFeatureIndex%slides.length)+slides.length)%slides.length;
  const active=slides[homeFeatureIndex];
- ["giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
- document.getElementById("homeFeatureKicker").textContent=active[1];hero.setAttribute("aria-label",active[2]);
+ const applySlide=()=>{
+  ["giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
+  document.getElementById("homeFeatureKicker").textContent=active[1];
+  hero.setAttribute("aria-label",active[2]);
+  homeFeatureActiveId=active[0];
+  requestAnimationFrame(()=>hero.classList.remove("home-feature-fading"));
+ };
+ clearTimeout(homeFeatureFadeTimeout);
+ if(homeFeatureActiveId&&homeFeatureActiveId!==active[0]&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+  hero.classList.add("home-feature-fading");
+  homeFeatureFadeTimeout=setTimeout(applySlide,260);
+ }else{hero.classList.remove("home-feature-fading");applySlide();}
  const dots=document.getElementById("homeFeatureDots");
  if(dots)dots.replaceChildren(...slides.map((slide,i)=>{const btn=document.createElement("button");btn.type="button";btn.className="home-feature-dot"+(i===homeFeatureIndex?" active":"");btn.setAttribute("aria-label","Show "+slide[2]);btn.setAttribute("aria-pressed",String(i===homeFeatureIndex));btn.onclick=()=>{homeFeatureIndex=i;updateHomeFeature();startHomeFeatureRotation();};return btn;}));
 }
