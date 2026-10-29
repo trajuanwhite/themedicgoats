@@ -31,19 +31,9 @@ function siteHome(){
    <div class="home-game-preview" aria-label="Preview of a Rapid Rhythms question"><div class="home-preview-top"><span>RAPID RHYTHMS</span><span>🐐 🐐 🐐</span></div><div class="home-preview-scene">Rate 110, regular. Upright P before each narrow QRS. PR 0.16 s.</div><div class="home-preview-question">What rhythm am I?</div><div class="home-preview-answers"><div><b>A</b> Sinus tachycardia</div><div><b>B</b> Sinus bradycardia</div><div><b>C</b> Atrial fibrillation</div><div><b>D</b> First-degree AV block</div></div><div class="home-preview-bottom">CHOOSE THE RHYTHM <span>7.0s</span></div></div>
    <div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-rhythms">Test your rhythm skills →</a></div></article>
  </section>
- <section class="manifesto"><div class="kicker">WHY THE MEDIC GOATS</div><h2>Knowing the answer isn't enough.<br><em>You have to recognize it in the field.</em></h2><p>We build education around clinical reasoning—not memorizing a slide deck. Learn the medicine, understand the why, then practice making the call.</p></section>
- <section class="education-block">
-   <div class="section-intro compact"><div><div class="kicker">EDUCATION</div><h2>Learn the medicine.<br>Understand the why.</h2></div><button class="btn" id="allEducation">Explore Training →</button></div>
-   <div class="article-grid">
-    <article class="article-card"><span>CARDIOLOGY & EKG</span><h3>Read the patient, not just the monitor.</h3><p>Practical cardiology built around recognition, physiology, and field decisions.</p></article>
-    <article class="article-card"><span>AIRWAY & RESPIRATORY</span><h3>Know what your numbers are telling you.</h3><p>Airway, ventilation, oxygenation, and capnography without losing the clinical picture.</p></article>
-    <article class="article-card"><span>EMS EDUCATION</span><h3>Better clinicians are built deliberately.</h3><p>Teaching, precepting, and clinical reasoning for the next generation of paramedics.</p></article>
-   </div>
- </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
  renderDailyBlogFeature();
  closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
- allEducation.onclick=()=>navigate("game");
 }
 function training(){
  clearInterval(timer);
