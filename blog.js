@@ -36,23 +36,22 @@ function drawStoryLines(ctx,lines,x,y,lineHeight,maxLines){
 function buildBlogStory(p){
  const c=document.createElement('canvas');c.width=1080;c.height=1920;const ctx=c.getContext('2d');
  ctx.fillStyle='#1d1d1b';ctx.fillRect(0,0,1080,1920);
- const x=90,w=900;
- ctx.fillStyle='#c9aa88';ctx.font='700 29px Arial,sans-serif';ctx.fillText('THE MEDIC GOATS',x,175);ctx.textAlign='right';ctx.fillText('BLOG',990,175);ctx.textAlign='left';
- ctx.font='700 30px Arial,sans-serif';ctx.fillText(String(p.category||'CLINICAL EDUCATION').toUpperCase(),x,325,w);
- const title=String(p.title||'');let size=76,lines=[];
- while(size>=42){ctx.font='bold '+size+'px Arial,sans-serif';lines=storyLines(ctx,title,w);if(lines.length<=7)break;size-=3;}
+ const x=95,w=890;
+ ctx.fillStyle='#f4f1ec';ctx.font='bold 34px Arial,sans-serif';ctx.fillText('THE MEDIC GOATS',x,180);
+ ctx.fillStyle='#c9aa88';ctx.font='29px Arial,sans-serif';ctx.textAlign='right';ctx.fillText('BLOG',985,180);ctx.textAlign='left';
+ ctx.font='bold 30px Arial,sans-serif';ctx.fillText(String(p.category||'CLINICAL EDUCATION').toUpperCase(),x,425,w);
+ const title=String(p.title||'');let size=86,lines=[];
+ while(size>=44){ctx.font='bold '+size+'px Arial,sans-serif';lines=storyLines(ctx,title,w);if(lines.length<=7&&lines.length*size*1.12<=700)break;size-=3;}
  ctx.fillStyle='#f4f1ec';ctx.font='bold '+size+'px Arial,sans-serif';
- const titleBottom=drawStoryLines(ctx,lines,x,415,size*1.14,7);
- ctx.fillStyle='#d8d0c6';ctx.font='38px Arial,sans-serif';
- const descriptionLines=storyLines(ctx,p.description||'Explore this EMS education article.',w);
- const descY=Math.max(titleBottom+85,675);
- const descBottom=drawStoryLines(ctx,descriptionLines,x,descY,57,4);
- const buttonY=Math.max(descBottom+95,990);
- ctx.fillStyle='#f4f1ec';ctx.beginPath();ctx.roundRect(x,buttonY,630,112,24);ctx.fill();ctx.fillStyle='#1d1d1b';ctx.font='bold 35px Arial,sans-serif';ctx.fillText('READ THE FULL ARTICLE  →',x+38,buttonY+70);
- const dividerY=buttonY+205;
- ctx.strokeStyle='#6d5b49';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,dividerY);ctx.lineTo(990,dividerY);ctx.stroke();
- ctx.fillStyle='#f4f1ec';ctx.font='bold 34px Arial,sans-serif';ctx.fillText('THE MEDIC GOATS',x,dividerY+95);
- ctx.fillStyle='#c9aa88';ctx.font='29px Arial,sans-serif';ctx.fillText('THEMEDICGOATS.COM',x,dividerY+155);
+ const titleBottom=drawStoryLines(ctx,lines,x,525,size*1.12,7);
+ const description=String(p.description||'Explore this EMS education article.');
+ let descSize=44,descriptionLines=[];
+ while(descSize>=32){ctx.font=descSize+'px Arial,sans-serif';descriptionLines=storyLines(ctx,description,w);if(descriptionLines.length<=5)break;descSize-=2;}
+ ctx.fillStyle='#d8d0c6';ctx.font=descSize+'px Arial,sans-serif';
+ const descY=titleBottom+95;
+ const descBottom=drawStoryLines(ctx,descriptionLines,x,descY,descSize*1.5,5);
+ ctx.fillStyle='#c9aa88';ctx.font='bold 36px Arial,sans-serif';ctx.fillText('READ ARTICLE  →',x,Math.min(Math.max(descBottom+115,1370),1580));
+ ctx.fillStyle='#c9aa88';ctx.font='30px Arial,sans-serif';ctx.fillText('THEMEDICGOATS.COM',x,1775);
  return c;
 }
 function blogShareStatus(message){const el=document.getElementById('blogShareStatus');if(el)el.textContent=message;}
