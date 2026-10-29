@@ -74,6 +74,15 @@ function siteHome(){
   <div class="home-feature-controls"><button type="button" id="homeFeaturePrev" aria-label="Previous featured item">‹</button><div id="homeFeatureDots" aria-label="Featured item selection"></div><button type="button" id="homeFeatureNext" aria-label="Next featured item">›</button></div>
  </section>
  
+ <section class="home-game-grid" aria-label="Quick training games">
+   <article class="home-game-card"><div class="kicker">RESUSCITATION • PLAY NOW</div><h3>Rapid MegaCode</h3><p>Think you can make the right call under pressure? Here's a glimpse of what awaits.</p>
+   <div class="home-game-preview" aria-label="Preview of a Rapid MegaCode question"><div class="home-preview-top"><span>RAPID MEGACODE</span><span>🐐 🐐 🐐</span></div><div class="home-preview-scene">You find an adult unresponsive and not breathing normally. Scene safety is confirmed.</div><div class="home-preview-question">What should you do first?</div><div class="home-preview-answers"><div><b>A</b> Assess responsiveness, breathing, and pulse promptly</div><div><b>B</b> Apply defibrillator pads before assessment</div><div><b>C</b> Administer epinephrine immediately</div><div><b>D</b> Prepare an advanced airway</div></div><div class="home-preview-bottom">7 SECONDS TO DECIDE <span>7.0s</span></div></div>
+   <div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-megacode">Take the challenge →</a></div></article>
+   <article class="home-game-card"><div class="kicker">CARDIOLOGY • PLAY NOW</div><h3>Rapid Rhythms</h3><p>No rhythm strip. Just clues. Can you identify the rhythm before time runs out?</p>
+   <div class="home-game-preview" aria-label="Preview of a Rapid Rhythms question"><div class="home-preview-top"><span>RAPID RHYTHMS</span><span>🐐 🐐 🐐</span></div><div class="home-preview-scene">Rate 110, regular. Upright P before each narrow QRS. PR 0.16 s.</div><div class="home-preview-question">What rhythm am I?</div><div class="home-preview-answers"><div><b>A</b> Sinus tachycardia</div><div><b>B</b> Sinus bradycardia</div><div><b>C</b> Atrial fibrillation</div><div><b>D</b> First-degree AV block</div></div><div class="home-preview-bottom">CHOOSE THE RHYTHM <span>7.0s</span></div></div>
+   <div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-rhythms">Test your rhythm skills →</a></div></article>
+ </section>
+ closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
  homeFeatureIndex=0;
  updateHomeFeature();
@@ -81,7 +90,7 @@ function siteHome(){
  document.getElementById("homeFeaturePrev").onclick=()=>{homeFeatureIndex--;updateHomeFeature();startHomeFeatureRotation();};
  document.getElementById("homeFeatureNext").onclick=()=>{homeFeatureIndex++;updateHomeFeature();startHomeFeatureRotation();};
  startGiveawayCountdown();
- closingTrain.onclick=()=>{history.pushState({view:"game"},"","/training");training();window.scrollTo(0,0);};
+ closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function training(){
  clearInterval(timer);
