@@ -82,7 +82,6 @@ function siteHome(){
    <div class="home-game-preview" aria-label="Preview of a Rapid Rhythms question"><div class="home-preview-top"><span>RAPID RHYTHMS</span><span>🐐 🐐 🐐</span></div><div class="home-preview-scene">Rate 110, regular. Upright P before each narrow QRS. PR 0.16 s.</div><div class="home-preview-question">What rhythm am I?</div><div class="home-preview-answers"><div><b>A</b> Sinus tachycardia</div><div><b>B</b> Sinus bradycardia</div><div><b>C</b> Atrial fibrillation</div><div><b>D</b> First-degree AV block</div></div><div class="home-preview-bottom">CHOOSE THE RHYTHM <span>7.0s</span></div></div>
    <div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-rhythms">Test your rhythm skills →</a></div></article>
  </section>
- closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
  homeFeatureIndex=0;
  updateHomeFeature();
