@@ -18,6 +18,24 @@ function renderDailyBlogFeature(){
 // Set the official giveaway closing time here (ISO 8601 with timezone offset).
 // Until confirmed, the giveaway remains featured and no end date is implied.
 const MEDIC_GIVEAWAY_END_AT = null;
+const MEDIC_GIVEAWAY_DEMO_END_AT = "2026-11-08T04:59:17Z";
+let medicGiveawayCountdownInterval = null;
+function renderGiveawayCountdown(){
+ const end=Date.parse(MEDIC_GIVEAWAY_END_AT||MEDIC_GIVEAWAY_DEMO_END_AT);
+ const remaining=Math.max(0,end-Date.now());
+ const parts=[Math.floor(remaining/86400000),Math.floor(remaining/3600000)%24,Math.floor(remaining/60000)%60,Math.floor(remaining/1000)%60];
+ document.querySelectorAll("[data-giveaway-countdown]").forEach(host=>{
+  const labels=["DAYS","HOURS","MINUTES","SECONDS"];
+  host.innerHTML=parts.map((n,i)=>'<div class="giveaway-clock-unit"><strong>'+String(n).padStart(2,"0")+'</strong><span>'+labels[i]+'</span></div>').join("");
+ });
+ if(!remaining){clearInterval(medicGiveawayCountdownInterval);medicGiveawayCountdownInterval=null;updateHomeFeature();}
+}
+function startGiveawayCountdown(){
+ if(medicGiveawayCountdownInterval)clearInterval(medicGiveawayCountdownInterval);
+ renderGiveawayCountdown();
+ medicGiveawayCountdownInterval=setInterval(renderGiveawayCountdown,1000);
+}
+
 function updateHomeFeature(){
  const deadline=MEDIC_GIVEAWAY_END_AT?Date.parse(MEDIC_GIVEAWAY_END_AT):NaN;
  const ended=Number.isFinite(deadline)&&Date.now()>=deadline;
@@ -35,7 +53,7 @@ function siteHome(){
  app.innerHTML=`
  <section class="brand-hero blog-day-hero" id="homeFeatureHero" aria-label="10K follower giveaway">
   <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY</div>
-  <div id="giveawayFeature"><h1>10,000 followers. One big thank you.</h1><p>We're celebrating this milestone with Intublade. A special giveaway is coming for the community that made it possible.</p><a class="btn light" href="/giveaway">Giveaway Details →</a></div>
+  <div id="giveawayFeature"><h1>10,000 followers. One big thank you.</h1><p>We're celebrating this milestone with Intublade. A special giveaway is coming for the community that made it possible.</p><div class="giveaway-clock" data-giveaway-countdown aria-label="Giveaway preview countdown"></div><p class="giveaway-demo-note">Countdown preview • Entries not open yet</p><a class="btn light" href="/giveaway">Giveaway Details →</a></div>
   <div id="dailyBlogFeature" hidden></div>
  </section>
  
@@ -49,6 +67,7 @@ function siteHome(){
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
  updateHomeFeature();
+ startGiveawayCountdown();
  closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function training(){
@@ -219,7 +238,8 @@ function education(){
 }
 function giveawayLanding(){
  clearInterval(timer);
- app.innerHTML=`<section class="brand-hero blog-day-hero" aria-label="Intublade giveaway"><div class="kicker">THE MEDIC GOATS × INTUBLADE</div><h1>10K FOLLOWER GIVEAWAY</h1><p>10,000 followers and counting. Thank you for being part of The Medic Goats community.</p></section><section class="medic-blog-article"><h2>Something special is coming.</h2><p>We've partnered with Intublade for a giveaway celebrating this milestone. The prize details, eligibility requirements, official rules, and entry deadline will be announced here before entries open.</p><p><strong>Entries are not open yet.</strong> Once the giveaway is ready, this page will have an Instagram-handle entry form and a live countdown to the closing deadline.</p><p>Follow <a href="https://www.instagram.com/themedicgoats/" target="_blank" rel="noopener noreferrer">@themedicgoats</a> for the announcement.</p><a class="btn primary" href="/">← Back to Home</a></section>`;
+ app.innerHTML=`<section class="brand-hero blog-day-hero" aria-label="Intublade giveaway"><div class="kicker">THE MEDIC GOATS × INTUBLADE</div><h1>10K FOLLOWER GIVEAWAY</h1><div class="giveaway-clock" data-giveaway-countdown aria-label="Giveaway preview countdown"></div><p class="giveaway-demo-note">10-day countdown preview • Entries not open yet</p><p>10,000 followers and counting. Thank you for being part of The Medic Goats community.</p></section><section class="medic-blog-article"><h2>Something special is coming.</h2><p>We've partnered with Intublade for a giveaway celebrating this milestone. The prize details, eligibility requirements, official rules, and entry deadline will be announced here before entries open.</p><p><strong>Entries are not open yet.</strong> Once the giveaway is ready, this page will have an Instagram-handle entry form and a live countdown to the closing deadline.</p><p>Follow <a href="https://www.instagram.com/themedicgoats/" target="_blank" rel="noopener noreferrer">@themedicgoats</a> for the announcement.</p><a class="btn primary" href="/">← Back to Home</a></section>`;
+ startGiveawayCountdown();
 }
 const routes={home:"/",game:"/training",leaderboard:"/training"};
 function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,education:education,leaderboard:training}[view]||siteHome)();}
