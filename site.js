@@ -36,17 +36,22 @@ function startGiveawayCountdown(){
  medicGiveawayCountdownInterval=setInterval(renderGiveawayCountdown,1000);
 }
 
+let homeFeatureRotationInterval=null,homeFeatureIndex=0;
 function updateHomeFeature(){
- const deadline=MEDIC_GIVEAWAY_END_AT?Date.parse(MEDIC_GIVEAWAY_END_AT):NaN;
- const ended=Number.isFinite(deadline)&&Date.now()>=deadline;
- const giveaway=document.getElementById("giveawayFeature");
- const daily=document.getElementById("dailyBlogFeature");
- const kicker=document.getElementById("homeFeatureKicker");
- const hero=document.getElementById("homeFeatureHero");
- if(!giveaway||!daily)return;
- giveaway.hidden=ended;
- daily.hidden=!ended;
- if(ended){if(kicker)kicker.textContent="THE MEDIC GOATS • BLOG OF THE DAY";if(hero)hero.setAttribute("aria-label","Blog of the Day");renderDailyBlogFeature();}
+ const ended=MEDIC_GIVEAWAY_END_AT&&Date.now()>=Date.parse(MEDIC_GIVEAWAY_END_AT);
+ const slides=[...(!ended?[["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"]]:[]),["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"]];
+ const hero=document.getElementById("homeFeatureHero");if(!hero)return;
+ renderDailyBlogFeature();
+ homeFeatureIndex=((homeFeatureIndex%slides.length)+slides.length)%slides.length;
+ const active=slides[homeFeatureIndex];
+ ["giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
+ document.getElementById("homeFeatureKicker").textContent=active[1];hero.setAttribute("aria-label",active[2]);
+ const dots=document.getElementById("homeFeatureDots");
+ if(dots)dots.replaceChildren(...slides.map((slide,i)=>{const btn=document.createElement("button");btn.type="button";btn.className="home-feature-dot"+(i===homeFeatureIndex?" active":"");btn.setAttribute("aria-label","Show "+slide[2]);btn.setAttribute("aria-pressed",String(i===homeFeatureIndex));btn.onclick=()=>{homeFeatureIndex=i;updateHomeFeature();startHomeFeatureRotation();};return btn;}));
+}
+function startHomeFeatureRotation(){
+ clearInterval(homeFeatureRotationInterval);
+ homeFeatureRotationInterval=setInterval(()=>{if(!document.getElementById("homeFeatureHero")){clearInterval(homeFeatureRotationInterval);return;}homeFeatureIndex++;updateHomeFeature();},8000);
 }
 function siteHome(){
  clearInterval(timer);
@@ -55,6 +60,8 @@ function siteHome(){
   <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY</div>
   <div id="giveawayFeature"><h1>10,000 followers. One big thank you.</h1><p>We're celebrating 10,000 followers with Intublade! One winner will receive a video laryngoscope plus a gift box. See the giveaway details below.</p><div class="giveaway-clock" data-giveaway-countdown aria-label="Giveaway preview countdown"></div><p class="giveaway-demo-note">Countdown preview • Entries not open yet</p><a class="btn light" href="/giveaway">Giveaway Details →</a></div>
   <div id="dailyBlogFeature" hidden></div>
+  <div id="gamesFeature" hidden><h1>Think fast. Train smarter.</h1><p>Challenge your clinical decision-making with Rapid MegaCode, Rapid Rhythms, and more interactive EMS training games.</p><a class="btn light" href="/training">Explore Games →</a></div>
+  <div class="home-feature-controls"><button type="button" id="homeFeaturePrev" aria-label="Previous featured item">‹</button><div id="homeFeatureDots" aria-label="Featured item selection"></div><button type="button" id="homeFeatureNext" aria-label="Next featured item">›</button></div>
  </section>
  
  <section class="home-game-grid" aria-label="Quick training games">
@@ -66,7 +73,11 @@ function siteHome(){
    <div class="home-game-footer"><span>7s + 7s • 3 GOATS</span><a class="btn primary" href="/rapid-rhythms">Test your rhythm skills →</a></div></article>
  </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
+ homeFeatureIndex=0;
  updateHomeFeature();
+ startHomeFeatureRotation();
+ document.getElementById("homeFeaturePrev").onclick=()=>{homeFeatureIndex--;updateHomeFeature();startHomeFeatureRotation();};
+ document.getElementById("homeFeatureNext").onclick=()=>{homeFeatureIndex++;updateHomeFeature();startHomeFeatureRotation();};
  startGiveawayCountdown();
  closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
