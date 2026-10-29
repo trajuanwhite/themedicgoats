@@ -91,7 +91,7 @@ function training(){
 <div class="home-game-preview training-preview-frame" data-game-preview hidden style="display:none"><div class="home-preview-top"><span>RAPID CARDIOLOGY</span><span>🏆</span></div><div class="home-preview-scene">GAME COMPLETE</div><div class="home-preview-question">FINAL RESULTS</div><div class="home-preview-answers"><div><b>1</b> 🥇 GOAT PLAYER <strong style="margin-left:auto">2,140 pts</strong></div><div><b>2</b> 🥈 PLAYER TWO <strong style="margin-left:auto">1,980 pts</strong></div><div><b>3</b> 🥉 PLAYER THREE <strong style="margin-left:auto">1,720 pts</strong></div><div><b>✓</b> PLAY AGAIN OR VIEW LEADERBOARD</div></div><div class="home-preview-bottom">FINAL SCORE <span>2,140</span></div></div>
 <div class="kicker" style="text-align:center;margin-top:10px" data-preview-position>GAMEPLAY • 1 / 3</div></div></div>
  </section>
- <section class="manifesto"><div class="kicker">TRAIN THE WAY YOU WORK</div><h2>Don't just memorize it.<br><em>Make the call.</em></h2><p>Each training experience is built to strengthen recognition, prioritization, and decision-making under pressure.</p></section>`;
+ `;
  loadTrainingLeaderboard();
  const leaderSlides=[...document.querySelectorAll("#trainingLeadersStrip > span")];
  let leaderSlide=0;
