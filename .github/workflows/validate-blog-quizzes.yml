@@ -1,0 +1,25 @@
+name: Validate blog quizzes
+on:
+  push:
+    paths:
+      - 'blog-posts.js'
+      - 'blog.js'
+      - 'scripts/validate-blog-quizzes.cjs'
+      - '.github/workflows/validate-blog-quizzes.yml'
+  pull_request:
+    paths:
+      - 'blog-posts.js'
+      - 'blog.js'
+      - 'scripts/validate-blog-quizzes.cjs'
+      - '.github/workflows/validate-blog-quizzes.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check blog.js
+      - run: node --check blog-posts.js
+      - run: node scripts/validate-blog-quizzes.cjs
