@@ -71,7 +71,7 @@ async function shareBlogStory(p){
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);
  blogShareStatus('Story image saved. Upload it to Instagram Stories and add a Link sticker to '+url);
 }
-async function shareBlogLink(p){const url=location.origin+'/blog/'+encodeURIComponent(p.slug);try{if(navigator.share){await navigator.share({title:p.title,url});return;}await navigator.clipboard.writeText(url);blogShareStatus('Article link copied.');}catch(e){if(e.name!=='AbortError')blogShareStatus('Copy this link: '+url);}}
+async function shareBlogLink(p){const url=location.origin+'/blog/'+encodeURIComponent(p.slug)+'?preview=article-20261029-v3';try{if(navigator.share){await navigator.share({title:p.title,url});return;}await navigator.clipboard.writeText(url);blogShareStatus('Article link copied.');}catch(e){if(e.name!=='AbortError')blogShareStatus('Copy this link: '+url);}}
 function openBlog(slug){
  clearInterval(timer);
  const p=posts.find(x=>x.slug===slug);
