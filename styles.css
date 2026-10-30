@@ -343,3 +343,11 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 #homeFeatureHero #homeFeatureKicker,#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{transition:opacity .26s ease-in-out,transform .26s ease-in-out;opacity:1;transform:translateY(0)}
 #homeFeatureHero.home-feature-fading #homeFeatureKicker,#homeFeatureHero.home-feature-fading #giveawayFeature,#homeFeatureHero.home-feature-fading #dailyBlogFeature,#homeFeatureHero.home-feature-fading #gamesFeature{opacity:0;transform:translateY(5px)}
 @media(prefers-reduced-motion:reduce){#homeFeatureHero #homeFeatureKicker,#homeFeatureHero #giveawayFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature{transition:none;transform:none}}
+
+/* Compact rotating homepage feature, including Blog of the Day */
+#homeFeatureHero.blog-day-hero{padding:clamp(20px,3vw,34px);border-radius:22px}
+#homeFeatureHero.blog-day-hero h1{font-size:clamp(26px,3.4vw,42px);line-height:1.1;max-width:740px;margin:8px 0 12px}
+#homeFeatureHero.blog-day-hero p{font-size:clamp(14px,1.5vw,17px);line-height:1.45;max-width:680px;margin:0 0 14px}
+#homeFeatureHero.blog-day-hero .daily-blog-category{margin-top:10px;font-size:11px}
+#homeFeatureHero.blog-day-hero .home-feature-controls{margin-top:12px}
+@media(max-width:700px){#homeFeatureHero.blog-day-hero{padding:22px 20px}#homeFeatureHero.blog-day-hero h1{font-size:clamp(26px,7vw,34px)}}
