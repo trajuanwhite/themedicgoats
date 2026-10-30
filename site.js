@@ -185,6 +185,7 @@ function training(){
  toggle.onclick=()=>{const opening=full.hidden;full.hidden=!opening;toggle.setAttribute("aria-expanded",String(opening));toggle.textContent=opening?"Hide Leaderboards":"View Full Leaderboards"};
 
 }
+function instagramProfileLink(name){const raw=String(name||"").trim();if(!raw.startsWith("@"))return null;const handle=raw.slice(1);return /^[A-Za-z0-9._]{1,30}$/.test(handle)?"https://www.instagram.com/"+handle+"/":null}
 async function loadTrainingLeaderboard(){
  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
  const boards=[["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"]];
@@ -211,10 +212,10 @@ async function loadTrainingLeaderboard(){
    if(!list.isConnected)return;
    const leaderId=id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology";
    const leader=document.getElementById(leaderId);
-   if(leader)leader.textContent=data.length?(data[0].player_name||"Anonymous")+" • "+Number(data[0].score||0).toLocaleString()+" pts":"No GOAT crowned yet";
+   if(leader){leader.replaceChildren();if(data.length){const name=data[0].player_name||"Anonymous",url=instagramProfileLink(name),el=document.createElement(url?"a":"span");el.textContent=name+" • "+Number(data[0].score||0).toLocaleString()+" pts";if(url){el.href=url;el.target="_blank";el.rel="noopener noreferrer";el.style.color="inherit";el.style.textDecoration="underline"}leader.append(el)}else leader.textContent="No GOAT crowned yet"}
    list.replaceChildren();
    if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first!";li.style.color="var(--muted)";list.append(li);return}
-   data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";name.textContent=(i+1)+". "+(p.player_name||"Anonymous");const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
+   data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";const profile=p.player_name||"Anonymous",url=instagramProfileLink(profile);name.textContent=(i+1)+". ";const label=document.createElement(url?"a":"span");label.textContent=profile;if(url){label.href=url;label.target="_blank";label.rel="noopener noreferrer";label.style.cssText="color:inherit;text-decoration:underline;text-underline-offset:3px"}name.append(label);const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
   }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable.";const leader=document.getElementById(id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology");if(leader)leader.textContent="Unavailable"}
  }));
 }
