@@ -17,7 +17,7 @@ function renderDailyBlogFeature(){
 }
 // Set the official giveaway closing time here (ISO 8601 with timezone offset).
 // Until confirmed, the giveaway remains featured and no end date is implied.
-const MEDIC_GIVEAWAY_END_AT = null;
+const MEDIC_GIVEAWAY_END_AT = "2026-11-09T16:19:00.627Z";
 const MEDIC_GIVEAWAY_DEMO_END_AT = "2026-11-08T04:59:17Z";
 let medicGiveawayCountdownInterval = null;
 function renderGiveawayCountdown(){
@@ -38,13 +38,13 @@ function startGiveawayCountdown(){
 
 let homeFeatureRotationInterval=null,homeFeatureIndex=0,homeFeatureFadeTimeout=null,homeFeatureActiveId=null;
 function updateHomeFeature(){
- const slides=[["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"]];
+ const slides=[["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"],["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"]];
  const hero=document.getElementById("homeFeatureHero");if(!hero)return;
  renderDailyBlogFeature();
  homeFeatureIndex=((homeFeatureIndex%slides.length)+slides.length)%slides.length;
  const active=slides[homeFeatureIndex];
  const applySlide=()=>{
-  ["dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
+  ["giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
   document.getElementById("homeFeatureKicker").textContent=active[1];
   hero.setAttribute("aria-label",active[2]);
   homeFeatureActiveId=active[0];
@@ -67,6 +67,7 @@ function siteHome(){
  app.innerHTML=`
  <section class="brand-hero blog-day-hero" id="homeFeatureHero" aria-label="Featured Medic Goats content">
   <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
+  <div id="giveawayFeature" hidden><h1>10K Follower Giveaway</h1><p>We’ve partnered with IntuBlade to give away a video laryngoscope and gift box. Open to eligible U.S. healthcare professionals and students.</p><a class="btn light" href="/giveaway">Enter the Giveaway →</a></div>
   <div id="dailyBlogFeature" hidden></div>
   <div id="gamesFeature" hidden><h1>Think fast. Train smarter.</h1><p>Challenge your clinical decision-making with Rapid MegaCode, Rapid Rhythms, and more interactive EMS training games.</p><a class="btn light" href="/training">Explore Games →</a></div>
   <div class="home-feature-controls"><button type="button" id="homeFeaturePrev" aria-label="Previous featured item">‹</button><div id="homeFeatureDots" aria-label="Featured item selection"></div><button type="button" id="homeFeatureNext" aria-label="Next featured item">›</button></div>
@@ -259,12 +260,27 @@ function education(){
 }
 function giveawayLanding(){
  clearInterval(timer);
- app.innerHTML=`<section class="brand-hero blog-day-hero" aria-label="Intublade giveaway"><div class="kicker">THE MEDIC GOATS × INTUBLADE</div><h1>10K FOLLOWER GIVEAWAY</h1><div class="giveaway-clock" data-giveaway-countdown aria-label="Giveaway preview countdown"></div><p class="giveaway-demo-note">10-day countdown preview • Entries not open yet</p><p>10,000 followers and counting. Thank you for being part of The Medic Goats community.</p></section><section class="medic-blog-article"><h2>Something special is coming.</h2><p>We've partnered with Intublade to celebrate 10,000 followers. <strong>One winner will receive a video laryngoscope plus a gift box.</strong> This giveaway is intended for healthcare professionals and students.</p><h2>How to enter</h2><ol><li>Follow <a href="https://www.instagram.com/themedicgoats/" target="_blank" rel="noopener noreferrer">@themedicgoats</a> and <a href="https://www.instagram.com/intublade/" target="_blank" rel="noopener noreferrer">@intublade</a> on Instagram.</li><li>Like the official giveaway announcement post.</li><li>Tag two people in a comment on that post.</li><li>Return here and submit your Instagram username once registration opens.</li></ol><p>One entry per eligible person. Completing Instagram actions does not automatically register an entry on this website. The selected winner will be contacted with prize-claim instructions. No purchase necessary. This promotion is not sponsored, endorsed, administered by, or associated with Instagram.</p><p><strong>Entries are not open yet.</strong> Once the giveaway is ready, this page will have an Instagram-handle entry form and a live countdown to the closing deadline.</p><p>Follow <a href="https://www.instagram.com/themedicgoats/" target="_blank" rel="noopener noreferrer">@themedicgoats</a> for the announcement.</p><a class="btn primary" href="/">← Back to Home</a></section>`;
+ app.innerHTML=`<section class="brand-hero blog-day-hero" aria-label="IntuBlade giveaway"><div class="kicker">THE MEDIC GOATS × INTUBLADE</div><h1>10K FOLLOWER GIVEAWAY</h1><div class="giveaway-clock" data-giveaway-countdown aria-label="Time remaining to enter"></div><p>Celebrating 10,000 followers with a video laryngoscope and gift box for one winner.</p></section><section class="medic-blog-article"><h2>How to enter</h2><ol><li>Follow <a href="https://www.instagram.com/themedicgoats/" target="_blank" rel="noopener noreferrer">@themedicgoats</a> and <a href="https://www.instagram.com/intublade/" target="_blank" rel="noopener noreferrer">@intublade</a>.</li><li>Like the official giveaway post.</li><li>Tag two people in a comment on the post.</li><li>Submit your Instagram handle below.</li></ol><p>For U.S. healthcare professionals and students. One entry per person. No purchase necessary. Not sponsored, endorsed, administered by, or associated with Instagram.</p><form id="giveawayEntryForm"><label for="giveawayHandle">Your Instagram handle</label><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px"><input id="giveawayHandle" aria-label="Instagram handle" placeholder="@yourhandle" required maxlength="31" style="flex:1;min-width:180px;padding:12px;border-radius:8px;border:1px solid #bbb"><button class="btn primary" type="submit">Submit Entry</button></div><p id="giveawayEntryStatus" role="status" aria-live="polite"></p></form><a class="btn primary" href="/">← Back to Home</a></section>`;
  startGiveawayCountdown();
+ document.getElementById("giveawayEntryForm").onsubmit=async e=>{
+  e.preventDefault();
+  const status=document.getElementById("giveawayEntryStatus");
+  const handle=document.getElementById("giveawayHandle").value.trim().replace(/^@/,"").toLowerCase();
+  if(!/^[a-z0-9._]{1,30}$/.test(handle)){status.textContent="Enter a valid Instagram username.";return;}
+  if(Date.now()>=Date.parse(MEDIC_GIVEAWAY_END_AT)){status.textContent="The giveaway has ended.";return;}
+  const button=e.currentTarget.querySelector("button");button.disabled=true;status.textContent="Submitting…";
+  try{
+   const {error}=await db.from("giveaway_entries").insert({instagram_handle:handle});
+   if(error)throw error;
+   status.textContent="Your entry was submitted!";e.currentTarget.reset();
+  }catch(err){status.textContent="We couldn't confirm your entry. Please try again later.";console.error("Giveaway entry error",err);}
+  finally{button.disabled=false;}
+ };
 }
+
 const routes={home:"/",game:"/training",leaderboard:"/training"};
 function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,education:education,leaderboard:training}[view]||siteHome)();}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
 window.addEventListener("popstate",()=>renderRoute());
-function renderRoute(){const path=location.pathname;if(path==="/giveaway"||path==="/giveaway/"){history.replaceState({view:"home"},"","/");return siteHome();}if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
+function renderRoute(){const path=location.pathname;if(path==="/giveaway"||path==="/giveaway/")return giveawayLanding();if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
 renderRoute();
