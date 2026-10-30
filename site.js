@@ -48,6 +48,7 @@ function updateHomeFeature(){
   document.getElementById("homeFeatureKicker").textContent=active[1];
   hero.setAttribute("aria-label",active[2]);
   homeFeatureActiveId=active[0];
+  hero.classList.toggle("giveaway-active",active[0]==="giveawayFeature");
   requestAnimationFrame(()=>hero.classList.remove("home-feature-fading"));
  };
  clearTimeout(homeFeatureFadeTimeout);
