@@ -358,3 +358,6 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 #homeFeatureHero.blog-day-hero.giveaway-active p{font-size:clamp(17px,2vw,21px);line-height:1.5;max-width:760px;margin-bottom:25px}
 #homeFeatureHero.blog-day-hero.giveaway-active .home-feature-controls{margin-top:28px}
 @media(max-width:700px){#homeFeatureHero.blog-day-hero.giveaway-active{min-height:300px;padding:40px 26px}#homeFeatureHero.blog-day-hero.giveaway-active h1{font-size:clamp(38px,9vw,52px)}}
+
+/* Compact CTA only on the homepage giveaway slide. */
+#homeFeatureHero.giveaway-active #giveawayFeature .btn{font-size:13px;padding:9px 15px;min-height:0;line-height:1.25;border-radius:8px}
