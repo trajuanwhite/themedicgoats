@@ -201,7 +201,7 @@ async function loadTrainingLeaderboard(){
     if(error)throw error;
     if(!batch?.length)break;
     for(const p of batch){
-     const key=p.player_id?"id:"+p.player_id:"legacy:"+String(p.player_name||"Anonymous").trim().replace(/\s+/g," ").toLocaleLowerCase();
+     const label=String(p.player_name||"Anonymous").trim().replace(/\s+/g," ").toLocaleLowerCase();const key=label.startsWith("@")?"ig:"+label:"name:"+label;
      if(seen.has(key))continue;
      seen.add(key);data.push(p);
      if(data.length===3)break;
