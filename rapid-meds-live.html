@@ -88,6 +88,7 @@ const urlPin=new URLSearchParams(location.search).get("pin");if(urlPin&&/^\d{6}$
 <script>
 (function(){
 const el=id=>document.getElementById(id);
+const db=window.supabase?.createClient('https://jjzjqjvdnaeuftptvmyw.supabase.co','sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4');
 let questions=[],index=0,lives=3,score=0,phase='idle',seconds=7,timer=null,player='',playerId='',answered=false;
 function stop(){if(timer){clearInterval(timer);timer=null}}
 function view(id){['welcome','lobby','game','finished','medsSoloGame','medsSoloEnd'].forEach(x=>el(x).classList.toggle('hidden',x!==id));document.body.classList.toggle('game-active',id==='medsSoloGame')}
