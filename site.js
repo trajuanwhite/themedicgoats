@@ -38,14 +38,13 @@ function startGiveawayCountdown(){
 
 let homeFeatureRotationInterval=null,homeFeatureIndex=0,homeFeatureFadeTimeout=null,homeFeatureActiveId=null;
 function updateHomeFeature(){
- const ended=MEDIC_GIVEAWAY_END_AT&&Date.now()>=Date.parse(MEDIC_GIVEAWAY_END_AT);
- const slides=[...(!ended?[["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"]]:[]),["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"]];
+ const slides=[["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"]];
  const hero=document.getElementById("homeFeatureHero");if(!hero)return;
  renderDailyBlogFeature();
  homeFeatureIndex=((homeFeatureIndex%slides.length)+slides.length)%slides.length;
  const active=slides[homeFeatureIndex];
  const applySlide=()=>{
-  ["giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
+  ["dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
   document.getElementById("homeFeatureKicker").textContent=active[1];
   hero.setAttribute("aria-label",active[2]);
   homeFeatureActiveId=active[0];
@@ -66,9 +65,8 @@ function startHomeFeatureRotation(){
 function siteHome(){
  clearInterval(timer);
  app.innerHTML=`
- <section class="brand-hero blog-day-hero" id="homeFeatureHero" aria-label="10K follower giveaway">
-  <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY</div>
-  <div id="giveawayFeature"><h1>10,000 followers. One big thank you.</h1><p>We're celebrating 10,000 followers with Intublade! One winner will receive a video laryngoscope plus a gift box. See the giveaway details below.</p><div class="giveaway-clock" data-giveaway-countdown aria-label="Giveaway preview countdown"></div><p class="giveaway-demo-note">Countdown preview • Entries not open yet</p><a class="btn light" href="/giveaway">Giveaway Details →</a></div>
+ <section class="brand-hero blog-day-hero" id="homeFeatureHero" aria-label="Featured Medic Goats content">
+  <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
   <div id="dailyBlogFeature" hidden></div>
   <div id="gamesFeature" hidden><h1>Think fast. Train smarter.</h1><p>Challenge your clinical decision-making with Rapid MegaCode, Rapid Rhythms, and more interactive EMS training games.</p><a class="btn light" href="/training">Explore Games →</a></div>
   <div class="home-feature-controls"><button type="button" id="homeFeaturePrev" aria-label="Previous featured item">‹</button><div id="homeFeatureDots" aria-label="Featured item selection"></div><button type="button" id="homeFeatureNext" aria-label="Next featured item">›</button></div>
@@ -88,7 +86,6 @@ function siteHome(){
  startHomeFeatureRotation();
  document.getElementById("homeFeaturePrev").onclick=()=>{homeFeatureIndex--;updateHomeFeature();startHomeFeatureRotation();};
  document.getElementById("homeFeatureNext").onclick=()=>{homeFeatureIndex++;updateHomeFeature();startHomeFeatureRotation();};
- startGiveawayCountdown();
  closingTrain.onclick=()=>document.querySelector(".home-game-grid")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function training(){
@@ -269,5 +266,5 @@ const routes={home:"/",game:"/training",leaderboard:"/training"};
 function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,education:education,leaderboard:training}[view]||siteHome)();}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
 window.addEventListener("popstate",()=>renderRoute());
-function renderRoute(){const path=location.pathname;if(path==="/giveaway"||path==="/giveaway/")return giveawayLanding();if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
+function renderRoute(){const path=location.pathname;if(path==="/giveaway"||path==="/giveaway/"){history.replaceState({view:"home"},"","/");return siteHome();}if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
 renderRoute();
