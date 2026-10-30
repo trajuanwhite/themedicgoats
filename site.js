@@ -122,6 +122,7 @@ function training(){
  <span class="is-active"><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
  <span><strong>Rapid Rhythms</strong> <span id="leaderRhythm">Loading…</span></span>
  <span><strong>Rapid Cardiology</strong> <span id="leaderCardiology">Loading…</span></span>
+ <span><strong>Rapid Meds</strong> <span id="leaderMeds">Loading…</span></span>
  </div></div>
  <button type="button" id="trainingOpenBoards" aria-expanded="false" aria-controls="trainingFullBoards" style="padding:10px 16px;border-radius:10px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;font-weight:700">View Full Leaderboards</button>
  </div>
@@ -130,6 +131,7 @@ function training(){
  <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>The GOAT and top challengers</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
  <div class="leaderboard-game"><div class="kicker">ECG INTERPRETATION</div><h3>Rapid Rhythms</h3><p>The GOAT and top challengers</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
  <div class="leaderboard-game"><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>The GOAT and top challengers</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
+ <div class="leaderboard-game"><div class="kicker">MEDICATION KNOWLEDGE</div><h3>Rapid Meds</h3><p>The GOAT and top challengers</p><ol id="trainingMedsBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-meds-live" class="leaderboard-link">Play Meds →</a></div>
  </div></div></section>
  <section class="feature-card">
    <div class="feature-copy"><span class="eyebrow">LIVE NOW • RESUSCITATION CHALLENGE</span><h2>Rapid MegaCode</h2><p data-game-description aria-live="off">Make critical decisions under pressure. Seven seconds to read each patient update, seven seconds to choose your action. Protect your three goats, earn points, and climb the leaderboard.</p><div class="row mobile"><a class="btn light" href="/rapid-megacode" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid MegaCode →</a></div></div>
@@ -188,7 +190,7 @@ function training(){
 function instagramProfileLink(name){const raw=String(name||"").trim();if(!raw.startsWith("@"))return null;const handle=raw.slice(1);return /^[A-Za-z0-9._]{1,30}$/.test(handle)?"https://www.instagram.com/"+handle+"/":null}
 async function loadTrainingLeaderboard(){
  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
- const boards=[["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"]];
+ const boards=[["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"],["trainingMedsBoard","rapid_meds_scores"]];
  await Promise.all(boards.map(async([id,table])=>{
   const list=document.getElementById(id);if(!list)return;
   try{
@@ -210,7 +212,7 @@ async function loadTrainingLeaderboard(){
     offset+=100;
    }
    if(!list.isConnected)return;
-   const leaderId=id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology";
+   const leaderId=id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":id==="trainingMedsBoard"?"leaderMeds":"leaderCardiology";
    const leader=document.getElementById(leaderId);
    if(leader){leader.replaceChildren();if(data.length){const name=data[0].player_name||"Anonymous",url=instagramProfileLink(name),el=document.createElement(url?"a":"span");el.textContent=name+" • "+Number(data[0].score||0).toLocaleString()+" pts";if(url){el.href=url;el.target="_blank";el.rel="noopener noreferrer";el.style.color="inherit";el.style.textDecoration="underline"}leader.append(el)}else leader.textContent="No GOAT crowned yet"}
    list.replaceChildren();
