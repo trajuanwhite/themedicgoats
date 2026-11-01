@@ -4,7 +4,7 @@ const Q=[["What's your spouse's ideal date night?",["Dinner out","Movie at home"
 const db=supabase.createClient('https://jjzjqjvdnaeuftptvmyw.supabase.co','sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4');
 const MEMBERS=['Tra & Iesha','Colby & Kheiston','Darius & Paesha'];\nconst displayName=(name)=>{const i=NAMES.indexOf(name);return esc(name)+(i<0?'':'<span style="display:block;font-size:12px;color:#716b63;font-weight:500;margin-top:3px">'+esc(MEMBERS[i])+'</span>')};\nconst root=document.getElementById('root'),error=document.getElementById('error'),NAMES=['The Whites','The Boones','The Prelows'];let me=JSON.parse(sessionStorage.getItem('bhbIdentity')||'null'),state=null,working=false;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const label=p=>NAMES[p.couple-1]+' · '+(p.side==='husband'?'Husband':'Wife');
+const COUPLES=['Tra & Iesha','Colby & Kheiston','Darius & Paesha'];const label=p=>NAMES[p.couple-1]+' · '+(p.side==='husband'?'Husband':'Wife');const named=n=>'<div><strong>'+esc(NAMES[n-1])+'</strong><div class="muted small">'+esc(COUPLES[n-1])+'</div></div>';
 async function rpc(name,args){const {data,error:e}=await db.rpc('bhb_'+name,args||{});if(e)throw Error(e.message);return data}
 function save(x){me=x;sessionStorage.setItem('bhbIdentity',JSON.stringify(x))}
 function msg(x){error.textContent=x||''}
