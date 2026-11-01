@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/blog/salad-technique-intubation-contaminated-airway-suction",
-      "destination": "/blog-share/salad-technique-intubation-contaminated-airway-suction.html"
-    },
-    {
       "source": "/blog/why-cardiac-epinephrine-costs-more-prefilled-syringes-vials-epipen",
       "destination": "/blog-share/why-cardiac-epinephrine-costs-more-prefilled-syringes-vials-epipen.html"
     },
