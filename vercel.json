@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/blog/gcs-15-evolving-traumatic-brain-injury-ems-case-study",
+      "destination": "/blog-share/gcs-15-evolving-traumatic-brain-injury-ems-case-study.html"
+    },
+    {
       "source": "/blog/alternating-bundle-branch-block-rbbb-lbbb-complete-heart-block",
       "destination": "/blog-share/alternating-bundle-branch-block-rbbb-lbbb-complete-heart-block.html"
     },
