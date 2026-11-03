@@ -2,6 +2,10 @@
   "rewrites": [
     {
       "source": "/blog/alternating-bundle-branch-block-rbbb-lbbb-complete-heart-block",
+      "destination": "/blog-share/alternating-bundle-branch-block-rbbb-lbbb-complete-heart-block.html"
+    },
+    {
+      "source": "/blog/alternating-bundle-branch-block-rbbb-lbbb-complete-heart-block",
       "destination": "/abbb-share.html"
     },
     {
