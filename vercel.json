@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/blog/ecg-fundamentals-series",
+      "destination": "/blog-share/ecg-fundamentals-series.html"
+    },
+    {
       "source": "/blog/shock-index-recognizing-circulatory-compromise",
       "destination": "/blog-share/shock-index-recognizing-circulatory-compromise.html"
     },
