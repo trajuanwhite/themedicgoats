@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/blog/shock-index-recognizing-circulatory-compromise",
+      "destination": "/blog-share/shock-index-recognizing-circulatory-compromise.html"
+    },
+    {
       "source": "/blog/ekg-basics-p-wave",
       "destination": "/blog-share/ekg-basics-p-wave.html"
     },
