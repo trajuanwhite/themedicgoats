@@ -1,6 +1,50 @@
 {
   "rewrites": [
     {
+      "source": "/blog/ekg-basics-p-wave",
+      "destination": "/blog-share/ekg-basics-p-wave.html"
+    },
+    {
+      "source": "/blog/ekg-basics-q-wave",
+      "destination": "/blog-share/ekg-basics-q-wave.html"
+    },
+    {
+      "source": "/blog/ekg-basics-r-wave",
+      "destination": "/blog-share/ekg-basics-r-wave.html"
+    },
+    {
+      "source": "/blog/ekg-basics-s-wave",
+      "destination": "/blog-share/ekg-basics-s-wave.html"
+    },
+    {
+      "source": "/blog/ekg-basics-t-wave",
+      "destination": "/blog-share/ekg-basics-t-wave.html"
+    },
+    {
+      "source": "/blog/ekg-basics-u-wave",
+      "destination": "/blog-share/ekg-basics-u-wave.html"
+    },
+    {
+      "source": "/blog/ekg-basics-qrs-complex",
+      "destination": "/blog-share/ekg-basics-qrs-complex.html"
+    },
+    {
+      "source": "/blog/ekg-basics-complete-cardiac-cycle",
+      "destination": "/blog-share/ekg-basics-complete-cardiac-cycle.html"
+    },
+    {
+      "source": "/blog/ekg-basics-pr-interval",
+      "destination": "/blog-share/ekg-basics-pr-interval.html"
+    },
+    {
+      "source": "/blog/ekg-basics-qt-interval",
+      "destination": "/blog-share/ekg-basics-qt-interval.html"
+    },
+    {
+      "source": "/blog/ekg-basics-st-segment",
+      "destination": "/blog-share/ekg-basics-st-segment.html"
+    },
+    {
       "source": "/blog/gcs-15-evolving-traumatic-brain-injury-ems-case-study",
       "destination": "/blog-share/gcs-15-evolving-traumatic-brain-injury-ems-case-study.html"
     },
