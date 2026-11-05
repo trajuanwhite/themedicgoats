@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/blog/postpartum-eclampsia-versed-vs-magnesium",
+      "destination": "/blog-share/postpartum-eclampsia-versed-vs-magnesium.html"
+    },
+    {
       "source": "/blog/ecg-fundamentals-series",
       "destination": "/blog-share/ecg-fundamentals-series.html"
     },
