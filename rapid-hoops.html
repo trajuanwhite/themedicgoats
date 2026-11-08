@@ -69,7 +69,7 @@ case 'basket':noiseBurst(.27,.12,1900);break;
 case 'miss':tone(250,.18,'sawtooth',.045,0,150);break;
 case 'tick':tone(920,.075,'square',.055);tone(690,.06,'sine',.04,.012);break;
 case 'buzzer':tone(155,.9,'sawtooth',.13);tone(162,.9,'square',.05);tone(310,.65,'triangle',.055);break;
-case 'fire':for(let i=0;i<4;i++)tone(520+i*160,.15,'triangle',.08,i*.095);break;
+case 'fire':noiseBurst(.42,.19,680);noiseBurst(.34,.12,1300,.11);break;
 case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
 }
 }
@@ -83,17 +83,17 @@ function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,to
 function next(){if(idx>=questions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='Play Again';start.hidden=false;return}
 phase='shoot';remaining=24;lastTick=-1;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=questions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent='QUESTION '+(idx+1)+'/20';status.textContent='24 seconds — read, aim, and shoot!';start.hidden=true}
 function begin(){unlockAudio();sound('start');lastTick=-1;swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
-let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0;
+let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0;
 function finish(correct,perfect=false){
 if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
 phase='result';remaining=1.8;
-if(correct&&perfect){swishStreak++;if(swishStreak>=3){fireHoop=swishHoop;fireTime=2.6}}else{swishStreak=0}
+if(correct&&perfect){swishStreak++;if(swishStreak>=3){fireHoop=swishHoop;fireTime=fireDuration;fireSoundAt=0}}else{swishStreak=0}
 const base=correct?(perfect?150:100):0;
 const buzzerBonus=correct&&buzzerShot?50:0;
 const points=base+buzzerBonus;
 status.textContent=correct?(buzzerShot?'BUZZER BEATER! '+(perfect?'SWISH! ':'')+'+'+points+' ('+base+' + 50 buzzer bonus)':perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100'):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+questions[idx][2]);
 if(correct){score+=points;scoreEl.textContent='SCORE '+score}
-if(correct&&perfect&&swishStreak>=3){status.textContent+=' 🔥 ON FIRE! '+swishStreak+' SWISH STREAK';sound('fire')}
+if(correct&&perfect&&swishStreak>=3){status.textContent+=' 🔥 ON FIRE! '+swishStreak+' SWISH STREAK'}
 else if(!correct)sound('miss');
 }
 function updateClock(){
@@ -129,14 +129,22 @@ const topY=y+3,bottomY=y+26+stretch;
 const netX=(t)=>x+sway*t*t;
 const netY=(t)=>topY+(bottomY-topY)*t;
 const netHalf=(t)=>17-7*t+impulse*3*Math.sin(Math.PI*t);
-ctx.strokeStyle='rgba(247,250,250,.9)';ctx.lineWidth=1.25;
+// The nylon actually burns away from the bottom upward: char, break, disappear.
+const burning=fireTime>0&&fireHoop===hoopIndex;
+const burn=burning?Math.min(1,(fireDuration-fireTime)/1.85):0;
+const visibleEnd=1-burn;
+ctx.lineWidth=1.25;
 for(let j=0;j<=6;j++){
-const u=j/6;
+const u=j/6,cut=Math.max(0,visibleEnd-.04*Math.sin(j*2.8+flameClock*8));
+if(cut<.025)continue;
+ctx.strokeStyle=burning?'rgba(255,'+Math.round(235-145*burn)+','+Math.round(205-185*burn)+','+(1-.3*burn)+')':'rgba(247,250,250,.9)';
 ctx.beginPath();ctx.moveTo(x-17+34*u,topY);
-ctx.quadraticCurveTo(netX(.55)+(u*2-1)*netHalf(.55),netY(.55),netX(1)+(u*2-1)*netHalf(1),bottomY);ctx.stroke();
+ctx.quadraticCurveTo(netX(cut*.55)+(u*2-1)*netHalf(cut*.55),netY(cut*.55),netX(cut)+(u*2-1)*netHalf(cut),netY(cut));ctx.stroke();
 }
 for(let row=0;row<4;row++){
 const t=row/4,nt=(row+1)/4;
+if(nt>visibleEnd)continue;
+ctx.strokeStyle=burning?'rgba(255,'+Math.round(230-150*burn)+','+Math.round(170-155*burn)+',.95)':'rgba(247,250,250,.9)';
 for(let j=0;j<6;j++){
 const u=j/6,un=(j+1)/6;
 ctx.beginPath();
@@ -147,21 +155,28 @@ ctx.lineTo(netX(nt)+(u*2-1)*netHalf(nt),netY(nt));
 ctx.stroke();
 }
 }
-// Animated flame tongues rise from the woven net after three clean swishes.
-if(fireTime>0&&fireHoop===hoopIndex){
+// Flames cling to the shrinking lower edge, with glowing embers and smoke.
+if(burning){
 ctx.save();ctx.globalCompositeOperation='screen';
-for(let f=0;f<11;f++){
-const fx=x-17+f*3.4;
-const wave=Math.sin(flameClock*13+f*1.7);
-const height=10+5*(.5+.5*wave)+((f*7)%5);
-const base=y+12+(f%3)*4;
-const drift=Math.sin(flameClock*8+f)*3;
-ctx.beginPath();ctx.moveTo(fx-3,base);ctx.quadraticCurveTo(fx-5+drift,base-height*.45,fx+drift,base-height);
-ctx.quadraticCurveTo(fx+5+drift,base-height*.4,fx+3,base);ctx.closePath();
-ctx.fillStyle=f%3===0?'rgba(255,213,65,.9)':f%3===1?'rgba(255,111,21,.87)':'rgba(255,58,12,.78)';
-ctx.fill();
+const edgeY=netY(visibleEnd);
+for(let f=0;f<13;f++){
+const fx=netX(visibleEnd)+(f/12*2-1)*netHalf(visibleEnd);
+const wave=Math.sin(flameClock*18+f*2.1);
+const height=8+9*(.5+.5*wave)+burn*7;
+const drift=Math.sin(flameClock*11+f)*3;
+ctx.beginPath();ctx.moveTo(fx-2.5,edgeY+2);
+ctx.quadraticCurveTo(fx-5+drift,edgeY-height*.4,fx+drift,edgeY-height);
+ctx.quadraticCurveTo(fx+5+drift,edgeY-height*.4,fx+2.5,edgeY+2);
+ctx.closePath();ctx.fillStyle=f%3===0?'rgba(255,227,65,.95)':f%3===1?'rgba(255,122,17,.9)':'rgba(255,52,9,.8)';ctx.fill();
 }
 ctx.restore();
+for(let p=0;p<9;p++){
+const rise=((flameClock*.65+p*.137)%1);
+const px=x+Math.sin(p*19+flameClock*3)*12;
+const py=edgeY-5-rise*28;
+ctx.fillStyle=p%3===0?'rgba(255,184,55,.8)':'rgba(105,111,113,.38)';
+ctx.beginPath();ctx.arc(px,py,p%3===0?1.3:2.2,0,Math.PI*2);ctx.fill();
+}
 }
 // Orange steel rim with highlight and shaded underside.
 ctx.strokeStyle='#9b471d';ctx.lineWidth=4.5;ctx.beginPath();ctx.ellipse(x,y+1,20,5,0,0,Math.PI*2);ctx.stroke();
@@ -174,7 +189,7 @@ ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origi
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
 ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +200':'SWISH! +150'):(buzzerShot?'BUZZER! +150':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
 let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
-flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);if(fireTime===0)fireHoop=-1}
+flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.36}if(fireTime===0)fireHoop=-1}
 if(phase==='shoot'||phase==='swish'||phase==='result'){
 remaining-=dt;
 if(phase==='shoot'&&remaining>0&&remaining<=10){const tick=Math.ceil(remaining);if(tick!==lastTick){lastTick=tick;sound('tick')}}
