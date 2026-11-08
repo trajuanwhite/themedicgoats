@@ -39,7 +39,30 @@ canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot'||ball.active)return
 canvas.addEventListener('pointermove',e=>{if(drag){e.preventDefault();drag=point(e)}});
 canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);ball.vx=Math.max(-15,Math.min(15,dx*power*.12));ball.vy=Math.max(-19,Math.min(-5,dy*power*.15));ball.active=true;ball.age=0;ball.touchedRim=false;attempts++;status.textContent='Shot '+attempts+' — follow the ball!'});
 canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchend',e=>e.preventDefault(),{passive:false});start.addEventListener('click',begin);
-function drawHoop(x,y,label,correct){ctx.lineWidth=3;ctx.strokeStyle='#d4eeee';ctx.strokeRect(x-23,y-28,46,24);ctx.strokeStyle='#ff9c54';ctx.beginPath();ctx.ellipse(x,y,20,5,0,0,Math.PI*2);ctx.stroke();ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x-17,y+3);ctx.lineTo(x-10,y+23);ctx.lineTo(x+10,y+23);ctx.lineTo(x+17,y+3);ctx.moveTo(x-17,y+3);ctx.lineTo(x+10,y+23);ctx.moveTo(x+17,y+3);ctx.lineTo(x-10,y+23);ctx.stroke();ctx.fillStyle=correct?'#7ff2cb':'#fff';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-38)}
+function drawHoop(x,y,label,correct){
+ctx.save();
+// Steel-framed glass backboard with inner target square and soft reflection.
+ctx.fillStyle='rgba(225,249,251,.14)';ctx.fillRect(x-25,y-33,50,29);
+ctx.strokeStyle='#d9f0f3';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
+ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=1;ctx.strokeRect(x-9,y-21,18,13);
+ctx.beginPath();ctx.moveTo(x-21,y-30);ctx.lineTo(x-13,y-30);ctx.lineTo(x-21,y-20);ctx.stroke();
+// Tapered woven net: vertical cords and crossing diagonals.
+const topY=y+3,bottomY=y+26;
+ctx.strokeStyle='rgba(247,250,250,.9)';ctx.lineWidth=1.25;
+for(let j=0;j<=6;j++){
+let tx=x-17+j*34/6,bx=x-10+j*20/6;
+ctx.beginPath();ctx.moveTo(tx,topY);ctx.lineTo(bx,bottomY);ctx.stroke();
+}
+for(let row=0;row<4;row++){
+let yy=topY+row*5.6,half=17-row*1.7,nextHalf=half-1.7;
+ctx.beginPath();for(let j=0;j<6;j++){let x1=x-half+j*2*half/6,x2=x-nextHalf+(j+1)*2*nextHalf/6;ctx.moveTo(x1,yy);ctx.lineTo(x2,yy+5.6);ctx.moveTo(x1+2*half/6,yy);ctx.lineTo(x-nextHalf+j*2*nextHalf/6,yy+5.6)}ctx.stroke();
+}
+// Orange steel rim with highlight and shaded underside.
+ctx.strokeStyle='#9b471d';ctx.lineWidth=4.5;ctx.beginPath();ctx.ellipse(x,y+1,20,5,0,0,Math.PI*2);ctx.stroke();
+ctx.strokeStyle='#ffad51';ctx.lineWidth=2.7;ctx.beginPath();ctx.ellipse(x,y-1,20,5,0,0,Math.PI*2);ctx.stroke();
+ctx.fillStyle=correct?'#7ff2cb':'#fff';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-40);
+ctx.restore();
+}
 function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#547a80';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===questions[idx]?.[2])}
 ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
@@ -61,16 +84,18 @@ ball.age+=k;ball.vy+=.34*k;ball.x+=ball.vx*k;ball.y+=ball.vy*k;
 for(let i=0;i<4;i++){
 const h=spots[order[i]];
 // Score only when the ball crosses downward through the center of the rim.
-if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<13){
-swishCorrect=i===questions[idx][2];swishPerfect=!ball.touchedRim;swishHoop=i;phase='swish';remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=swishPerfect?'Clean swish!':'Through the hoop!';return;
+if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<12){
+// A near-rim shot can still score, but it is not a clean swish.
+if(Math.abs(ball.x-h.x)>6||Math.abs(ball.vx)>2.2)ball.touchedRim=true;
+swishCorrect=i===questions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=swishPerfect?'Clean swish!':'Through the hoop!';return;
 }
 // Soft collision with the rim edges rather than teleporting through them.
 if(ball.vy>0 && oldY<=h.y+11){for(const edge of [-20,20]){
 const rx=h.x+edge,ry=h.y,dx=ball.x-rx,dy=ball.y-ry,d=Math.hypot(dx,dy);
-if(d>0&&d<11){ball.touchedRim=true;
+if(d>0&&d<14){ball.touchedRim=true;
 const nx=dx/d,ny=dy/d,dot=ball.vx*nx+ball.vy*ny;
 if(dot<0){ball.vx=(ball.vx-1.65*dot*nx)*.85;ball.vy=(ball.vy-1.65*dot*ny)*.85}
-ball.x=rx+nx*11;ball.y=ry+ny*11;
+ball.x=rx+nx*14;ball.y=ry+ny*14;
 }
 }}
 }
