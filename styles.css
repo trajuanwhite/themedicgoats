@@ -361,3 +361,10 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 
 /* Compact CTA only on the homepage giveaway slide. */
 #homeFeatureHero.giveaway-active #giveawayFeature .btn{font-size:13px;padding:9px 15px;min-height:0;line-height:1.25;border-radius:8px}
+
+/* Rapid Hoops homepage card: noninteractive snapshot of the actual game page */
+.home-hoops-preview{position:relative;height:300px;padding:0;background:#e6dbca;overflow:hidden;isolation:isolate}
+.home-hoops-preview iframe{position:absolute;left:50%;top:0;width:650px;height:730px;border:0;transform:translateX(-50%) scale(.68);transform-origin:top center;pointer-events:none}
+.home-hoops-preview-link{position:absolute;inset:0;z-index:1;cursor:pointer}
+.home-hoops-preview-link:focus-visible{outline:3px solid #a66b48;outline-offset:-4px}
+@media(max-width:700px){.home-hoops-preview{height:280px}.home-hoops-preview iframe{transform:translateX(-50%) scale(.63)}}
