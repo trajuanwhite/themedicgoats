@@ -31,9 +31,9 @@ const W=360,H=360;canvas.width=720;canvas.height=720;ctx.setTransform(2,0,0,2,0,
 let phase='ready',idx=0,score=0,remaining=0,last=performance.now(),drag=null,attempts=0,ball={x:180,y:314,vx:0,vy:0,active:false,age:0},hit=false,order=[0,1,2,3];
 function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,touchedRim:false};drag=null}
 function next(){if(idx>=questions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='Play Again';start.hidden=false;return}
-phase='read';remaining=7;attempts=0;hit=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=questions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent='QUESTION '+(idx+1)+'/20';status.textContent='Read the question';start.hidden=true}
+phase='read';remaining=7;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=questions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent='QUESTION '+(idx+1)+'/20';status.textContent='Read the question';start.hidden=true}
 function begin(){idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
-function finish(correct,perfect=false){if(phase!=='shoot'&&phase!=='swish')return;phase='result';remaining=1.8;const points=correct?(perfect?150:100):0;status.textContent=correct?(perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100'):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+questions[idx][2]);if(correct){score+=points;scoreEl.textContent='SCORE '+score}}
+function finish(correct,perfect=false){if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;phase='result';remaining=1.8;const points=correct?(perfect?150:100):0;status.textContent=correct?(buzzerShot?(perfect?'BUZZER BEATER! SWISH! +150':'BUZZER BEATER! +100'):(perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100')):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+questions[idx][2]);if(correct){score+=points;scoreEl.textContent='SCORE '+score}}
 function point(e){let r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot'||ball.active)return;e.preventDefault();let p=point(e);if(Math.hypot(p.x-ball.x,p.y-ball.y)<65){drag=p;canvas.setPointerCapture(e.pointerId)}});
 canvas.addEventListener('pointermove',e=>{if(drag){e.preventDefault();drag=point(e)}});
@@ -66,17 +66,17 @@ ctx.restore();
 function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#547a80';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===questions[idx]?.[2])}
 ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
-ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?'SWISH! +150':'BUCKET! +100',h.x,Math.max(16,h.y-52))}}
-let swishCorrect=false,swishPerfect=false,swishHoop=-1;function update(dt){
+ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +150':'SWISH! +150'):(buzzerShot?'BUZZER! +100':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
+let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
 if(phase==='read'||phase==='shoot'||phase==='swish'||phase==='result'){
 remaining-=dt;clock.textContent=Math.max(0,Math.ceil(remaining))+'s';
 if(remaining<=0){
 if(phase==='read'){phase='shoot';remaining=10;status.textContent='Pull back and release!'}
-else if(phase==='shoot'){finish(false)}else if(phase==='swish'){finish(swishCorrect,swishPerfect)}
+else if(phase==='shoot'){if(ball.active){phase='buzzer';remaining=0;buzzerShot=true;status.textContent='BUZZER BEATER! Ball is still live!'}else{finish(false)}}else if(phase==='swish'){finish(swishCorrect,swishPerfect)}
 else{idx++;next()}
 }}
 if(phase==='swish'&&ball.active){ball.y+=Math.max(1,ball.vy)*dt*60;ball.x+=ball.vx*dt*35;ball.vy+=.22*dt*60;}
-if(phase==='shoot'&&ball.active){
+if((phase==='shoot'||phase==='buzzer')&&ball.active){
 const steps=Math.max(1,Math.ceil(dt*60));
 for(let step=0;step<steps;step++){
 const k=dt*60/steps,oldY=ball.y,oldX=ball.x;
@@ -87,7 +87,7 @@ const h=spots[order[i]];
 if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<12){
 // A near-rim shot can still score, but it is not a clean swish.
 if(Math.abs(ball.x-h.x)>6||Math.abs(ball.vx)>2.2)ball.touchedRim=true;
-swishCorrect=i===questions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=swishPerfect?'Clean swish!':'Through the hoop!';return;
+swishCorrect=i===questions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=buzzerShot?'BUZZER BEATER!':(swishPerfect?'Clean swish!':'Through the hoop!');return;
 }
 // Soft collision with the rim edges rather than teleporting through them.
 if(ball.vy>0 && oldY<=h.y+11){for(const edge of [-20,20]){
@@ -102,7 +102,7 @@ ball.x=rx+nx*14;ball.y=ry+ny*14;
 if(ball.x<10){ball.x=10;ball.vx=Math.abs(ball.vx)*.55}
 if(ball.x>350){ball.x=350;ball.vx=-Math.abs(ball.vx)*.55}
 if(ball.y>335){ball.y=335;ball.vy=-Math.abs(ball.vy)*.4;ball.vx*=.75}
-if(ball.age>100||(ball.y>=334&&Math.abs(ball.vy)<1.5)){resetBall();status.textContent='Missed — pull back for another shot';return}
+if(ball.age>100||(ball.y>=334&&Math.abs(ball.vy)<1.5)){resetBall();if(phase==='buzzer'){finish(false)}else{status.textContent='Missed — pull back for another shot'}return}
 }
 }}
 function frame(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(frame)}requestAnimationFrame(frame);
