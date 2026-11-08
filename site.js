@@ -115,6 +115,7 @@ function training(){
  #trainingLeadersStrip > span.is-active{opacity:1;visibility:visible;transform:translateX(0);pointer-events:auto}
  @media(prefers-reduced-motion:reduce){#trainingLeadersStrip > span{transition:none;transform:none}}
  </style>
+ <section class="feature-card" aria-label="Rapid Hoops game" style="margin-bottom:22px"><div class="feature-copy"><span class="eyebrow">NEW GAME • EMS BASKETBALL</span><h2>Rapid Hoops 🏀</h2><p>Answer EMS questions by shooting into the correct hoop. Build three perfect shots to ignite the ball, burn the net, and earn double points while on fire.</p><div class="row mobile"><a class="btn light" href="/rapid-hoops.html" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid Hoops →</a></div></div><div class="feature-copy" style="display:flex;align-items:center;justify-content:center;min-height:150px;text-align:center"><div><div style="font-size:64px;line-height:1.2">🏀🔥</div><strong>SHOOT • SWISH • SCORE</strong><p>Rookie • Pro • Hall of Fame</p></div></div></section>
  <section class="training-leaderboards" aria-label="Game leaders" style="padding:16px 18px;margin-bottom:22px;width:100%;max-width:100%;box-sizing:border-box;text-align:center">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
  <div style="flex:1;min-width:0;text-align:center"><div class="kicker">LEADERBOARD • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="margin-top:10px">
