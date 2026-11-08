@@ -1,8 +1,38 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Rapid Hoops | The Medic Goats</title><style>
-*{box-sizing:border-box}html{overscroll-behavior:none}body{margin:0;overscroll-behavior:none;background:#071e25;color:#eaf8f6;font-family:system-ui,-apple-system,sans-serif}main{max-width:650px;margin:auto;padding:14px}header{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#67e2ce}.tag{font-size:12px;border:1px solid #377b7e;border-radius:20px;padding:6px 10px}.question{background:#16343e;padding:16px;border-radius:16px;text-align:center;min-height:115px;margin:12px 0}.question strong{display:block;font-size:18px;margin-bottom:10px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}.answer{background:#20434b;border-radius:8px;padding:8px;font-size:13px;min-height:43px}.answer b{color:#75f1dc}#game{width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain;display:block;background:linear-gradient(#102f3b,#0a232b);border-radius:14px}button{background:#62dfca;border:0;border-radius:12px;color:#07272a;font-size:17px;font-weight:800;padding:14px 26px;cursor:pointer}.controls{text-align:center;margin:12px;display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap}.controls #soundToggle{background:#183d45;color:#bff5ec;border:1px solid #4c8e91;padding:12px 16px;font-size:14px}#status{text-align:center;font-weight:700;min-height:25px}.muted{color:#a2c4c6;font-size:13px;text-align:center}#stats{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin:10px 0}#clock{display:inline-flex;align-items:center;justify-content:center;min-width:94px;padding:7px 10px;border:3px solid #72888b;border-radius:7px;background:#080c12;box-shadow:inset 0 0 0 2px #172c32,0 3px 0 #20363b;color:#ff493e;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:23px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums;text-shadow:0 0 9px rgba(255,67,51,.65)}.shotclock-wrap{display:flex;justify-content:center;align-items:center;margin:10px 0 6px}#clock.reading{color:#ffce63;text-shadow:0 0 8px rgba(255,206,99,.55)}#clock.expiring{animation:clockflash .45s infinite alternate}#clock.buzzer{color:#ff3e35;box-shadow:inset 0 0 0 2px #592420,0 0 15px rgba(255,48,34,.45)}@keyframes clockflash{from{opacity:1}to{opacity:.5}}@media(max-width:420px){main{padding:8px}.question{padding:10px;min-height:96px}.question strong{font-size:16px}}
- .difficulty-picker{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0}.difficulty-picker button{padding:9px 12px;font-size:12px;background:#173b44;color:#d7f3ef;border:1px solid #4c777e}.difficulty-picker button.selected{background:#66e0cb;color:#08252b;border-color:#66e0cb}.difficulty-picker button:disabled{opacity:.55;cursor:default}</style></head><body><main><header><span>THE MEDIC GOATS</span><span class="tag">RAPID HOOPS · TEST</span></header><div id="stats"><span id="progress">QUESTION 0/20</span><span id="score">SCORE 0</span></div><section class="question"><strong id="question">Pull back and release to shoot into the correct answer hoop.</strong><div class="answers" id="answers"><div class="answer">A · </div><div class="answer">B · </div><div class="answer">C · </div><div class="answer">D · </div></div></section><div class="difficulty-picker" id="difficultyPicker" role="group" aria-label="Game difficulty"><button type="button" data-difficulty="rookie" class="selected">Rookie · 24s</button><button type="button" data-difficulty="pro">Pro · 20s</button><button type="button" data-difficulty="hof">Hall of Fame · 16s</button></div><div class="shotclock-wrap"><span id="clock">READY</span></div><canvas id="game" width="360" height="360" aria-label="Basketball game with four answer hoops"></canvas><div id="status">Ready to play</div><div class="controls"><button id="start">Start Game</button><button id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button></div><p class="muted">Choose Rookie (24s), Pro (20s), or Hall of Fame (16s) · drag backward from the basketball and release. This is a private gameplay prototype, not a protocol reference.</p></main><script>
+:root{--bg:#f4f1eb;--ink:#17130f;--muted:#6d675f;--line:#ddd6cc;--cream:#f1e7d8;--clay:#a66b48;--olive:#72735b;--dark:#17130f}
+*{box-sizing:border-box}
+html{overscroll-behavior:none}
+body{margin:0;overscroll-behavior:none;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:650px;margin:auto;padding:18px 16px 28px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:950;letter-spacing:.08em;color:var(--ink);font-size:13px;padding:8px 0 16px;border-bottom:1px solid var(--line)}
+.tag{font-size:10px;letter-spacing:.09em;border:1px solid #bdb1a2;border-radius:30px;padding:8px 11px;color:#62594e;background:#ebe5db;white-space:nowrap}
+#stats{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.06em;color:#645b50;margin:17px 0 12px}
+#score{color:#17130f;background:#e6dfd3;padding:8px 12px;border-radius:10px}
+.question{background:#fff;padding:20px;border:1px solid var(--line);border-radius:22px;text-align:center;min-height:115px;margin:0 0 15px;box-shadow:0 7px 26px rgba(39,30,19,.035)}
+.question strong{display:block;font-size:clamp(17px,3.7vw,21px);letter-spacing:-.025em;line-height:1.28;margin-bottom:16px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.answer{background:#f7f4ee;border:1px solid #e6ded2;border-radius:12px;padding:11px 10px;font-size:13px;line-height:1.35;min-height:49px;text-align:left;color:#312b25}
+.answer b{color:#8e5539;font-weight:950}
+button{background:#17130f;border:1px solid #17130f;border-radius:13px;color:#fff;font-size:15px;font-weight:850;padding:13px 23px;cursor:pointer;font-family:inherit}
+.controls{text-align:center;margin:15px 0 8px;display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap}
+.controls #soundToggle{background:#eee7dc;color:#40362c;border:1px solid #d5cbbd;padding:12px 16px;font-size:13px}
+#status{text-align:center;font-weight:800;min-height:35px;padding:11px 6px 2px;color:#514638;font-size:13px;line-height:1.4}
+.muted{color:var(--muted);font-size:12px;text-align:center;line-height:1.6;margin-top:15px}
+#game{width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain;display:block;background:linear-gradient(180deg,#e8e0d2 0%,#e0d4c3 70%,#d3c1a9 100%);border:1px solid #cbb9a4;border-radius:18px;box-shadow:0 12px 30px rgba(62,43,27,.09)}
+#clock{display:inline-flex;align-items:center;justify-content:center;min-width:104px;padding:8px 13px;border:3px solid #81766a;border-radius:9px;background:#211c19;box-shadow:inset 0 0 0 2px #42372e,0 4px 0 #b6a99b;color:#ed7658;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:24px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums;text-shadow:0 0 7px rgba(237,118,88,.4)}
+.shotclock-wrap{display:flex;justify-content:center;align-items:center;margin:12px 0 11px}
+#clock.reading{color:#edc27e;text-shadow:0 0 8px rgba(237,194,126,.4)}
+#clock.expiring{animation:clockflash .45s infinite alternate}
+#clock.buzzer{color:#ff695b;box-shadow:inset 0 0 0 2px #592420,0 0 12px rgba(199,80,61,.3)}
+@keyframes clockflash{from{opacity:1}to{opacity:.5}}
+.difficulty-picker{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.difficulty-picker button{padding:10px 13px;font-size:12px;background:#e9e2d8;color:#4e443a;border:1px solid #d1c5b6}
+.difficulty-picker button.selected{background:#17130f;color:#fff;border-color:#17130f}
+.difficulty-picker button:disabled{opacity:.55;cursor:default}
+@media(max-width:420px){main{padding:10px 10px 24px}.question{padding:14px;min-height:96px}.question strong{font-size:17px}.answer{padding:9px;font-size:12px}.difficulty-picker button{padding:9px 10px}}
+</style></head><body><main><header><span>THE MEDIC GOATS</span><span class="tag">RAPID HOOPS · TEST</span></header><div id="stats"><span id="progress">QUESTION 0/20</span><span id="score">SCORE 0</span></div><section class="question"><strong id="question">Pull back and release to shoot into the correct answer hoop.</strong><div class="answers" id="answers"><div class="answer">A · </div><div class="answer">B · </div><div class="answer">C · </div><div class="answer">D · </div></div></section><div class="difficulty-picker" id="difficultyPicker" role="group" aria-label="Game difficulty"><button type="button" data-difficulty="rookie" class="selected">Rookie · 24s</button><button type="button" data-difficulty="pro">Pro · 20s</button><button type="button" data-difficulty="hof">Hall of Fame · 16s</button></div><div class="shotclock-wrap"><span id="clock">READY</span></div><canvas id="game" width="360" height="360" aria-label="Basketball game with four answer hoops"></canvas><div id="status">Ready to play</div><div class="controls"><button id="start">Start Game</button><button id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button></div><p class="muted">Choose Rookie (24s), Pro (20s), or Hall of Fame (16s) · drag backward from the basketball and release. This is a private gameplay prototype, not a protocol reference.</p></main><script>
 (()=>{'use strict';
 const questions=[
 ['Which medication is a selective beta-2 agonist?',['Atropine','Albuterol','Amiodarone','Adenosine'],1],
@@ -119,9 +149,9 @@ canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('
 function drawHoop(x,y,label,correct,hoopIndex){
 ctx.save();
 // Steel-framed glass backboard with inner target square and soft reflection.
-ctx.fillStyle='rgba(225,249,251,.14)';ctx.fillRect(x-25,y-33,50,29);
-ctx.strokeStyle='#d9f0f3';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
-ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=1;ctx.strokeRect(x-9,y-21,18,13);
+ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillRect(x-25,y-33,50,29);
+ctx.strokeStyle='#817569';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
+ctx.strokeStyle='rgba(95,77,60,.42)';ctx.lineWidth=1;ctx.strokeRect(x-9,y-21,18,13);
 ctx.beginPath();ctx.moveTo(x-21,y-30);ctx.lineTo(x-13,y-30);ctx.lineTo(x-21,y-20);ctx.stroke();
 // Tapered woven net: vertical cords and crossing diagonals.
 const activeNet=phase==='swish'&&swishHoop===hoopIndex;
@@ -141,14 +171,14 @@ ctx.lineWidth=1.25;
 for(let j=0;j<=6;j++){
 const u=j/6,cut=Math.max(0,visibleEnd-.04*Math.sin(j*2.8+flameClock*8));
 if(cut<.025)continue;
-ctx.strokeStyle=burning?'rgba(255,'+Math.round(235-145*burn)+','+Math.round(205-185*burn)+','+(1-.3*burn)+')':'rgba(247,250,250,.9)';
+ctx.strokeStyle=burning?'rgba(255,'+Math.round(235-145*burn)+','+Math.round(205-185*burn)+','+(1-.3*burn)+')':'rgba(255,252,246,.95)';
 ctx.beginPath();ctx.moveTo(x-17+34*u,topY);
 ctx.quadraticCurveTo(netX(cut*.55)+(u*2-1)*netHalf(cut*.55),netY(cut*.55),netX(cut)+(u*2-1)*netHalf(cut),netY(cut));ctx.stroke();
 }
 for(let row=0;row<4;row++){
 const t=row/4,nt=(row+1)/4;
 if(nt>visibleEnd)continue;
-ctx.strokeStyle=burning?'rgba(255,'+Math.round(230-150*burn)+','+Math.round(170-155*burn)+',.95)':'rgba(247,250,250,.9)';
+ctx.strokeStyle=burning?'rgba(255,'+Math.round(230-150*burn)+','+Math.round(170-155*burn)+',.95)':'rgba(255,252,246,.95)';
 for(let j=0;j<6;j++){
 const u=j/6,un=(j+1)/6;
 ctx.beginPath();
@@ -183,15 +213,15 @@ ctx.beginPath();ctx.arc(px,py,p%3===0?1.3:2.2,0,Math.PI*2);ctx.fill();
 }
 }
 // Orange steel rim with highlight and shaded underside.
-ctx.strokeStyle='#9b471d';ctx.lineWidth=4.5;ctx.beginPath();ctx.ellipse(x,y+1,20,5,0,0,Math.PI*2);ctx.stroke();
-ctx.strokeStyle='#ffad51';ctx.lineWidth=2.7;ctx.beginPath();ctx.ellipse(x,y-1,20,5,0,0,Math.PI*2);ctx.stroke();
-ctx.fillStyle=correct?'#7ff2cb':'#fff';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-40);
+ctx.strokeStyle='#8e4d2d';ctx.lineWidth=4.5;ctx.beginPath();ctx.ellipse(x,y+1,20,5,0,0,Math.PI*2);ctx.stroke();
+ctx.strokeStyle='#c67b46';ctx.lineWidth=2.7;ctx.beginPath();ctx.ellipse(x,y-1,20,5,0,0,Math.PI*2);ctx.stroke();
+ctx.fillStyle=correct?'#536b46':'#33271f';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-40);
 ctx.restore();
 }
-function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#547a80';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===activeQuestions[idx]?.[2],i)}
-ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
-if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
-ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +200':'SWISH! +150'):(buzzerShot?'BUZZER! +150':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
+function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#bba993';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===activeQuestions[idx]?.[2],i)}
+ctx.strokeStyle='#756b5e';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
+if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#84674f';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
+ctx.fillStyle='#b66d3b';ctx.strokeStyle='#573a27';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#33271f';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +200':'SWISH! +150'):(buzzerShot?'BUZZER! +150':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
 let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
 flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.36}if(fireTime===0)fireHoop=-1}
 if(phase==='shoot'||phase==='swish'||phase==='result'){
