@@ -32,7 +32,7 @@ let difficulty='rookie',activeQuestions=questions;
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),start=document.getElementById('start'),status=document.getElementById('status'),qEl=document.getElementById('question'),aEl=document.getElementById('answers'),progress=document.getElementById('progress'),scoreEl=document.getElementById('score'),clock=document.getElementById('clock');
 const difficultyButtons=[...document.querySelectorAll('[data-difficulty]')];difficultyButtons.forEach(btn=>btn.addEventListener('click',()=>{if(phase!=='ready'&&phase!=='done')return;difficulty=btn.dataset.difficulty;difficultyButtons.forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn))});status.textContent=difficultySettings[difficulty].label+' — '+difficultySettings[difficulty].seconds+' seconds per shot';}));
 const W=360,H=360;canvas.width=720;canvas.height=720;ctx.setTransform(2,0,0,2,0,0);const origin={x:180,y:314},spots=[{x:45,y:135},{x:135,y:88},{x:225,y:110},{x:315,y:65}];
-let phase='ready',idx=0,score=0,remaining=0,last=performance.now(),drag=null,attempts=0,ball={x:180,y:314,vx:0,vy:0,active:false,age:0},hit=false,order=[0,1,2,3];
+let shots=[],answerLocked=false,roundPoints=0,roundMade=0,roundEnded=false;let phase='ready',idx=0,score=0,remaining=0,last=performance.now(),drag=null,attempts=0,ball={x:180,y:314,vx:0,vy:0,active:false,age:0},hit=false,order=[0,1,2,3];
 
 // Lightweight original game audio, synthesized locally with Web Audio (no downloads).
 let audioCtx=null,soundEnabled=true,lastTick=-1;
@@ -85,36 +85,41 @@ if(soundEnabled){unlockAudio();sound('start')}
 });
 function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,touchedRim:false};drag=null}
 function next(){if(idx>=activeQuestions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='Play Again';start.hidden=false;difficultyButtons.forEach(b=>b.disabled=false);return}
-phase='shoot';remaining=difficultySettings[difficulty].seconds;lastTick=-1;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=activeQuestions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent=difficultySettings[difficulty].label.toUpperCase()+' · QUESTION '+(idx+1)+'/'+activeQuestions.length;status.textContent=difficultySettings[difficulty].seconds+' seconds — read, aim, and shoot!';start.hidden=true}
+phase='shoot';remaining=difficultySettings[difficulty].seconds;lastTick=-1;attempts=0;hit=false;buzzerShot=false;shots=[];answerLocked=false;roundPoints=0;roundMade=0;roundEnded=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=activeQuestions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent=difficultySettings[difficulty].label.toUpperCase()+' · QUESTION '+(idx+1)+'/'+activeQuestions.length;status.textContent=difficultySettings[difficulty].seconds+' seconds — score in the correct hoop to unlock rapid-fire shots!';start.hidden=true}
 function begin(){activeQuestions=[...questionBanks[difficulty]].sort(()=>Math.random()-.5);difficultyButtons.forEach(b=>b.disabled=true);unlockAudio();sound('start');lastTick=-1;swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
 let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0;
-function finish(correct,perfect=false){
-if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
-phase='result';remaining=1.8;
-if(correct&&perfect){swishStreak++;if(swishStreak>=3){fireHoop=swishHoop;fireTime=fireDuration;fireSoundAt=0}}else{swishStreak=0}
-const base=correct?(perfect?150:100):0;
-const buzzerBonus=correct&&buzzerShot?50:0;
-const points=base+buzzerBonus;
-status.textContent=correct?(buzzerShot?'BUZZER BEATER! '+(perfect?'SWISH! ':'')+'+'+points+' ('+base+' + 50 buzzer bonus)':perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100'):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+activeQuestions[idx][2]);
-if(correct){score+=points;scoreEl.textContent='SCORE '+score}
-if(correct&&perfect&&swishStreak>=3){status.textContent+=' 🔥 ON FIRE! '+swishStreak+' SWISH STREAK'}
-else if(!correct)sound('miss');
+function finish(correct=false,perfect=false){
+if(roundEnded||phase==='done'||phase==='ready'||phase==='result')return;
+roundEnded=true;phase='result';remaining=1.8;shots=[];resetBall();
+status.textContent=answerLocked?'ROUND OVER · '+roundMade+' baskets · +'+roundPoints+' points':'Time up or wrong basket — correct answer: '+String.fromCharCode(65+activeQuestions[idx][2]);
+if(!answerLocked)sound('miss');
+}
+function awardBasket(shot,i,perfect){
+const correct=i===activeQuestions[idx][2];
+if(!answerLocked&&!correct){finish(false);return}
+if(!answerLocked){answerLocked=true;status.textContent='CORRECT! RAPID FIRE — keep shooting!'}
+const base=perfect?150:100,bonus=shot.buzzer?50:0,points=base+bonus;
+score+=points;roundPoints+=points;roundMade++;scoreEl.textContent='SCORE '+score;
+if(perfect){swishStreak++;if(swishStreak>=3){fireHoop=i;fireTime=fireDuration;fireSoundAt=0}}else swishStreak=0;
+sound(perfect?'swish':'basket');
+status.textContent=(shot.buzzer?'BUZZER BEATER! ':'')+(perfect?'SWISH! ':'BUCKET! ')+'+'+points+' · '+roundMade+' made · KEEP SHOOTING!';
+if(perfect&&swishStreak>=3)status.textContent+=' 🔥 ON FIRE!';
 }
 function updateClock(){
 clock.className='';
 if(phase==='read')clock.classList.add('reading');
-if(phase==='buzzer'||(buzzerShot&&(phase==='swish'||phase==='result')))clock.classList.add('buzzer');
+if(phase==='buzzer')clock.classList.add('buzzer');
 if(phase==='shoot'&&remaining<=3)clock.classList.add('expiring');
 if(phase==='ready'||phase==='done'){clock.textContent=phase==='ready'?'READY':'END';return}
-if(phase==='buzzer'||(buzzerShot&&(phase==='swish'||phase==='result'))){clock.textContent='00.0';return}
+if(phase==='buzzer'){clock.textContent='00.0';return}
 if(phase==='result'){clock.textContent='00.0';return}
 const t=Math.max(0,remaining);
 clock.textContent=String(Math.floor(t)).padStart(2,'0')+'.'+Math.floor((t%1)*10);
 }
 function point(e){let r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
-canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot'||ball.active)return;e.preventDefault();let p=point(e);if(Math.hypot(p.x-ball.x,p.y-ball.y)<65){drag=p;canvas.setPointerCapture(e.pointerId)}});
+canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot')return;e.preventDefault();let p=point(e);if(Math.hypot(p.x-ball.x,p.y-ball.y)<65){drag=p;canvas.setPointerCapture(e.pointerId)}});
 canvas.addEventListener('pointermove',e=>{if(drag){e.preventDefault();drag=point(e)}});
-canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);ball.vx=Math.max(-15,Math.min(15,dx*power*.12));ball.vy=Math.max(-19,Math.min(-5,dy*power*.15));ball.active=true;ball.age=0;ball.touchedRim=false;attempts++;sound('shoot');status.textContent='Shot '+attempts+' — follow the ball!'});
+canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);const shot={x:origin.x,y:origin.y,vx:Math.max(-15,Math.min(15,dx*power*.12)),vy:Math.max(-19,Math.min(-5,dy*power*.15)),active:true,age:0,touchedRim:false,buzzer:false,scored:false,swishTime:0,swishHoop:-1,perfect:false};shots.push(shot);attempts++;sound('shoot');status.textContent=answerLocked?'RAPID FIRE · '+roundMade+' baskets made':'Shot '+attempts+' — hit the correct hoop to unlock rapid fire!';});
 canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchend',e=>e.preventDefault(),{passive:false});start.addEventListener('click',begin);
 function drawHoop(x,y,label,correct,hoopIndex){
 ctx.save();
@@ -190,47 +195,57 @@ ctx.restore();
 }
 function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#547a80';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===activeQuestions[idx]?.[2],i)}
 ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
-if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
-ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +200':'SWISH! +150'):(buzzerShot?'BUZZER! +150':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
-let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
-flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.36}if(fireTime===0)fireHoop=-1}
-if(phase==='shoot'||phase==='swish'||phase==='result'){
+if(drag){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
+function paintBall(b){ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(b.x,b.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(b.x-10,b.y);ctx.lineTo(b.x+10,b.y);ctx.moveTo(b.x,b.y-10);ctx.lineTo(b.x,b.y+10);ctx.stroke()}
+if(phase==='shoot')paintBall(ball);
+for(const shot of shots)paintBall(shot);
+}
+let buzzerShot=false;
+function update(dt){
+flameClock+=dt;
+if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.36}if(fireTime===0)fireHoop=-1}
+if(phase==='shoot'||phase==='result'){
 remaining-=dt;
 if(phase==='shoot'&&remaining>0&&remaining<=10){const tick=Math.ceil(remaining);if(tick!==lastTick){lastTick=tick;sound('tick')}}
 if(remaining<=0){
-if(phase==='shoot'){sound('buzzer');if(ball.active){phase='buzzer';remaining=0;buzzerShot=true;status.textContent='BUZZER BEATER! Ball is still live!'}else{finish(false)}}else if(phase==='swish'){finish(swishCorrect,swishPerfect)}
-else{idx++;next()}
+if(phase==='shoot'){sound('buzzer');phase='buzzer';remaining=0;shots.forEach(s=>s.buzzer=true);status.textContent='BUZZER! Released shots are still live!';if(!shots.length)finish()}
+else{idx++;next();return}
 }}
-if(phase==='swish'&&ball.active){ball.y+=Math.max(1,ball.vy)*dt*60;ball.x+=ball.vx*dt*35;ball.vy+=.22*dt*60;}
-if((phase==='shoot'||phase==='buzzer')&&ball.active){
-const steps=Math.max(1,Math.ceil(dt*60));
+if(phase!=='shoot'&&phase!=='buzzer')return;
+const scale=dt*60;
+for(const shot of shots){
+if(shot.scored){shot.swishTime-=dt;shot.y+=Math.max(1,shot.vy)*scale;shot.x+=shot.vx*scale*.55;shot.vy+=.22*scale;continue}
+const steps=Math.max(1,Math.ceil(scale));
 for(let step=0;step<steps;step++){
-const k=dt*60/steps,oldY=ball.y,oldX=ball.x;
-ball.age+=k;ball.vy+=.34*k;ball.x+=ball.vx*k;ball.y+=ball.vy*k;
+const k=scale/steps,oldY=shot.y;
+shot.age+=k;shot.vy+=.34*k;shot.x+=shot.vx*k;shot.y+=shot.vy*k;
+let scored=false;
 for(let i=0;i<4;i++){
 const h=spots[order[i]];
-// Score only when the ball crosses downward through the center of the rim.
-if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<12){
-// A near-rim shot can still score, but it is not a clean swish.
-if(Math.abs(ball.x-h.x)>6||Math.abs(ball.vx)>2.2){if(!ball.touchedRim)sound('rim');ball.touchedRim=true;}
-swishCorrect=i===activeQuestions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';sound(swishPerfect?'swish':'basket');remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=buzzerShot?'BUZZER BEATER!':(swishPerfect?'Clean swish!':'Through the hoop!');return;
+if(shot.vy>0&&oldY<=h.y-7&&shot.y>=h.y-7&&Math.abs(shot.x-h.x)<12){
+if(Math.abs(shot.x-h.x)>6||Math.abs(shot.vx)>2.2){if(!shot.touchedRim)sound('rim');shot.touchedRim=true}
+const perfect=!shot.touchedRim&&Math.abs(shot.x-h.x)<=5&&Math.abs(shot.vx)<=2.2;
+shot.scored=true;shot.swishTime=.45;shot.vy=Math.max(2.6,shot.vy);shot.vx*=.22;
+awardBasket(shot,i,perfect);scored=true;break;
 }
-// Soft collision with the rim edges rather than teleporting through them.
-if(ball.vy>0 && oldY<=h.y+11){for(const edge of [-20,20]){
-const rx=h.x+edge,ry=h.y,dx=ball.x-rx,dy=ball.y-ry,d=Math.hypot(dx,dy);
-if(d>0&&d<14){if(!ball.touchedRim)sound('rim');ball.touchedRim=true;
-const nx=dx/d,ny=dy/d,dot=ball.vx*nx+ball.vy*ny;
-if(dot<0){ball.vx=(ball.vx-1.65*dot*nx)*.85;ball.vy=(ball.vy-1.65*dot*ny)*.85}
-ball.x=rx+nx*14;ball.y=ry+ny*14;
-}
-}}
-}
-if(ball.x<10){ball.x=10;ball.vx=Math.abs(ball.vx)*.55}
-if(ball.x>350){ball.x=350;ball.vx=-Math.abs(ball.vx)*.55}
-if(ball.y>335){ball.y=335;ball.vy=-Math.abs(ball.vy)*.4;ball.vx*=.75}
-if(ball.age>100||(ball.y>=334&&Math.abs(ball.vy)<1.5)){resetBall();if(phase==='buzzer'){finish(false)}else{status.textContent='Missed — pull back for another shot'}return}
+if(shot.vy>0&&oldY<=h.y+11){for(const edge of [-20,20]){
+const rx=h.x+edge,ry=h.y,dx=shot.x-rx,dy=shot.y-ry,d=Math.hypot(dx,dy);
+if(d>0&&d<14){if(!shot.touchedRim)sound('rim');shot.touchedRim=true;
+const nx=dx/d,ny=dy/d,dot=shot.vx*nx+shot.vy*ny;
+if(dot<0){shot.vx=(shot.vx-1.65*dot*nx)*.85;shot.vy=(shot.vy-1.65*dot*ny)*.85}
+shot.x=rx+nx*14;shot.y=ry+ny*14;
 }
 }}
+}
+if(scored||roundEnded)break;
+if(shot.x<10){shot.x=10;shot.vx=Math.abs(shot.vx)*.55}
+if(shot.x>350){shot.x=350;shot.vx=-Math.abs(shot.vx)*.55}
+if(shot.y>335){shot.y=335;shot.vy=-Math.abs(shot.vy)*.4;shot.vx*=.75}
+}
+}
+shots=shots.filter(s=>s.scored?s.swishTime>0:!(s.age>100||(s.y>=334&&Math.abs(s.vy)<1.5)));
+if(phase==='buzzer'&&!shots.length)finish();
+}
 function frame(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);updateClock();render();requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();
 </script></body></html>
