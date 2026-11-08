@@ -68,7 +68,7 @@ const clockLabel=document.getElementById('clockLabel');
 function showStartButton(){start.hidden=false;clock.hidden=true;clockLabel.textContent='START GAME'}
 function showShotClock(){start.hidden=true;clock.hidden=false;clockLabel.textContent='SHOT CLOCK'}
 const difficultyButtons=[...document.querySelectorAll('[data-difficulty]')];difficultyButtons.forEach(btn=>btn.addEventListener('click',()=>{if(phase!=='ready'&&phase!=='done')return;difficulty=btn.dataset.difficulty;difficultyButtons.forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn))});status.textContent=difficultySettings[difficulty].label+' — '+difficultySettings[difficulty].seconds+' seconds per shot';}));
-const W=360,H=360;canvas.width=720;canvas.height=720;ctx.setTransform(2,0,0,2,0,0);const origin={x:180,y:314},spots=[{x:45,y:180},{x:135,y:164},{x:225,y:174},{x:315,y:158}];
+const W=360,H=360;canvas.width=720;canvas.height=720;ctx.setTransform(2,0,0,2,0,0);const origin={x:180,y:314},spots=[{x:45,y:168},{x:135,y:152},{x:225,y:162},{x:315,y:146}];
 let phase='ready',idx=0,score=0,remaining=0,last=performance.now(),drag=null,attempts=0,ball={x:180,y:314,vx:0,vy:0,active:false,age:0},hit=false,order=[0,1,2,3];
 
 // Lightweight original game audio, synthesized locally with Web Audio (no downloads).
