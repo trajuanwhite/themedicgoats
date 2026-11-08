@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Rapid Hoops | The Medic Goats</title><style>
-*{box-sizing:border-box}html{overscroll-behavior:none}body{margin:0;overscroll-behavior:none;background:#071e25;color:#eaf8f6;font-family:system-ui,-apple-system,sans-serif}main{max-width:650px;margin:auto;padding:14px}header{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#67e2ce}.tag{font-size:12px;border:1px solid #377b7e;border-radius:20px;padding:6px 10px}.question{background:#16343e;padding:16px;border-radius:16px;text-align:center;min-height:115px;margin:12px 0}.question strong{display:block;font-size:18px;margin-bottom:10px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}.answer{background:#20434b;border-radius:8px;padding:8px;font-size:13px;min-height:43px}.answer b{color:#75f1dc}#game{width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain;display:block;background:linear-gradient(#102f3b,#0a232b);border-radius:14px}button{background:#62dfca;border:0;border-radius:12px;color:#07272a;font-size:17px;font-weight:800;padding:14px 26px;cursor:pointer}.controls{text-align:center;margin:12px}#status{text-align:center;font-weight:700;min-height:25px}.muted{color:#a2c4c6;font-size:13px;text-align:center}#stats{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin:10px 0}#clock{display:inline-flex;align-items:center;justify-content:center;min-width:94px;padding:7px 10px;border:3px solid #72888b;border-radius:7px;background:#080c12;box-shadow:inset 0 0 0 2px #172c32,0 3px 0 #20363b;color:#ff493e;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:23px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums;text-shadow:0 0 9px rgba(255,67,51,.65)}.shotclock-wrap{display:flex;justify-content:center;align-items:center;margin:10px 0 6px}#clock.reading{color:#ffce63;text-shadow:0 0 8px rgba(255,206,99,.55)}#clock.expiring{animation:clockflash .45s infinite alternate}#clock.buzzer{color:#ff3e35;box-shadow:inset 0 0 0 2px #592420,0 0 15px rgba(255,48,34,.45)}@keyframes clockflash{from{opacity:1}to{opacity:.5}}@media(max-width:420px){main{padding:8px}.question{padding:10px;min-height:96px}.question strong{font-size:16px}}
-</style></head><body><main><header><span>THE MEDIC GOATS</span><span class="tag">RAPID HOOPS · TEST</span></header><div id="stats"><span id="progress">QUESTION 0/20</span><span id="score">SCORE 0</span></div><section class="question"><strong id="question">Pull back and release to shoot into the correct answer hoop.</strong><div class="answers" id="answers"><div class="answer">A · </div><div class="answer">B · </div><div class="answer">C · </div><div class="answer">D · </div></div></section><div class="shotclock-wrap"><span id="clock">READY</span></div><canvas id="game" width="360" height="360" aria-label="Basketball game with four answer hoops"></canvas><div id="status">Ready to play</div><div class="controls"><button id="start">Start Game</button></div><p class="muted">24-second shot clock to read and shoot · drag backward from the basketball and release. This is a private gameplay prototype, not a protocol reference.</p></main><script>
+*{box-sizing:border-box}html{overscroll-behavior:none}body{margin:0;overscroll-behavior:none;background:#071e25;color:#eaf8f6;font-family:system-ui,-apple-system,sans-serif}main{max-width:650px;margin:auto;padding:14px}header{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#67e2ce}.tag{font-size:12px;border:1px solid #377b7e;border-radius:20px;padding:6px 10px}.question{background:#16343e;padding:16px;border-radius:16px;text-align:center;min-height:115px;margin:12px 0}.question strong{display:block;font-size:18px;margin-bottom:10px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}.answer{background:#20434b;border-radius:8px;padding:8px;font-size:13px;min-height:43px}.answer b{color:#75f1dc}#game{width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain;display:block;background:linear-gradient(#102f3b,#0a232b);border-radius:14px}button{background:#62dfca;border:0;border-radius:12px;color:#07272a;font-size:17px;font-weight:800;padding:14px 26px;cursor:pointer}.controls{text-align:center;margin:12px;display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap}.controls #soundToggle{background:#183d45;color:#bff5ec;border:1px solid #4c8e91;padding:12px 16px;font-size:14px}#status{text-align:center;font-weight:700;min-height:25px}.muted{color:#a2c4c6;font-size:13px;text-align:center}#stats{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin:10px 0}#clock{display:inline-flex;align-items:center;justify-content:center;min-width:94px;padding:7px 10px;border:3px solid #72888b;border-radius:7px;background:#080c12;box-shadow:inset 0 0 0 2px #172c32,0 3px 0 #20363b;color:#ff493e;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:23px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums;text-shadow:0 0 9px rgba(255,67,51,.65)}.shotclock-wrap{display:flex;justify-content:center;align-items:center;margin:10px 0 6px}#clock.reading{color:#ffce63;text-shadow:0 0 8px rgba(255,206,99,.55)}#clock.expiring{animation:clockflash .45s infinite alternate}#clock.buzzer{color:#ff3e35;box-shadow:inset 0 0 0 2px #592420,0 0 15px rgba(255,48,34,.45)}@keyframes clockflash{from{opacity:1}to{opacity:.5}}@media(max-width:420px){main{padding:8px}.question{padding:10px;min-height:96px}.question strong{font-size:16px}}
+</style></head><body><main><header><span>THE MEDIC GOATS</span><span class="tag">RAPID HOOPS · TEST</span></header><div id="stats"><span id="progress">QUESTION 0/20</span><span id="score">SCORE 0</span></div><section class="question"><strong id="question">Pull back and release to shoot into the correct answer hoop.</strong><div class="answers" id="answers"><div class="answer">A · </div><div class="answer">B · </div><div class="answer">C · </div><div class="answer">D · </div></div></section><div class="shotclock-wrap"><span id="clock">READY</span></div><canvas id="game" width="360" height="360" aria-label="Basketball game with four answer hoops"></canvas><div id="status">Ready to play</div><div class="controls"><button id="start">Start Game</button><button id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button></div><p class="muted">24-second shot clock to read and shoot · drag backward from the basketball and release. This is a private gameplay prototype, not a protocol reference.</p></main><script>
 (()=>{'use strict';
 const questions=[
 ['Which medication is a selective beta-2 agonist?',['Atropine','Albuterol','Amiodarone','Adenosine'],1],
@@ -29,10 +29,48 @@ const questions=[
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),start=document.getElementById('start'),status=document.getElementById('status'),qEl=document.getElementById('question'),aEl=document.getElementById('answers'),progress=document.getElementById('progress'),scoreEl=document.getElementById('score'),clock=document.getElementById('clock');
 const W=360,H=360;canvas.width=720;canvas.height=720;ctx.setTransform(2,0,0,2,0,0);const origin={x:180,y:314},spots=[{x:45,y:135},{x:135,y:88},{x:225,y:110},{x:315,y:65}];
 let phase='ready',idx=0,score=0,remaining=0,last=performance.now(),drag=null,attempts=0,ball={x:180,y:314,vx:0,vy:0,active:false,age:0},hit=false,order=[0,1,2,3];
+
+// Lightweight original game audio, synthesized locally with Web Audio (no downloads).
+let audioCtx=null,soundEnabled=true,lastTick=-1;
+const soundButton=document.getElementById('soundToggle');
+function unlockAudio(){
+if(!soundEnabled)return;
+try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+if(!audioCtx)audioCtx=new AC();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+}catch(e){}
+}
+function tone(freq,duration=.12,type='sine',volume=.12,delay=0,endFreq=null){
+if(!soundEnabled||!audioCtx||audioCtx.state!=='running')return;
+const now=audioCtx.currentTime+delay,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+osc.type=type;osc.frequency.setValueAtTime(freq,now);
+if(endFreq)osc.frequency.exponentialRampToValueAtTime(Math.max(1,endFreq),now+duration);
+gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.012);
+gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+duration+.025);
+}
+function sound(name){
+switch(name){
+case 'shoot':tone(190,.10,'triangle',.13,0,90);break;
+case 'rim':tone(480,.065,'square',.055);tone(280,.095,'triangle',.06,.055);break;
+case 'swish':tone(950,.12,'sine',.085,0,520);tone(1150,.13,'triangle',.065,.08,740);break;
+case 'basket':tone(390,.11,'triangle',.1);tone(590,.16,'triangle',.1,.11);break;
+case 'miss':tone(250,.18,'sawtooth',.045,0,150);break;
+case 'tick':tone(840,.045,'sine',.045);break;
+case 'buzzer':tone(175,.48,'sawtooth',.10);tone(183,.48,'square',.035);break;
+case 'fire':for(let i=0;i<4;i++)tone(520+i*160,.15,'triangle',.08,i*.095);break;
+case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
+}
+}
+soundButton.addEventListener('click',()=>{
+soundEnabled=!soundEnabled;
+soundButton.textContent=soundEnabled?'🔊 Sound On':'🔇 Sound Off';
+soundButton.setAttribute('aria-pressed',String(soundEnabled));
+if(soundEnabled){unlockAudio();sound('start')}
+});
 function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,touchedRim:false};drag=null}
 function next(){if(idx>=questions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='Play Again';start.hidden=false;return}
-phase='shoot';remaining=24;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=questions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent='QUESTION '+(idx+1)+'/20';status.textContent='24 seconds — read, aim, and shoot!';start.hidden=true}
-function begin(){swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
+phase='shoot';remaining=24;lastTick=-1;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=questions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent='QUESTION '+(idx+1)+'/20';status.textContent='24 seconds — read, aim, and shoot!';start.hidden=true}
+function begin(){unlockAudio();sound('start');lastTick=-1;swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
 let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0;
 function finish(correct,perfect=false){
 if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
@@ -43,7 +81,8 @@ const buzzerBonus=correct&&buzzerShot?50:0;
 const points=base+buzzerBonus;
 status.textContent=correct?(buzzerShot?'BUZZER BEATER! '+(perfect?'SWISH! ':'')+'+'+points+' ('+base+' + 50 buzzer bonus)':perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100'):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+questions[idx][2]);
 if(correct){score+=points;scoreEl.textContent='SCORE '+score}
-if(correct&&perfect&&swishStreak>=3)status.textContent+=' 🔥 ON FIRE! '+swishStreak+' SWISH STREAK';
+if(correct&&perfect&&swishStreak>=3){status.textContent+=' 🔥 ON FIRE! '+swishStreak+' SWISH STREAK';sound('fire')}
+else if(!correct)sound('miss');
 }
 function updateClock(){
 clock.className='';
@@ -59,7 +98,7 @@ clock.textContent=String(Math.floor(t)).padStart(2,'0')+'.'+Math.floor((t%1)*10)
 function point(e){let r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot'||ball.active)return;e.preventDefault();let p=point(e);if(Math.hypot(p.x-ball.x,p.y-ball.y)<65){drag=p;canvas.setPointerCapture(e.pointerId)}});
 canvas.addEventListener('pointermove',e=>{if(drag){e.preventDefault();drag=point(e)}});
-canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);ball.vx=Math.max(-15,Math.min(15,dx*power*.12));ball.vy=Math.max(-19,Math.min(-5,dy*power*.15));ball.active=true;ball.age=0;ball.touchedRim=false;attempts++;status.textContent='Shot '+attempts+' — follow the ball!'});
+canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);ball.vx=Math.max(-15,Math.min(15,dx*power*.12));ball.vy=Math.max(-19,Math.min(-5,dy*power*.15));ball.active=true;ball.age=0;ball.touchedRim=false;attempts++;sound('shoot');status.textContent='Shot '+attempts+' — follow the ball!'});
 canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchend',e=>e.preventDefault(),{passive:false});start.addEventListener('click',begin);
 function drawHoop(x,y,label,correct,hoopIndex){
 ctx.save();
@@ -126,8 +165,9 @@ let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function
 flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);if(fireTime===0)fireHoop=-1}
 if(phase==='shoot'||phase==='swish'||phase==='result'){
 remaining-=dt;
+if(phase==='shoot'&&remaining>0&&remaining<=3){const tick=Math.ceil(remaining);if(tick!==lastTick){lastTick=tick;sound('tick')}}
 if(remaining<=0){
-if(phase==='shoot'){if(ball.active){phase='buzzer';remaining=0;buzzerShot=true;status.textContent='BUZZER BEATER! Ball is still live!'}else{finish(false)}}else if(phase==='swish'){finish(swishCorrect,swishPerfect)}
+if(phase==='shoot'){sound('buzzer');if(ball.active){phase='buzzer';remaining=0;buzzerShot=true;status.textContent='BUZZER BEATER! Ball is still live!'}else{finish(false)}}else if(phase==='swish'){finish(swishCorrect,swishPerfect)}
 else{idx++;next()}
 }}
 if(phase==='swish'&&ball.active){ball.y+=Math.max(1,ball.vy)*dt*60;ball.x+=ball.vx*dt*35;ball.vy+=.22*dt*60;}
@@ -142,12 +182,12 @@ const h=spots[order[i]];
 if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<12){
 // A near-rim shot can still score, but it is not a clean swish.
 if(Math.abs(ball.x-h.x)>6||Math.abs(ball.vx)>2.2)ball.touchedRim=true;
-swishCorrect=i===questions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=buzzerShot?'BUZZER BEATER!':(swishPerfect?'Clean swish!':'Through the hoop!');return;
+swishCorrect=i===questions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';sound(swishPerfect?'swish':'basket');remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=buzzerShot?'BUZZER BEATER!':(swishPerfect?'Clean swish!':'Through the hoop!');return;
 }
 // Soft collision with the rim edges rather than teleporting through them.
 if(ball.vy>0 && oldY<=h.y+11){for(const edge of [-20,20]){
 const rx=h.x+edge,ry=h.y,dx=ball.x-rx,dy=ball.y-ry,d=Math.hypot(dx,dy);
-if(d>0&&d<14){ball.touchedRim=true;
+if(d>0&&d<14){if(!ball.touchedRim)sound('rim');ball.touchedRim=true;
 const nx=dx/d,ny=dy/d,dot=ball.vx*nx+ball.vy*ny;
 if(dot<0){ball.vx=(ball.vx-1.65*dot*nx)*.85;ball.vy=(ball.vy-1.65*dot*ny)*.85}
 ball.x=rx+nx*14;ball.y=ry+ny*14;
