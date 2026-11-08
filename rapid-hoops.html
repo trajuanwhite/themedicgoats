@@ -115,12 +115,12 @@ case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
 }
 function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,touchedRim:false};drag=null}
 function next(){if(idx>=activeQuestions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='REPLAY';showStartButton();difficultyButtons.forEach(b=>b.disabled=false);return}
-phase='shoot';remaining=difficultySettings[difficulty].seconds;lastTick=-1;attempts=0;hit=false;buzzerShot=false;shotSpeedBonus=0;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=activeQuestions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent=(idx+1)+'/'+activeQuestions.length;status.textContent=difficultySettings[difficulty].seconds+' seconds — read, aim, and shoot!';showShotClock()}
+phase='shoot';remaining=difficultySettings[difficulty].seconds;lastTick=-1;attempts=0;hit=false;buzzerShot=false;shotSpeedBonus=0;resultCorrect=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=activeQuestions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent=(idx+1)+'/'+activeQuestions.length;status.textContent=difficultySettings[difficulty].seconds+' seconds — read, aim, and shoot!';showShotClock()}
 function begin(){activeQuestions=[...questionBanks[difficulty]].sort(()=>Math.random()-.5);difficultyButtons.forEach(b=>b.disabled=true);unlockAudio();sound('start');lastTick=-1;swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='0';showShotClock();next()}
-let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0,shotSpeedBonus=0;
+let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0,shotSpeedBonus=0,resultCorrect=false;
 function finish(correct,perfect=false){
 if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
-phase='result';remaining=1.8;
+phase='result';remaining=1.8;resultCorrect=correct;
 if(correct&&perfect){swishStreak++;if(swishStreak>=3){fireHoop=swishHoop;fireTime=fireDuration;fireSoundAt=0}}else{swishStreak=0}
 const base=correct?(perfect?150:100):0;
 const buzzerBonus=correct&&buzzerShot?50:0;
@@ -150,8 +150,8 @@ canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('
 function drawHoop(x,y,label,correct,hoopIndex){
 ctx.save();
 // Steel-framed glass backboard with inner target square and soft reflection.
-ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillRect(x-25,y-33,50,29);
-ctx.strokeStyle='#817569';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
+ctx.fillStyle=correct?'rgba(48,180,93,.82)':'rgba(255,255,255,.3)';ctx.fillRect(x-25,y-33,50,29);
+ctx.strokeStyle=correct?'#1c8843':'#817569';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
 ctx.strokeStyle='rgba(95,77,60,.42)';ctx.lineWidth=1;ctx.strokeRect(x-9,y-21,18,13);
 ctx.beginPath();ctx.moveTo(x-21,y-30);ctx.lineTo(x-13,y-30);ctx.lineTo(x-21,y-20);ctx.stroke();
 // Tapered woven net: vertical cords and crossing diagonals.
@@ -219,7 +219,7 @@ ctx.strokeStyle='#c67b46';ctx.lineWidth=2.7;ctx.beginPath();ctx.ellipse(x,y-1,20
 ctx.fillStyle=correct?'#536b46':'#33271f';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-43);
 ctx.restore();
 }
-function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#bba993';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===activeQuestions[idx]?.[2],i)}
+function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#bba993';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&resultCorrect&&i===swishHoop,i)}
 ctx.strokeStyle='#756b5e';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#84674f';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
 ctx.fillStyle='#b66d3b';ctx.strokeStyle='#573a27';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#c67b46';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke()}}
