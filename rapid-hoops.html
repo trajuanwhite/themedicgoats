@@ -99,6 +99,17 @@ gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(volum
 gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
 src.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);src.start(now);src.stop(now+duration);
 }
+// Soft, irregular fire texture: low rushing flame plus tiny sharp nylon pops.
+function burningNetSound(){
+if(!audioCtx||audioCtx.state!=='running')return;
+const sr=audioCtx.sampleRate,duration=.72,len=Math.ceil(sr*duration),buffer=audioCtx.createBuffer(1,len,sr),data=buffer.getChannelData(0);
+let low=0;const pops=Array.from({length:7},()=>({at:Math.random()*duration,amp:.25+Math.random()*.65,width:.002+Math.random()*.008}));
+for(let i=0;i<len;i++){const t=i/sr;low=low*.985+(Math.random()*2-1)*.015;let crackle=0;for(const p of pops){const d=t-p.at;if(d>=0&&d<p.width)crackle+=p.amp*Math.exp(-d/(p.width*.24))*(Math.random()*2-1)}data[i]=Math.max(-1,Math.min(1,low*.7+crackle*.7));}
+const src=audioCtx.createBufferSource(),lowpass=audioCtx.createBiquadFilter(),gain=audioCtx.createGain(),now=audioCtx.currentTime;
+src.buffer=buffer;lowpass.type='lowpass';lowpass.frequency.value=2400;
+gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(.11,now+.06);gain.gain.setValueAtTime(.11,now+.48);gain.gain.linearRampToValueAtTime(.0001,now+duration);
+src.connect(lowpass);lowpass.connect(gain);gain.connect(audioCtx.destination);src.start(now);src.stop(now+duration);
+}
 function sound(name){
 switch(name){
 case 'shoot':tone(190,.10,'triangle',.13,0,90);break;
@@ -109,7 +120,7 @@ case 'miss':tone(250,.18,'sawtooth',.045,0,150);break;
 case 'tick':tone(920,.075,'square',.055);tone(690,.06,'sine',.04,.012);break;
 case 'buzzer': // Sustained arena-style final horn, including shots already in flight.
 tone(146,1.65,'sawtooth',.17);tone(151,1.65,'sawtooth',.13);tone(292,1.5,'square',.045);tone(438,1.4,'triangle',.035);break;
-case 'fire':noiseBurst(.42,.19,680);noiseBurst(.34,.12,1300,.11);break;
+case 'fire':burningNetSound();break;
 case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
 }
 }
@@ -230,7 +241,7 @@ ctx.strokeStyle='#756b5e';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origi
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#84674f';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
 if(fireBallTime>0){ctx.save();ctx.globalCompositeOperation='screen';for(let f=0;f<9;f++){const t=flameClock*10+f*1.8,fx=ball.x+Math.sin(t)*7,fy=ball.y-8-Math.abs(Math.sin(t*.8))*14;ctx.fillStyle=f%2?'rgba(255,153,31,.55)':'rgba(255,211,75,.65)';ctx.beginPath();ctx.ellipse(fx,fy,3+f%3,7+f%4,Math.sin(t)*.3,0,Math.PI*2);ctx.fill()}ctx.restore()}ctx.fillStyle='#b66d3b';ctx.strokeStyle='#573a27';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#c67b46';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke()}}
 let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
-flameClock+=dt;if(fireBallTime>0){fireBallTime=Math.max(0,fireBallTime-dt);if(fireBallTime===0){swishStreak=0;fireHoop=-1;fireTime=0}updateFireMeter()}if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.36}if(fireTime===0)fireHoop=-1}
+flameClock+=dt;if(fireBallTime>0){fireBallTime=Math.max(0,fireBallTime-dt);if(fireBallTime===0){swishStreak=0;fireHoop=-1;fireTime=0}updateFireMeter()}if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.64+Math.random()*.28}if(fireTime===0)fireHoop=-1}
 if(phase==='shoot'||phase==='swish'||phase==='result'){
 remaining-=dt;
 if(phase==='shoot'&&remaining>0&&remaining<=10){const tick=Math.ceil(remaining);if(tick!==lastTick){lastTick=tick;sound('tick')}}
