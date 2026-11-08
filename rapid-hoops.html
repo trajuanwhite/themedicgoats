@@ -116,15 +116,16 @@ case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
 function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,touchedRim:false};drag=null}
 function next(){if(idx>=activeQuestions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='REPLAY';showStartButton();difficultyButtons.forEach(b=>b.disabled=false);return}
 phase='shoot';remaining=difficultySettings[difficulty].seconds;lastTick=-1;attempts=0;hit=false;buzzerShot=false;shotSpeedBonus=0;resultCorrect=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=activeQuestions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent=(idx+1)+'/'+activeQuestions.length;status.textContent='';showShotClock()}
-function begin(){activeQuestions=[...questionBanks[difficulty]].sort(()=>Math.random()-.5);difficultyButtons.forEach(b=>b.disabled=true);unlockAudio();sound('start');lastTick=-1;swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='0';updateFireMeter();showShotClock();next()}
-let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0,shotSpeedBonus=0,resultCorrect=false;
+function begin(){activeQuestions=[...questionBanks[difficulty]].sort(()=>Math.random()-.5);difficultyButtons.forEach(b=>b.disabled=true);unlockAudio();sound('start');lastTick=-1;swishStreak=0;fireHoop=-1;fireTime=0;fireBallTime=0;idx=0;score=0;scoreEl.textContent='0';updateFireMeter();showShotClock();next()}
+let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0,fireBallTime=0,shotSpeedBonus=0,resultCorrect=false;
 const fireMeter=document.getElementById('fireMeter'),fireCount=document.getElementById('fireCount'),firePips=[...fireMeter.querySelectorAll('.fire-meter-pips span')];
-function updateFireMeter(){const level=Math.min(3,swishStreak);firePips.forEach((pip,i)=>pip.classList.toggle('lit',i<level));fireCount.textContent=level+'/3';fireMeter.classList.toggle('charged',level===3);fireMeter.setAttribute('aria-label',level===3?'Fire power-up active': 'Fire power-up: '+level+' of 3 clean swishes')}
+function resetFire(){swishStreak=0;fireBallTime=0;fireHoop=-1;fireTime=0;updateFireMeter()}
+function updateFireMeter(){const level=fireBallTime>0?3:Math.min(3,swishStreak);firePips.forEach((pip,i)=>pip.classList.toggle('lit',i<level));fireCount.textContent=fireBallTime>0?Math.ceil(fireBallTime)+'s':level+'/3';fireMeter.classList.toggle('charged',fireBallTime>0);fireMeter.setAttribute('aria-label',fireBallTime>0?'Fire ball active for '+Math.ceil(fireBallTime)+' seconds':'Fire power-up: '+level+' of 3 perfect shots')}
 
 function finish(correct,perfect=false){
 if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
 phase='result';remaining=1.8;resultCorrect=correct;
-if(correct&&perfect){swishStreak++;if(swishStreak>=3){fireHoop=swishHoop;fireTime=fireDuration;fireSoundAt=0}}else{swishStreak=0}
+if(!correct){resetFire()}else if(fireBallTime<=0&&perfect){swishStreak++;if(swishStreak>=3){fireBallTime=24;fireHoop=swishHoop;fireTime=fireDuration;fireSoundAt=0}}
 updateFireMeter();
 const base=correct?(perfect?150:100):0;
 const buzzerBonus=correct&&buzzerShot?50:0;
@@ -132,7 +133,7 @@ const speedBonus=correct?shotSpeedBonus:0;
 const points=base+buzzerBonus+speedBonus;
 status.textContent=correct?(perfect?'Clean shot':'Correct answer')+' · +'+points+' points'+(speedBonus?' · '+speedBonus+' speed bonus':'')+(buzzerBonus?' · '+buzzerBonus+' buzzer bonus':''):'Incorrect · Answer: '+String.fromCharCode(65+activeQuestions[idx][2]);
 if(correct){score+=points;scoreEl.textContent=String(score)}
-if(correct&&perfect&&swishStreak>=3){status.textContent+=' · '+swishStreak+' swishes in a row'}
+if(correct&&fireBallTime>0){status.textContent+=' · 🔥 Ball on fire'}
 else if(!correct)sound('miss');
 }
 function updateClock(){
@@ -226,9 +227,9 @@ ctx.restore();
 function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#bba993';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&resultCorrect&&i===swishHoop,i)}
 ctx.strokeStyle='#756b5e';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#84674f';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
-ctx.fillStyle='#b66d3b';ctx.strokeStyle='#573a27';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#c67b46';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke()}}
+if(fireBallTime>0){ctx.save();ctx.globalCompositeOperation='screen';for(let f=0;f<9;f++){const t=flameClock*10+f*1.8,fx=ball.x+Math.sin(t)*7,fy=ball.y-8-Math.abs(Math.sin(t*.8))*14;ctx.fillStyle=f%2?'rgba(255,153,31,.55)':'rgba(255,211,75,.65)';ctx.beginPath();ctx.ellipse(fx,fy,3+f%3,7+f%4,Math.sin(t)*.3,0,Math.PI*2);ctx.fill()}ctx.restore()}ctx.fillStyle='#b66d3b';ctx.strokeStyle='#573a27';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#c67b46';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke()}}
 let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
-flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.36}if(fireTime===0)fireHoop=-1}
+flameClock+=dt;if(fireBallTime>0){fireBallTime=Math.max(0,fireBallTime-dt);if(fireBallTime===0){swishStreak=0;fireHoop=-1;fireTime=0}updateFireMeter()}if(fireTime>0){fireTime=Math.max(0,fireTime-dt);fireSoundAt-=dt;if(fireSoundAt<=0){sound('fire');fireSoundAt=.36}if(fireTime===0)fireHoop=-1}
 if(phase==='shoot'||phase==='swish'||phase==='result'){
 remaining-=dt;
 if(phase==='shoot'&&remaining>0&&remaining<=10){const tick=Math.ceil(remaining);if(tick!==lastTick){lastTick=tick;sound('tick')}}
@@ -248,7 +249,7 @@ const h=spots[order[i]];
 if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<12){
 // A near-rim shot can still score, but it is not a clean swish.
 if(Math.abs(ball.x-h.x)>6||Math.abs(ball.vx)>2.2){if(!ball.touchedRim)sound('rim');ball.touchedRim=true;}
-swishCorrect=i===activeQuestions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';sound(swishPerfect?'swish':'basket');remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent='';return;
+swishCorrect=i===activeQuestions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;if(fireBallTime>0&&swishCorrect){fireHoop=i;fireTime=fireDuration;fireSoundAt=0}phase='swish';sound(swishPerfect?'swish':'basket');remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent='';return;
 }
 // Soft collision with the rim edges rather than teleporting through them.
 if(ball.vy>0 && oldY<=h.y+11){for(const edge of [-20,20]){
@@ -270,7 +271,7 @@ ball.vy=-ball.vy*.66;
 ball.vx*=.82;
 if(Math.abs(ball.vy)<1.15){ball.vy=0;ball.vx*=.6}
 }
-if(ball.age>100||(ball.y>=floorY-ballRadius&&ball.vy===0)){resetBall();shotSpeedBonus=0;if(phase==='buzzer'){finish(false)}else{status.textContent=''}return}
+if(ball.age>100||(ball.y>=floorY-ballRadius&&ball.vy===0)){resetBall();shotSpeedBonus=0;resetFire();if(phase==='buzzer'){finish(false)}else{status.textContent=''}return}
 }
 }}
 function frame(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);updateClock();render();requestAnimationFrame(frame)}requestAnimationFrame(frame);
