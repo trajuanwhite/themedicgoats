@@ -130,8 +130,9 @@ updateFireMeter();
 const base=correct?(perfect?150:100):0;
 const buzzerBonus=correct&&buzzerShot?50:0;
 const speedBonus=correct?shotSpeedBonus:0;
-const points=base+buzzerBonus+speedBonus;
-status.textContent=correct?(perfect?'Clean shot':'Correct answer')+' · +'+points+' points'+(speedBonus?' · '+speedBonus+' speed bonus':'')+(buzzerBonus?' · '+buzzerBonus+' buzzer bonus':''):'Incorrect · Answer: '+String.fromCharCode(65+activeQuestions[idx][2]);
+const fireMultiplier=correct&&fireBallTime>0?2:1;
+const points=(base+buzzerBonus+speedBonus)*fireMultiplier;
+status.textContent=correct?(perfect?'Clean shot':'Correct answer')+' · +'+points+' points'+(fireMultiplier===2?' · 🔥 2× FIRE':'')+(speedBonus?' · '+speedBonus+' speed bonus':'')+(buzzerBonus?' · '+buzzerBonus+' buzzer bonus':''):'Incorrect · Answer: '+String.fromCharCode(65+activeQuestions[idx][2]);
 if(correct){score+=points;scoreEl.textContent=String(score)}
 if(correct&&fireBallTime>0){status.textContent+=' · 🔥 Ball on fire'}
 else if(!correct)sound('miss');
