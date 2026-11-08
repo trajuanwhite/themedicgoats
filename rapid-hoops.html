@@ -115,17 +115,18 @@ case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
 }
 function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,touchedRim:false};drag=null}
 function next(){if(idx>=activeQuestions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='REPLAY';showStartButton();difficultyButtons.forEach(b=>b.disabled=false);return}
-phase='shoot';remaining=difficultySettings[difficulty].seconds;lastTick=-1;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=activeQuestions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent=(idx+1)+'/'+activeQuestions.length;status.textContent=difficultySettings[difficulty].seconds+' seconds — read, aim, and shoot!';showShotClock()}
+phase='shoot';remaining=difficultySettings[difficulty].seconds;lastTick=-1;attempts=0;hit=false;buzzerShot=false;shotSpeedBonus=0;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=activeQuestions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent=(idx+1)+'/'+activeQuestions.length;status.textContent=difficultySettings[difficulty].seconds+' seconds — read, aim, and shoot!';showShotClock()}
 function begin(){activeQuestions=[...questionBanks[difficulty]].sort(()=>Math.random()-.5);difficultyButtons.forEach(b=>b.disabled=true);unlockAudio();sound('start');lastTick=-1;swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='0';showShotClock();next()}
-let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0;
+let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0,fireDuration=2.6,fireSoundAt=0,shotSpeedBonus=0;
 function finish(correct,perfect=false){
 if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
 phase='result';remaining=1.8;
 if(correct&&perfect){swishStreak++;if(swishStreak>=3){fireHoop=swishHoop;fireTime=fireDuration;fireSoundAt=0}}else{swishStreak=0}
 const base=correct?(perfect?150:100):0;
 const buzzerBonus=correct&&buzzerShot?50:0;
-const points=base+buzzerBonus;
-status.textContent=correct?(buzzerShot?'BUZZER BEATER! '+(perfect?'SWISH! ':'')+'+'+points+' ('+base+' + 50 buzzer bonus)':perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100'):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+activeQuestions[idx][2]);
+const speedBonus=correct?shotSpeedBonus:0;
+const points=base+buzzerBonus+speedBonus;
+status.textContent=correct?(buzzerShot?'BUZZER BEATER! ':'')+(perfect?'SWISH! ':'CORRECT! ')+'+'+points+' ('+base+' base'+(speedBonus?' + '+speedBonus+' speed':'')+(buzzerBonus?' + '+buzzerBonus+' buzzer':'')+')':'Time up or wrong basket — correct answer: '+String.fromCharCode(65+activeQuestions[idx][2]);
 if(correct){score+=points;scoreEl.textContent=String(score)}
 if(correct&&perfect&&swishStreak>=3){status.textContent+=' 🔥 ON FIRE! '+swishStreak+' SWISH STREAK'}
 else if(!correct)sound('miss');
@@ -144,7 +145,7 @@ clock.textContent=String(Math.floor(t)).padStart(2,'0')+'.'+Math.floor((t%1)*10)
 function point(e){let r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot'||ball.active)return;e.preventDefault();let p=point(e);if(Math.hypot(p.x-ball.x,p.y-ball.y)<65){drag=p;canvas.setPointerCapture(e.pointerId)}});
 canvas.addEventListener('pointermove',e=>{if(drag){e.preventDefault();drag=point(e)}});
-canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);ball.vx=Math.max(-15,Math.min(15,dx*power*.12));ball.vy=Math.max(-19,Math.min(-5,dy*power*.15));ball.active=true;ball.age=0;ball.touchedRim=false;attempts++;sound('shoot');status.textContent='Shot released — follow the ball!'});
+canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);ball.vx=Math.max(-15,Math.min(15,dx*power*.12));ball.vy=Math.max(-19,Math.min(-5,dy*power*.15));ball.active=true;ball.age=0;ball.touchedRim=false;shotSpeedBonus=Math.min(50,Math.max(0,Math.round(50*remaining/difficultySettings[difficulty].seconds)));attempts++;sound('shoot');status.textContent='Shot released — follow the ball!'});
 canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchend',e=>e.preventDefault(),{passive:false});start.addEventListener('click',begin);
 function drawHoop(x,y,label,correct,hoopIndex){
 ctx.save();
@@ -265,7 +266,7 @@ ball.vy=-ball.vy*.66;
 ball.vx*=.82;
 if(Math.abs(ball.vy)<1.15){ball.vy=0;ball.vx*=.6}
 }
-if(ball.age>100||(ball.y>=floorY-ballRadius&&ball.vy===0)){resetBall();if(phase==='buzzer'){finish(false)}else{status.textContent='Missed! Pull back and shoot again — the clock is still running.'}return}
+if(ball.age>100||(ball.y>=floorY-ballRadius&&ball.vy===0)){resetBall();shotSpeedBonus=0;if(phase==='buzzer'){finish(false)}else{status.textContent='Missed! Pull back and shoot again — the clock is still running.'}return}
 }
 }}
 function frame(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);updateClock();render();requestAnimationFrame(frame)}requestAnimationFrame(frame);
