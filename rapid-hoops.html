@@ -65,7 +65,7 @@ const difficultySettings={rookie:{label:'Rookie',seconds:24},pro:{label:'Pro',se
 let difficulty='rookie',activeQuestions=questions;
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),start=document.getElementById('start'),status=document.getElementById('status'),qEl=document.getElementById('question'),aEl=document.getElementById('answers'),progress=document.getElementById('progress'),scoreEl=document.getElementById('score'),clock=document.getElementById('clock');
 const difficultyButtons=[...document.querySelectorAll('[data-difficulty]')];difficultyButtons.forEach(btn=>btn.addEventListener('click',()=>{if(phase!=='ready'&&phase!=='done')return;difficulty=btn.dataset.difficulty;difficultyButtons.forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn))});status.textContent=difficultySettings[difficulty].label+' — '+difficultySettings[difficulty].seconds+' seconds per shot';}));
-const W=360,H=360;canvas.width=720;canvas.height=720;ctx.setTransform(2,0,0,2,0,0);const origin={x:180,y:314},spots=[{x:45,y:150},{x:135,y:120},{x:225,y:135},{x:315,y:100}];
+const W=360,H=360;canvas.width=720;canvas.height=720;ctx.setTransform(2,0,0,2,0,0);const origin={x:180,y:314},spots=[{x:45,y:180},{x:135,y:164},{x:225,y:174},{x:315,y:158}];
 let phase='ready',idx=0,score=0,remaining=0,last=performance.now(),drag=null,attempts=0,ball={x:180,y:314,vx:0,vy:0,active:false,age:0},hit=false,order=[0,1,2,3];
 
 // Lightweight original game audio, synthesized locally with Web Audio (no downloads).
@@ -219,7 +219,7 @@ ctx.beginPath();ctx.arc(px,py,p%3===0?1.3:2.2,0,Math.PI*2);ctx.fill();
 // Orange steel rim with highlight and shaded underside.
 ctx.strokeStyle='#8e4d2d';ctx.lineWidth=4.5;ctx.beginPath();ctx.ellipse(x,y+1,20,5,0,0,Math.PI*2);ctx.stroke();
 ctx.strokeStyle='#c67b46';ctx.lineWidth=2.7;ctx.beginPath();ctx.ellipse(x,y-1,20,5,0,0,Math.PI*2);ctx.stroke();
-ctx.fillStyle=correct?'#536b46':'#33271f';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-40);
+ctx.fillStyle=correct?'#536b46':'#33271f';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-43);
 ctx.restore();
 }
 function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#bba993';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===activeQuestions[idx]?.[2],i)}
