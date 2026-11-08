@@ -48,12 +48,24 @@ gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(Math.
 gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
 osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+duration+.025);
 }
+
+// Filtered noise makes the net sound like woven nylon instead of an electronic chime.
+function noiseBurst(duration=.3,volume=.14,frequency=1700,delay=0){
+if(!soundEnabled||!audioCtx||audioCtx.state!=='running')return;
+const sr=audioCtx.sampleRate,length=Math.ceil(sr*duration),buffer=audioCtx.createBuffer(1,length,sr),data=buffer.getChannelData(0);
+for(let i=0;i<length;i++){const t=i/sr;data[i]=(Math.random()*2-1)*(0.45+0.55*Math.sin(t*210));}
+const src=audioCtx.createBufferSource(),filter=audioCtx.createBiquadFilter(),gain=audioCtx.createGain(),now=audioCtx.currentTime+delay;
+src.buffer=buffer;filter.type='bandpass';filter.frequency.value=frequency;filter.Q.value=.65;
+gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(volume,now+.018);
+gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+src.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);src.start(now);src.stop(now+duration);
+}
 function sound(name){
 switch(name){
 case 'shoot':tone(190,.10,'triangle',.13,0,90);break;
-case 'rim':tone(480,.065,'square',.055);tone(280,.095,'triangle',.06,.055);break;
-case 'swish':tone(950,.12,'sine',.085,0,520);tone(1150,.13,'triangle',.065,.08,740);break;
-case 'basket':tone(390,.11,'triangle',.1);tone(590,.16,'triangle',.1,.11);break;
+case 'rim':tone(195,.095,'triangle',.22,0,105);tone(115,.13,'sine',.19,.015,68);noiseBurst(.055,.065,450);break;
+case 'swish':noiseBurst(.38,.19,2300);noiseBurst(.23,.075,3100,.09);break;
+case 'basket':noiseBurst(.27,.12,1900);break;
 case 'miss':tone(250,.18,'sawtooth',.045,0,150);break;
 case 'tick':tone(840,.045,'sine',.045);break;
 case 'buzzer':tone(175,.48,'sawtooth',.10);tone(183,.48,'square',.035);break;
@@ -181,7 +193,7 @@ const h=spots[order[i]];
 // Score only when the ball crosses downward through the center of the rim.
 if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<12){
 // A near-rim shot can still score, but it is not a clean swish.
-if(Math.abs(ball.x-h.x)>6||Math.abs(ball.vx)>2.2)ball.touchedRim=true;
+if(Math.abs(ball.x-h.x)>6||Math.abs(ball.vx)>2.2){if(!ball.touchedRim)sound('rim');ball.touchedRim=true;}
 swishCorrect=i===questions[idx][2];swishPerfect=!ball.touchedRim&&Math.abs(ball.x-h.x)<=5&&Math.abs(ball.vx)<=2.2;swishHoop=i;phase='swish';sound(swishPerfect?'swish':'basket');remaining=.48;ball.vy=Math.max(2.6,ball.vy);ball.vx*=.22;status.textContent=buzzerShot?'BUZZER BEATER!':(swishPerfect?'Clean swish!':'Through the hoop!');return;
 }
 // Soft collision with the rim edges rather than teleporting through them.
