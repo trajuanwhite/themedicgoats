@@ -58,7 +58,7 @@ canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot'||ball.active)return
 canvas.addEventListener('pointermove',e=>{if(drag){e.preventDefault();drag=point(e)}});
 canvas.addEventListener('pointerup',e=>{if(!drag||phase!=='shoot')return;e.preventDefault();let p=point(e),dx=origin.x-p.x,dy=origin.y-p.y,len=Math.hypot(dx,dy);drag=null;if(len<12)return;let power=Math.min(1,135/len);ball.vx=Math.max(-15,Math.min(15,dx*power*.12));ball.vy=Math.max(-19,Math.min(-5,dy*power*.15));ball.active=true;ball.age=0;ball.touchedRim=false;attempts++;status.textContent='Shot '+attempts+' — follow the ball!'});
 canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});canvas.addEventListener('touchend',e=>e.preventDefault(),{passive:false});start.addEventListener('click',begin);
-function drawHoop(x,y,label,correct){
+function drawHoop(x,y,label,correct,hoopIndex){
 ctx.save();
 // Steel-framed glass backboard with inner target square and soft reflection.
 ctx.fillStyle='rgba(225,249,251,.14)';ctx.fillRect(x-25,y-33,50,29);
@@ -66,15 +66,32 @@ ctx.strokeStyle='#d9f0f3';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
 ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=1;ctx.strokeRect(x-9,y-21,18,13);
 ctx.beginPath();ctx.moveTo(x-21,y-30);ctx.lineTo(x-13,y-30);ctx.lineTo(x-21,y-20);ctx.stroke();
 // Tapered woven net: vertical cords and crossing diagonals.
-const topY=y+3,bottomY=y+26;
+const activeNet=phase==='swish'&&swishHoop===hoopIndex;
+const elapsed=activeNet?Math.max(0,.48-remaining):0;
+const impulse=activeNet?Math.sin(Math.min(1,elapsed/.48)*Math.PI)*Math.exp(-elapsed*1.6):0;
+const sway=impulse*Math.sin(elapsed*22)*7;
+const stretch=impulse*9;
+const topY=y+3,bottomY=y+26+stretch;
+const netX=(t)=>x+sway*t*t;
+const netY=(t)=>topY+(bottomY-topY)*t;
+const netHalf=(t)=>17-7*t+impulse*3*Math.sin(Math.PI*t);
 ctx.strokeStyle='rgba(247,250,250,.9)';ctx.lineWidth=1.25;
 for(let j=0;j<=6;j++){
-let tx=x-17+j*34/6,bx=x-10+j*20/6;
-ctx.beginPath();ctx.moveTo(tx,topY);ctx.lineTo(bx,bottomY);ctx.stroke();
+const u=j/6;
+ctx.beginPath();ctx.moveTo(x-17+34*u,topY);
+ctx.quadraticCurveTo(netX(.55)+(u*2-1)*netHalf(.55),netY(.55),netX(1)+(u*2-1)*netHalf(1),bottomY);ctx.stroke();
 }
 for(let row=0;row<4;row++){
-let yy=topY+row*5.6,half=17-row*1.7,nextHalf=half-1.7;
-ctx.beginPath();for(let j=0;j<6;j++){let x1=x-half+j*2*half/6,x2=x-nextHalf+(j+1)*2*nextHalf/6;ctx.moveTo(x1,yy);ctx.lineTo(x2,yy+5.6);ctx.moveTo(x1+2*half/6,yy);ctx.lineTo(x-nextHalf+j*2*nextHalf/6,yy+5.6)}ctx.stroke();
+const t=row/4,nt=(row+1)/4;
+for(let j=0;j<6;j++){
+const u=j/6,un=(j+1)/6;
+ctx.beginPath();
+ctx.moveTo(netX(t)+(u*2-1)*netHalf(t),netY(t));
+ctx.lineTo(netX(nt)+(un*2-1)*netHalf(nt),netY(nt));
+ctx.moveTo(netX(t)+(un*2-1)*netHalf(t),netY(t));
+ctx.lineTo(netX(nt)+(u*2-1)*netHalf(nt),netY(nt));
+ctx.stroke();
+}
 }
 // Orange steel rim with highlight and shaded underside.
 ctx.strokeStyle='#9b471d';ctx.lineWidth=4.5;ctx.beginPath();ctx.ellipse(x,y+1,20,5,0,0,Math.PI*2);ctx.stroke();
@@ -82,7 +99,7 @@ ctx.strokeStyle='#ffad51';ctx.lineWidth=2.7;ctx.beginPath();ctx.ellipse(x,y-1,20
 ctx.fillStyle=correct?'#7ff2cb':'#fff';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(label,x,y-40);
 ctx.restore();
 }
-function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#547a80';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===questions[idx]?.[2])}
+function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#547a80';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===questions[idx]?.[2],i)}
 ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
 ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +200':'SWISH! +150'):(buzzerShot?'BUZZER! +150':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
