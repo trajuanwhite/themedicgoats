@@ -32,15 +32,18 @@ let phase='ready',idx=0,score=0,remaining=0,last=performance.now(),drag=null,att
 function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,touchedRim:false};drag=null}
 function next(){if(idx>=questions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='Play Again';start.hidden=false;return}
 phase='read';remaining=7;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=questions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent='QUESTION '+(idx+1)+'/20';status.textContent='Read the question';start.hidden=true}
-function begin(){idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
+function begin(){swishStreak=0;fireHoop=-1;fireTime=0;idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
+let swishStreak=0,fireHoop=-1,fireTime=0,flameClock=0;
 function finish(correct,perfect=false){
 if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
 phase='result';remaining=1.8;
+if(correct&&perfect){swishStreak++;if(swishStreak>=3){fireHoop=swishHoop;fireTime=2.6}}else{swishStreak=0}
 const base=correct?(perfect?150:100):0;
 const buzzerBonus=correct&&buzzerShot?50:0;
 const points=base+buzzerBonus;
 status.textContent=correct?(buzzerShot?'BUZZER BEATER! '+(perfect?'SWISH! ':'')+'+'+points+' ('+base+' + 50 buzzer bonus)':perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100'):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+questions[idx][2]);
 if(correct){score+=points;scoreEl.textContent='SCORE '+score}
+if(correct&&perfect&&swishStreak>=3)status.textContent+=' 🔥 ON FIRE! '+swishStreak+' SWISH STREAK';
 }
 function updateClock(){
 clock.className='';
@@ -93,6 +96,22 @@ ctx.lineTo(netX(nt)+(u*2-1)*netHalf(nt),netY(nt));
 ctx.stroke();
 }
 }
+// Animated flame tongues rise from the woven net after three clean swishes.
+if(fireTime>0&&fireHoop===hoopIndex){
+ctx.save();ctx.globalCompositeOperation='screen';
+for(let f=0;f<11;f++){
+const fx=x-17+f*3.4;
+const wave=Math.sin(flameClock*13+f*1.7);
+const height=10+5*(.5+.5*wave)+((f*7)%5);
+const base=y+12+(f%3)*4;
+const drift=Math.sin(flameClock*8+f)*3;
+ctx.beginPath();ctx.moveTo(fx-3,base);ctx.quadraticCurveTo(fx-5+drift,base-height*.45,fx+drift,base-height);
+ctx.quadraticCurveTo(fx+5+drift,base-height*.4,fx+3,base);ctx.closePath();
+ctx.fillStyle=f%3===0?'rgba(255,213,65,.9)':f%3===1?'rgba(255,111,21,.87)':'rgba(255,58,12,.78)';
+ctx.fill();
+}
+ctx.restore();
+}
 // Orange steel rim with highlight and shaded underside.
 ctx.strokeStyle='#9b471d';ctx.lineWidth=4.5;ctx.beginPath();ctx.ellipse(x,y+1,20,5,0,0,Math.PI*2);ctx.stroke();
 ctx.strokeStyle='#ffad51';ctx.lineWidth=2.7;ctx.beginPath();ctx.ellipse(x,y-1,20,5,0,0,Math.PI*2);ctx.stroke();
@@ -104,6 +123,7 @@ ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origi
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
 ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +200':'SWISH! +150'):(buzzerShot?'BUZZER! +150':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
 let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
+flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);if(fireTime===0)fireHoop=-1}
 if(phase==='read'||phase==='shoot'||phase==='swish'||phase==='result'){
 remaining-=dt;
 if(remaining<=0){
