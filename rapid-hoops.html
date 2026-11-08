@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Rapid Hoops | The Medic Goats</title><style>
-*{box-sizing:border-box}html{overscroll-behavior:none}body{margin:0;overscroll-behavior:none;background:#071e25;color:#eaf8f6;font-family:system-ui,-apple-system,sans-serif}main{max-width:650px;margin:auto;padding:14px}header{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#67e2ce}.tag{font-size:12px;border:1px solid #377b7e;border-radius:20px;padding:6px 10px}.question{background:#16343e;padding:16px;border-radius:16px;text-align:center;min-height:115px;margin:12px 0}.question strong{display:block;font-size:18px;margin-bottom:10px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}.answer{background:#20434b;border-radius:8px;padding:8px;font-size:13px;min-height:43px}.answer b{color:#75f1dc}#game{width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain;display:block;background:linear-gradient(#102f3b,#0a232b);border-radius:14px}button{background:#62dfca;border:0;border-radius:12px;color:#07272a;font-size:17px;font-weight:800;padding:14px 26px;cursor:pointer}.controls{text-align:center;margin:12px}#status{text-align:center;font-weight:700;min-height:25px}.muted{color:#a2c4c6;font-size:13px;text-align:center}#stats{display:flex;justify-content:space-between;font-size:13px;margin:10px 0}@media(max-width:420px){main{padding:8px}.question{padding:10px;min-height:96px}.question strong{font-size:16px}}
+*{box-sizing:border-box}html{overscroll-behavior:none}body{margin:0;overscroll-behavior:none;background:#071e25;color:#eaf8f6;font-family:system-ui,-apple-system,sans-serif}main{max-width:650px;margin:auto;padding:14px}header{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#67e2ce}.tag{font-size:12px;border:1px solid #377b7e;border-radius:20px;padding:6px 10px}.question{background:#16343e;padding:16px;border-radius:16px;text-align:center;min-height:115px;margin:12px 0}.question strong{display:block;font-size:18px;margin-bottom:10px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}.answer{background:#20434b;border-radius:8px;padding:8px;font-size:13px;min-height:43px}.answer b{color:#75f1dc}#game{width:100%;height:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain;display:block;background:linear-gradient(#102f3b,#0a232b);border-radius:14px}button{background:#62dfca;border:0;border-radius:12px;color:#07272a;font-size:17px;font-weight:800;padding:14px 26px;cursor:pointer}.controls{text-align:center;margin:12px}#status{text-align:center;font-weight:700;min-height:25px}.muted{color:#a2c4c6;font-size:13px;text-align:center}#stats{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin:10px 0}#clock{display:inline-flex;align-items:center;justify-content:center;min-width:94px;padding:7px 10px;border:3px solid #72888b;border-radius:7px;background:#080c12;box-shadow:inset 0 0 0 2px #172c32,0 3px 0 #20363b;color:#ff493e;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:23px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums;text-shadow:0 0 9px rgba(255,67,51,.65)}#clock.reading{color:#ffce63;text-shadow:0 0 8px rgba(255,206,99,.55)}#clock.expiring{animation:clockflash .45s infinite alternate}#clock.buzzer{color:#ff3e35;box-shadow:inset 0 0 0 2px #592420,0 0 15px rgba(255,48,34,.45)}@keyframes clockflash{from{opacity:1}to{opacity:.5}}@media(max-width:420px){main{padding:8px}.question{padding:10px;min-height:96px}.question strong{font-size:16px}}
 </style></head><body><main><header><span>THE MEDIC GOATS</span><span class="tag">RAPID HOOPS · TEST</span></header><div id="stats"><span id="progress">QUESTION 0/20</span><span id="score">SCORE 0</span><span id="clock">READY</span></div><section class="question"><strong id="question">Pull back and release to shoot into the correct answer hoop.</strong><div class="answers" id="answers"><div class="answer">A · </div><div class="answer">B · </div><div class="answer">C · </div><div class="answer">D · </div></div></section><canvas id="game" width="360" height="360" aria-label="Basketball game with four answer hoops"></canvas><div id="status">Ready to play</div><div class="controls"><button id="start">Start Game</button></div><p class="muted">7 seconds to read · 10 seconds to shoot · drag backward from the basketball and release. This is a private gameplay prototype, not a protocol reference.</p></main><script>
 (()=>{'use strict';
 const questions=[
@@ -33,7 +33,26 @@ function resetBall(){ball={x:origin.x,y:origin.y,vx:0,vy:0,active:false,age:0,to
 function next(){if(idx>=questions.length){phase='done';qEl.textContent='Game complete!';aEl.innerHTML='';status.textContent='Final score: '+score;clock.textContent='FINISHED';start.textContent='Play Again';start.hidden=false;return}
 phase='read';remaining=7;attempts=0;hit=false;buzzerShot=false;resetBall();order=[0,1,2,3].sort(()=>Math.random()-.5);let q=questions[idx];qEl.textContent=q[0];aEl.innerHTML=q[1].map((a,i)=>'<div class="answer"><b>'+String.fromCharCode(65+i)+'</b> · '+a+'</div>').join('');progress.textContent='QUESTION '+(idx+1)+'/20';status.textContent='Read the question';start.hidden=true}
 function begin(){idx=0;score=0;scoreEl.textContent='SCORE 0';start.hidden=true;next()}
-function finish(correct,perfect=false){if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;phase='result';remaining=1.8;const points=correct?(perfect?150:100):0;status.textContent=correct?(buzzerShot?(perfect?'BUZZER BEATER! SWISH! +150':'BUZZER BEATER! +100'):(perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100')):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+questions[idx][2]);if(correct){score+=points;scoreEl.textContent='SCORE '+score}}
+function finish(correct,perfect=false){
+if(phase!=='shoot'&&phase!=='swish'&&phase!=='buzzer')return;
+phase='result';remaining=1.8;
+const base=correct?(perfect?150:100):0;
+const buzzerBonus=correct&&buzzerShot?50:0;
+const points=base+buzzerBonus;
+status.textContent=correct?(buzzerShot?'BUZZER BEATER! '+(perfect?'SWISH! ':'')+'+'+points+' ('+base+' + 50 buzzer bonus)':perfect?'SWISH! PERFECT SHOT +150':'CORRECT! +100'):'Time up or wrong basket — correct answer: '+String.fromCharCode(65+questions[idx][2]);
+if(correct){score+=points;scoreEl.textContent='SCORE '+score}
+}
+function updateClock(){
+clock.className='';
+if(phase==='read')clock.classList.add('reading');
+if(phase==='buzzer'||(buzzerShot&&(phase==='swish'||phase==='result')))clock.classList.add('buzzer');
+if(phase==='shoot'&&remaining<=3)clock.classList.add('expiring');
+if(phase==='ready'||phase==='done'){clock.textContent=phase==='ready'?'READY':'END';return}
+if(phase==='buzzer'||(buzzerShot&&(phase==='swish'||phase==='result'))){clock.textContent='00.0';return}
+if(phase==='result'){clock.textContent='00.0';return}
+const t=Math.max(0,remaining);
+clock.textContent=String(Math.floor(t)).padStart(2,'0')+'.'+Math.floor((t%1)*10);
+}
 function point(e){let r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 canvas.addEventListener('pointerdown',e=>{if(phase!=='shoot'||ball.active)return;e.preventDefault();let p=point(e);if(Math.hypot(p.x-ball.x,p.y-ball.y)<65){drag=p;canvas.setPointerCapture(e.pointerId)}});
 canvas.addEventListener('pointermove',e=>{if(drag){e.preventDefault();drag=point(e)}});
@@ -66,10 +85,10 @@ ctx.restore();
 function render(){ctx.clearRect(0,0,W,H);ctx.strokeStyle='#547a80';ctx.beginPath();ctx.moveTo(0,344);ctx.lineTo(W,344);ctx.stroke();for(let i=0;i<4;i++){let s=spots[order[i]];drawHoop(s.x,s.y,String.fromCharCode(65+i),phase==='result'&&i===questions[idx]?.[2])}
 ctx.strokeStyle='#cce9e9';ctx.lineWidth=3;ctx.beginPath();ctx.arc(origin.x,origin.y+8,8,0,Math.PI*2);ctx.moveTo(origin.x,origin.y+16);ctx.lineTo(origin.x,origin.y+32);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x-13,origin.y+28);ctx.moveTo(origin.x,origin.y+22);ctx.lineTo(origin.x+13,origin.y+28);ctx.stroke();
 if(drag&&!ball.active){let dx=origin.x-drag.x,dy=origin.y-drag.y,len=Math.hypot(dx,dy),f=Math.min(1,140/Math.max(1,len)),vx=dx*f*.12,vy=dy*f*.15;ctx.fillStyle='#6ce7d0';for(let t=4;t<50;t+=5){let x=origin.x+vx*t,y=origin.y+vy*t+.17*t*t;if(x<0||x>W||y<0||y>H)break;ctx.beginPath();ctx.arc(x,y,2,0,7);ctx.fill()}}
-ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +150':'SWISH! +150'):(buzzerShot?'BUZZER! +100':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
+ctx.fillStyle='#f28a38';ctx.strokeStyle='#653b23';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,10,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(ball.x-10,ball.y);ctx.lineTo(ball.x+10,ball.y);ctx.moveTo(ball.x,ball.y-10);ctx.lineTo(ball.x,ball.y+10);ctx.stroke();if(phase==='swish'&&swishHoop>=0){let h=spots[order[swishHoop]];ctx.strokeStyle='#ffb66a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(h.x,h.y,20,5,0,0,Math.PI);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(swishPerfect?(buzzerShot?'BUZZER SWISH! +200':'SWISH! +150'):(buzzerShot?'BUZZER! +150':'BUCKET! +100'),h.x,Math.max(16,h.y-52))}}
 let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function update(dt){
 if(phase==='read'||phase==='shoot'||phase==='swish'||phase==='result'){
-remaining-=dt;clock.textContent=Math.max(0,Math.ceil(remaining))+'s';
+remaining-=dt;
 if(remaining<=0){
 if(phase==='read'){phase='shoot';remaining=10;status.textContent='Pull back and release!'}
 else if(phase==='shoot'){if(ball.active){phase='buzzer';remaining=0;buzzerShot=true;status.textContent='BUZZER BEATER! Ball is still live!'}else{finish(false)}}else if(phase==='swish'){finish(swishCorrect,swishPerfect)}
@@ -105,6 +124,6 @@ if(ball.y>335){ball.y=335;ball.vy=-Math.abs(ball.vy)*.4;ball.vx*=.75}
 if(ball.age>100||(ball.y>=334&&Math.abs(ball.vy)<1.5)){resetBall();if(phase==='buzzer'){finish(false)}else{status.textContent='Missed — pull back for another shot'}return}
 }
 }}
-function frame(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(frame)}requestAnimationFrame(frame);
+function frame(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);updateClock();render();requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();
 </script></body></html>
