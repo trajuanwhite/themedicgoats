@@ -67,8 +67,8 @@ case 'rim':tone(195,.095,'triangle',.22,0,105);tone(115,.13,'sine',.19,.015,68);
 case 'swish':noiseBurst(.38,.19,2300);noiseBurst(.23,.075,3100,.09);break;
 case 'basket':noiseBurst(.27,.12,1900);break;
 case 'miss':tone(250,.18,'sawtooth',.045,0,150);break;
-case 'tick':tone(840,.045,'sine',.045);break;
-case 'buzzer':tone(175,.48,'sawtooth',.10);tone(183,.48,'square',.035);break;
+case 'tick':tone(920,.075,'square',.055);tone(690,.06,'sine',.04,.012);break;
+case 'buzzer':tone(155,.9,'sawtooth',.13);tone(162,.9,'square',.05);tone(310,.65,'triangle',.055);break;
 case 'fire':for(let i=0;i<4;i++)tone(520+i*160,.15,'triangle',.08,i*.095);break;
 case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
 }
@@ -177,7 +177,7 @@ let swishCorrect=false,swishPerfect=false,swishHoop=-1,buzzerShot=false;function
 flameClock+=dt;if(fireTime>0){fireTime=Math.max(0,fireTime-dt);if(fireTime===0)fireHoop=-1}
 if(phase==='shoot'||phase==='swish'||phase==='result'){
 remaining-=dt;
-if(phase==='shoot'&&remaining>0&&remaining<=3){const tick=Math.ceil(remaining);if(tick!==lastTick){lastTick=tick;sound('tick')}}
+if(phase==='shoot'&&remaining>0&&remaining<=10){const tick=Math.ceil(remaining);if(tick!==lastTick){lastTick=tick;sound('tick')}}
 if(remaining<=0){
 if(phase==='shoot'){sound('buzzer');if(ball.active){phase='buzzer';remaining=0;buzzerShot=true;status.textContent='BUZZER BEATER! Ball is still live!'}else{finish(false)}}else if(phase==='swish'){finish(swishCorrect,swishPerfect)}
 else{idx++;next()}
