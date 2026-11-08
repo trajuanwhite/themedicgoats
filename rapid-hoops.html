@@ -64,14 +64,14 @@ if(ball.vy>0&&oldY<=h.y-7&&ball.y>=h.y-7&&Math.abs(ball.x-h.x)<13){
 finish(i===questions[idx][2]);return;
 }
 // Soft collision with the rim edges rather than teleporting through them.
-for(const edge of [-20,20]){
+if(ball.vy>0 && oldY<=h.y+11){for(const edge of [-20,20]){
 const rx=h.x+edge,ry=h.y,dx=ball.x-rx,dy=ball.y-ry,d=Math.hypot(dx,dy);
 if(d>0&&d<11){
 const nx=dx/d,ny=dy/d,dot=ball.vx*nx+ball.vy*ny;
 if(dot<0){ball.vx=(ball.vx-1.65*dot*nx)*.85;ball.vy=(ball.vy-1.65*dot*ny)*.85}
 ball.x=rx+nx*11;ball.y=ry+ny*11;
 }
-}
+}}
 }
 if(ball.x<10){ball.x=10;ball.vx=Math.abs(ball.vx)*.55}
 if(ball.x>350){ball.x=350;ball.vx=-Math.abs(ball.vx)*.55}
