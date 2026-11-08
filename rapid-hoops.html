@@ -150,8 +150,8 @@ canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('
 function drawHoop(x,y,label,correct,hoopIndex){
 ctx.save();
 // Steel-framed glass backboard with inner target square and soft reflection.
-ctx.fillStyle=correct?'rgba(48,180,93,.82)':'rgba(255,255,255,.3)';ctx.fillRect(x-25,y-33,50,29);
-ctx.strokeStyle=correct?'#1c8843':'#817569';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
+ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillRect(x-25,y-33,50,29);
+ctx.strokeStyle='#817569';ctx.lineWidth=2.5;ctx.strokeRect(x-25,y-33,50,29);
 ctx.strokeStyle='rgba(95,77,60,.42)';ctx.lineWidth=1;ctx.strokeRect(x-9,y-21,18,13);
 ctx.beginPath();ctx.moveTo(x-21,y-30);ctx.lineTo(x-13,y-30);ctx.lineTo(x-21,y-20);ctx.stroke();
 // Tapered woven net: vertical cords and crossing diagonals.
