@@ -106,7 +106,8 @@ case 'swish':noiseBurst(.38,.19,2300);noiseBurst(.23,.075,3100,.09);break;
 case 'basket':noiseBurst(.27,.12,1900);break;
 case 'miss':tone(250,.18,'sawtooth',.045,0,150);break;
 case 'tick':tone(920,.075,'square',.055);tone(690,.06,'sine',.04,.012);break;
-case 'buzzer':tone(155,.9,'sawtooth',.13);tone(162,.9,'square',.05);tone(310,.65,'triangle',.055);break;
+case 'buzzer': // Sustained arena-style final horn, including shots already in flight.
+tone(146,1.65,'sawtooth',.17);tone(151,1.65,'sawtooth',.13);tone(292,1.5,'square',.045);tone(438,1.4,'triangle',.035);break;
 case 'fire':noiseBurst(.42,.19,680);noiseBurst(.34,.12,1300,.11);break;
 case 'start':tone(480,.1,'sine',.08);tone(720,.14,'sine',.08,.12);break;
 }
