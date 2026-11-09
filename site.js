@@ -119,6 +119,7 @@ function training(){
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
  <div style="flex:1;min-width:0;text-align:center"><div class="kicker">LEADERBOARD • CURRENT GOATS 🐐</div><div id="trainingLeadersStrip" style="margin-top:10px">
  <span class="is-active"><strong>Rapid MegaCode</strong> <span id="leaderMega">Loading…</span></span>
+ <span><strong>Medic Match</strong> <span id="leaderMatch">Loading…</span></span>
  <span><strong>Rapid Rhythms</strong> <span id="leaderRhythm">Loading…</span></span>
  <span><strong>Rapid Cardiology</strong> <span id="leaderCardiology">Loading…</span></span>
  <span><strong>Rapid Meds</strong> <span id="leaderMeds">Loading…</span></span>
@@ -126,7 +127,7 @@ function training(){
  <button type="button" id="trainingOpenBoards" aria-expanded="false" aria-controls="trainingFullBoards" style="padding:10px 16px;border-radius:10px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;font-weight:700">View Full Leaderboards</button>
  </div>
  <div id="trainingFullBoards" hidden style="margin-top:18px">
- <div class="leaderboard-grid">
+ <div class="leaderboard-grid"><div class="leaderboard-game"><div class="kicker">MEMORY • PRO BOARD</div><h3>Medic Match</h3><p>Best matching efficiency per IG handle</p><ol id="trainingMatchBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/medic-match.html" class="leaderboard-link">Play Medic Match →</a></div>
  <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>The GOAT and top challengers</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
  <div class="leaderboard-game"><div class="kicker">ECG INTERPRETATION</div><h3>Rapid Rhythms</h3><p>The GOAT and top challengers</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
  <div class="leaderboard-game"><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>The GOAT and top challengers</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
@@ -191,7 +192,7 @@ function training(){
 function instagramProfileLink(name){const raw=String(name||"").trim();if(!raw.startsWith("@"))return null;const handle=raw.slice(1);return /^[A-Za-z0-9._]{1,30}$/.test(handle)?"https://www.instagram.com/"+handle+"/":null}
 async function loadTrainingLeaderboard(){
  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
- const boards=[["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"],["trainingMedsBoard","rapid_meds_scores"]];
+ const boards=[["trainingMatchBoard","medic_match_scores"],["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"],["trainingMedsBoard","rapid_meds_scores"]];
  await Promise.all(boards.map(async([id,table])=>{
   const list=document.getElementById(id);if(!list)return;
   try{
@@ -200,7 +201,7 @@ async function loadTrainingLeaderboard(){
    // when repeat entries would otherwise occupy more than one podium position.
    const data=[],seen=new Set();let offset=0;
    while(data.length<3){
-    const {data:batch,error}=await client.from(table).select("player_name,score,player_id").order("score",{ascending:false}).range(offset,offset+99);
+    let query=client.from(table).select("player_name,score,player_id").order("score",{ascending:false});if(table==="medic_match_scores")query=query.eq("pairs",8).order("elapsed_ms",{ascending:true});const {data:batch,error}=await query.range(offset,offset+99);
     if(error)throw error;
     if(!batch?.length)break;
     for(const p of batch){
@@ -213,13 +214,13 @@ async function loadTrainingLeaderboard(){
     offset+=100;
    }
    if(!list.isConnected)return;
-   const leaderId=id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":id==="trainingMedsBoard"?"leaderMeds":"leaderCardiology";
+   const leaderId=id==="trainingMatchBoard"?"leaderMatch":id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":id==="trainingMedsBoard"?"leaderMeds":"leaderCardiology";
    const leader=document.getElementById(leaderId);
    if(leader){leader.replaceChildren();if(data.length){const name=data[0].player_name||"Anonymous",url=instagramProfileLink(name),el=document.createElement(url?"a":"span");el.textContent=name+" • "+Number(data[0].score||0).toLocaleString()+" pts";if(url){el.href=url;el.target="_blank";el.rel="noopener noreferrer";el.style.color="inherit";el.style.textDecoration="underline"}leader.append(el)}else leader.textContent="No GOAT crowned yet"}
    list.replaceChildren();
    if(!data?.length){const li=document.createElement("li");li.textContent="No scores yet. Be the first!";li.style.color="var(--muted)";list.append(li);return}
    data.forEach((p,i)=>{const li=document.createElement("li");li.style.cssText="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)";const name=document.createElement("span");name.style.cssText="min-width:0;overflow-wrap:anywhere";const profile=p.player_name||"Anonymous",url=instagramProfileLink(profile);name.textContent=(i+1)+". ";const label=document.createElement(url?"a":"span");label.textContent=profile;if(url){label.href=url;label.target="_blank";label.rel="noopener noreferrer";label.style.cssText="color:inherit;text-decoration:underline;text-underline-offset:3px"}name.append(label);const points=document.createElement("strong");points.style.cssText="white-space:nowrap;color:var(--ink)";points.textContent=Number(p.score||0).toLocaleString()+" pts";li.append(name,points);list.append(li)});
-  }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable.";const leader=document.getElementById(id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology");if(leader)leader.textContent="Unavailable"}
+  }catch(e){if(list.isConnected)list.textContent="Scores are temporarily unavailable.";const leader=document.getElementById(id==="trainingMatchBoard"?"leaderMatch":id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":"leaderCardiology");if(leader)leader.textContent="Unavailable"}
  }));
 }
 function rapidDifferentialsLanding(){
