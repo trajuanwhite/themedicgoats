@@ -122,17 +122,17 @@ function training(){
  <span><strong>Medic Match</strong> <span id="leaderMatch">Loading…</span></span>
  <span><strong>Rapid Rhythms</strong> <span id="leaderRhythm">Loading…</span></span>
  <span><strong>Rapid Cardiology</strong> <span id="leaderCardiology">Loading…</span></span>
- <span><strong>Rapid Meds</strong> <span id="leaderMeds">Loading…</span></span>
+ <span><strong>Rapid Meds</strong> <span id="leaderMeds">Loading…</span></span><span><strong>Rapid Hoops</strong> <span id="leaderHoops">Loading…</span></span>
  </div></div>
  <button type="button" id="trainingOpenBoards" aria-expanded="false" aria-controls="trainingFullBoards" style="padding:10px 16px;border-radius:10px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;font-weight:700">View Full Leaderboards</button>
  </div>
  <div id="trainingFullBoards" hidden style="margin-top:18px">
- <div class="leaderboard-grid"><div class="leaderboard-game"><div class="kicker">MEMORY • PRO BOARD</div><h3>Medic Match</h3><p>Best matching efficiency per IG handle</p><ol id="trainingMatchBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/medic-match.html" class="leaderboard-link">Play Medic Match →</a></div>
+ <div class="leaderboard-grid"><div class="leaderboard-game"><div class="kicker">MEMORY • GOAT BOARD</div><h3>Medic Match</h3><p>Best matching efficiency per IG handle</p><ol id="trainingMatchBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/medic-match.html" class="leaderboard-link">Play Medic Match →</a></div>
  <div class="leaderboard-game"><div class="kicker">RESUSCITATION</div><h3>Rapid MegaCode</h3><p>The GOAT and top challengers</p><ol id="trainingMegaBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-megacode" class="leaderboard-link">Play MegaCode →</a></div>
  <div class="leaderboard-game"><div class="kicker">ECG INTERPRETATION</div><h3>Rapid Rhythms</h3><p>The GOAT and top challengers</p><ol id="trainingRhythmBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-rhythms" class="leaderboard-link">Play Rhythms →</a></div>
  <div class="leaderboard-game"><div class="kicker">CARDIAC ANATOMY</div><h3>Rapid Cardiology</h3><p>The GOAT and top challengers</p><ol id="trainingCardiologyBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-cardiology" class="leaderboard-link">Play Cardiology →</a></div>
  <div class="leaderboard-game"><div class="kicker">MEDICATION KNOWLEDGE</div><h3>Rapid Meds</h3><p>The GOAT and top challengers</p><ol id="trainingMedsBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-meds-live" class="leaderboard-link">Play Meds →</a></div>
- </div></div></section>
+ <div class="leaderboard-game"><div class="kicker">EMS BASKETBALL • ROOKIE</div><h3>Rapid Hoops</h3><p>Highest basketball scores per Instagram handle</p><ol id="trainingHoopsBoard" class="leaderboard-list"><li>Loading scores…</li></ol><a href="/rapid-hoops.html" class="leaderboard-link">Play Rapid Hoops →</a></div></div></div></section>
  <section class="feature-card" aria-label="Medic Match game" style="margin-bottom:22px"><div class="feature-copy"><span class="eyebrow">NEW GAME • MEMORY CHALLENGE</span><h2>Medic Match</h2><p>Flip two cards, remember their positions, and match every EMS symbol. Choose Rookie, Pro, or GOAT and beat your best move count.</p><div class="row mobile"><a class="btn light" href="/medic-match.html" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Medic Match →</a></div></div><div class="feature-copy" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-content:center;text-align:center" aria-hidden="true"><div style="border:1px solid #7c7060;border-radius:14px;padding:22px 10px;font-size:32px;background:#29231d">🐐</div><div style="border:1px solid #7c7060;border-radius:14px;padding:22px 10px;font-size:32px;background:#efe6d9;color:#17130f">🚑</div><div style="border:1px solid #7c7060;border-radius:14px;padding:22px 10px;font-size:32px;background:#29231d">🐐</div><div style="border:1px solid #7c7060;border-radius:14px;padding:22px 10px;font-size:32px;background:#29231d">🐐</div><div style="border:1px solid #7c7060;border-radius:14px;padding:22px 10px;font-size:32px;background:#efe6d9;color:#17130f">🚑</div><div style="border:1px solid #7c7060;border-radius:14px;padding:22px 10px;font-size:32px;background:#29231d">🐐</div></div></section>
  <section class="feature-card" aria-label="Rapid Hoops game" style="margin-bottom:22px"><div class="feature-copy"><span class="eyebrow">NEW GAME • EMS BASKETBALL</span><h2>Rapid Hoops 🏀</h2><p>Answer EMS questions by shooting into the correct hoop. Build three perfect shots to ignite the ball, burn the net, and earn double points while on fire.</p><div class="row mobile"><a class="btn light" href="/rapid-hoops.html" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play Rapid Hoops →</a></div></div><div class="feature-copy" style="display:flex;align-items:center;justify-content:center;min-height:150px;text-align:center"><div><div style="font-size:64px;line-height:1.2">🏀🔥</div><strong>SHOOT • SWISH • SCORE</strong><p>Rookie • Pro • Hall of Fame</p></div></div></section>
  <section class="feature-card">
@@ -192,7 +192,7 @@ function training(){
 function instagramProfileLink(name){const raw=String(name||"").trim();if(!raw.startsWith("@"))return null;const handle=raw.slice(1);return /^[A-Za-z0-9._]{1,30}$/.test(handle)?"https://www.instagram.com/"+handle+"/":null}
 async function loadTrainingLeaderboard(){
  const client=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
- const boards=[["trainingMatchBoard","medic_match_scores"],["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"],["trainingMedsBoard","rapid_meds_scores"]];
+ const boards=[["trainingMatchBoard","medic_match_scores"],["trainingMegaBoard","rapid_megacode_scores"],["trainingRhythmBoard","rapid_rhythms_scores"],["trainingCardiologyBoard","rapid_cardiology_scores"],["trainingMedsBoard","rapid_meds_scores"],["trainingHoopsBoard","rapid_hoops_scores"]];
  await Promise.all(boards.map(async([id,table])=>{
   const list=document.getElementById(id);if(!list)return;
   try{
@@ -201,7 +201,7 @@ async function loadTrainingLeaderboard(){
    // when repeat entries would otherwise occupy more than one podium position.
    const data=[],seen=new Set();let offset=0;
    while(data.length<3){
-    let query=client.from(table).select("player_name,score,player_id").order("score",{ascending:false});if(table==="medic_match_scores")query=query.eq("pairs",8).order("elapsed_ms",{ascending:true});const {data:batch,error}=await query.range(offset,offset+99);
+    let query=client.from(table).select("player_name,score,player_id").order("score",{ascending:false});if(table==="medic_match_scores")query=query.eq("pairs",12).order("elapsed_ms",{ascending:true});if(table==="rapid_hoops_scores")query=query.eq("difficulty","rookie");const {data:batch,error}=await query.range(offset,offset+99);
     if(error)throw error;
     if(!batch?.length)break;
     for(const p of batch){
@@ -214,7 +214,7 @@ async function loadTrainingLeaderboard(){
     offset+=100;
    }
    if(!list.isConnected)return;
-   const leaderId=id==="trainingMatchBoard"?"leaderMatch":id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":id==="trainingMedsBoard"?"leaderMeds":"leaderCardiology";
+   const leaderId=id==="trainingMatchBoard"?"leaderMatch":id==="trainingMegaBoard"?"leaderMega":id==="trainingRhythmBoard"?"leaderRhythm":id==="trainingMedsBoard"?"leaderMeds":id==="trainingHoopsBoard"?"leaderHoops":"leaderCardiology";
    const leader=document.getElementById(leaderId);
    if(leader){leader.replaceChildren();if(data.length){const name=data[0].player_name||"Anonymous",url=instagramProfileLink(name),el=document.createElement(url?"a":"span");el.textContent=name+" • "+Number(data[0].score||0).toLocaleString()+" pts";if(url){el.href=url;el.target="_blank";el.rel="noopener noreferrer";el.style.color="inherit";el.style.textDecoration="underline"}leader.append(el)}else leader.textContent="No GOAT crowned yet"}
    list.replaceChildren();
