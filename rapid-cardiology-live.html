@@ -32,6 +32,27 @@ body.game-active main>h1,body.game-active main>p{display:none}body.game-active m
 body{background:radial-gradient(ellipse at top,#1d1d1d,#111111 70%)}
 .panel{background:#202020;border-color:#484848}
 .eyebrow{color:#d7c0a2}
+
+/* Medic Match-inspired light cream theme for the Rapid games. */
+:root{color-scheme:light!important;background:#f4f1eb!important;color:#17130f!important;--bg:#f4f1eb;--ink:#17130f;--muted:#777065;--line:#dcd4c8}
+html,body{background:#f4f1eb!important;color:#17130f!important}
+header{border-bottom-color:#dcd4c8}
+header a,main>header a,a{color:#17130f}
+h1,h2,h3,.score,.clock,.pin{color:#17130f!important}
+p,.muted{color:#777065!important}
+.eyebrow, .scenario small{color:#777065!important}
+.panel,#welcome,#lobby,.scenario,.feedback{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important;box-shadow:none}
+input,select,textarea{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important}
+input::placeholder,textarea::placeholder{color:#8a837a!important}
+.primary{background:#17130f!important;color:#fff!important;border-color:#17130f!important}
+.secondary{background:#fff!important;color:#17130f!important;border:1px solid #dcd4c8!important}
+.answer{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important}
+.answer b{color:#17130f!important}
+.answer.correct{background:#e5f2e9!important;color:#164d2b!important;border-color:#24764c!important}
+.answer.wrong{background:#fae9e5!important;color:#782f24!important;border-color:#c36e5f!important}
+.pill,.badge{background:#f4f1eb!important;color:#17130f!important;border-color:#dcd4c8!important}
+.bar{background:#e6dfd5!important}.fill{background:#17130f!important}
+.board li,.rapid-collection-item{border-color:#dcd4c8!important}
 </style></head><body><main><header><a href="/training">← THE MEDIC GOATS / TRAINING</a><span class="eyebrow">RAPID CARDIOLOGY LIVE</span></header><h1>Read the Clues. Rule the Board.</h1><p>Same rhythms. Same clock. Only one player takes the top spot.</p>
 <section id="welcome" class="panel"><div class="row"><button class="primary" id="hostBtn">HOST A LIVE GAME</button><button class="secondary" id="joinBtn">JOIN WITH GAME PIN</button></div><div id="joinFields" class="hidden"><label class="eyebrow" for="pinInput">GAME PIN</label><input id="pinInput" inputmode="numeric" maxlength="6" placeholder="6-digit PIN"><label class="eyebrow" for="nameInput">YOUR NAME</label><input id="nameInput" maxlength="24" placeholder="Your name"><button class="primary wide" id="joinSubmit">JOIN GAME →</button></div><p class="error" id="welcomeError"></p></section>
 <section id="lobby" class="panel hidden"><div class="lobby-main"><div class="lobby-top"><div class="eyebrow">GAME PIN</div><div class="pin" id="lobbyPin"></div></div><div class="lobby-body"><div id="hostTools" class="hidden center"><div id="qr"></div><p>Scan to join from any phone</p><div class="scenario" style="margin-bottom:16px;text-align:left"><div class="eyebrow">GAME MODE</div><div class="row" style="margin-top:12px"><button class="secondary" id="soloModeBtn">SOLO BATTLE</button><button class="secondary" id="teamsModeBtn">TEAM BATTLE</button></div><p id="modeLabel" style="font-size:13px">Individual competition</p></div><button class="primary wide" id="startBtn">START GAME →</button></div><p class="center" id="lobbyInfo">Waiting for host to start…</p><div id="teamPicker" class="hidden center" style="margin:18px 0"><div class="eyebrow">CHOOSE YOUR TEAM</div><div class="row" style="margin-top:12px"><button id="teamABtn" class="secondary">JOIN TEAM A</button><button id="teamBBtn" class="secondary">JOIN TEAM B</button></div><p id="teamChoiceStatus"></p></div><p class="error" id="lobbyError"></p></div></div><aside class="lobby-players"><div class="lobby-players-head"><h2>Players in lobby</h2><span class="player-count" id="playerCount">0 PLAYERS</span></div><ol class="board" id="lobbyPlayers"></ol></aside></section>
