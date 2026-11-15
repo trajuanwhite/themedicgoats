@@ -410,3 +410,8 @@ main:has(.training-leaderboards)>.page-heading{padding-top:12px}
 /* Compact Play buttons on Games cards only. */
 body:has(.training-leaderboards) .feature-card .row.mobile .btn.light{width:auto!important;min-width:100px;min-height:40px;padding:9px 24px;font-size:15px;line-height:1.25;border-radius:11px;flex:0 0 auto}
 @media(max-width:700px){body:has(.training-leaderboards) .feature-card .row.mobile .btn.light{width:auto!important;min-width:100px;padding:9px 24px}}
+
+/* Games cards: tightly fitted Play pills. */
+body:has(.training-leaderboards) .feature-card .row.mobile{justify-content:flex-start!important;align-items:flex-start}
+body:has(.training-leaderboards) .feature-card .row.mobile .btn.light{display:inline-flex!important;width:fit-content!important;min-width:0!important;max-width:max-content!important;flex:0 0 auto!important;padding:8px 17px!important;min-height:36px!important;font-size:14px!important;line-height:1.2!important;border-radius:999px!important;white-space:nowrap!important}
+@media(max-width:700px){body:has(.training-leaderboards) .feature-card .row.mobile .btn.light{width:fit-content!important;min-width:0!important;padding:8px 17px!important}}
