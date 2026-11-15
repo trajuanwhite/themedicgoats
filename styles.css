@@ -424,3 +424,21 @@ body:has(.training-leaderboards) .feature-card .row.mobile .btn.light{margin-lef
 body:has(.training-leaderboards) .feature-card .game-title-action{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:0 0 8px}
 body:has(.training-leaderboards) .feature-card .game-title-action h2{margin:0;min-width:0;flex:1 1 auto}
 body:has(.training-leaderboards) .feature-card .game-title-action .btn.light{flex:0 0 auto!important;display:inline-flex!important;width:fit-content!important;min-width:0!important;max-width:max-content!important;padding:8px 17px!important;min-height:36px!important;font-size:14px!important;line-height:1.2!important;border-radius:999px!important;white-space:nowrap!important;margin:0!important}
+
+/* Four Rapid games grouped in one native, accessible expandable card. */
+body:has(.training-leaderboards) .rapid-collection{margin-top:0!important}
+body:has(.training-leaderboards) .rapid-collection .feature-copy{width:100%;max-width:none}
+body:has(.training-leaderboards) .rapid-collection-details{width:100%}
+body:has(.training-leaderboards) .rapid-collection-details>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;list-style:none;padding:4px 0}
+body:has(.training-leaderboards) .rapid-collection-details>summary::-webkit-details-marker{display:none}
+body:has(.training-leaderboards) .rapid-collection-heading{display:flex;flex-direction:column;gap:7px;min-width:0}
+body:has(.training-leaderboards) .rapid-collection-heading strong{font-size:clamp(23px,3vw,30px);line-height:1.15;color:#fff}
+body:has(.training-leaderboards) .rapid-collection-heading small{font-size:14px;font-weight:400;line-height:1.45;color:#ded8cf}
+body:has(.training-leaderboards) .rapid-collection-toggle{font-size:28px;line-height:1;color:#fff;transition:transform .2s}
+body:has(.training-leaderboards) .rapid-collection-details[open] .rapid-collection-toggle{transform:rotate(180deg)}
+body:has(.training-leaderboards) .rapid-collection-list{margin-top:20px;border-top:1px solid rgba(255,255,255,.2)}
+body:has(.training-leaderboards) .rapid-collection-item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.15)}
+body:has(.training-leaderboards) .rapid-collection-item:last-child{border-bottom:0;padding-bottom:0}
+body:has(.training-leaderboards) .rapid-collection-item h3{font-size:18px;color:#fff;margin:0 0 5px}
+body:has(.training-leaderboards) .rapid-collection-item p{font-size:13px;line-height:1.4;color:#ded8cf;margin:0}
+body:has(.training-leaderboards) .rapid-collection-item .btn.light{display:inline-flex!important;flex:0 0 auto!important;width:fit-content!important;min-width:0!important;padding:8px 17px!important;min-height:36px!important;font-size:14px!important;border-radius:999px!important;text-decoration:none;color:#201c18}
