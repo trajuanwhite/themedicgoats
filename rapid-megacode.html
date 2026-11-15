@@ -22,6 +22,27 @@ body:has(#play:not(.hidden)) #play #answers button{padding:12px!important;margin
 body{background:radial-gradient(ellipse at top,#1d1d1d,#111111 70%)}
 .panel{background:#202020;border-color:#484848}
 .eyebrow{color:#d7c0a2}
+
+/* Medic Match-inspired light cream theme for the Rapid games. */
+:root{color-scheme:light!important;background:#f4f1eb!important;color:#17130f!important;--bg:#f4f1eb;--ink:#17130f;--muted:#777065;--line:#dcd4c8}
+html,body{background:#f4f1eb!important;color:#17130f!important}
+header{border-bottom-color:#dcd4c8}
+header a,main>header a,a{color:#17130f}
+h1,h2,h3,.score,.clock,.pin{color:#17130f!important}
+p,.muted{color:#777065!important}
+.eyebrow, .scenario small{color:#777065!important}
+.panel,#welcome,#lobby,.scenario,.feedback{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important;box-shadow:none}
+input,select,textarea{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important}
+input::placeholder,textarea::placeholder{color:#8a837a!important}
+.primary{background:#17130f!important;color:#fff!important;border-color:#17130f!important}
+.secondary{background:#fff!important;color:#17130f!important;border:1px solid #dcd4c8!important}
+.answer{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important}
+.answer b{color:#17130f!important}
+.answer.correct{background:#e5f2e9!important;color:#164d2b!important;border-color:#24764c!important}
+.answer.wrong{background:#fae9e5!important;color:#782f24!important;border-color:#c36e5f!important}
+.pill,.badge{background:#f4f1eb!important;color:#17130f!important;border-color:#dcd4c8!important}
+.bar{background:#e6dfd5!important}.fill{background:#17130f!important}
+.board li,.rapid-collection-item{border-color:#dcd4c8!important}
 </style></head><body><header><a href="/">THE MEDIC GOATS</a><a href="/" aria-label="Return to home">← BACK TO SITE</a></header><main><div class="eyebrow">QUICK PLAY • CLINICAL DECISIONS</div><h1>Rapid MegaCode<span style="color:#d4b695">.</span></h1><p>Read the scenario at your pace. Reveal the answers to start your seven-second decision window. Protect your three goats and finish the code.</p>
 <div class="panel"><div id="intro"><div class="row" style="margin-bottom:22px"><button class="primary" id="soloMode" type="button" style="flex:1;min-width:130px">SOLO</button><a href="/rapid-megacode-live" style="flex:1;min-width:130px;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;border:1px solid #d4b695;border-radius:12px;background:#3b3027;color:#f4d6b6;font-weight:800;text-decoration:none">MULTIPLAYER →</a></div><p style="margin:0 0 14px">Enter your name to begin the challenge.</p><label for="startPlayerName" class="eyebrow" style="display:block;margin-bottom:8px">PLAYER NAME</label><input id="startPlayerName" class="nameinput" maxlength="24" autocomplete="nickname" aria-required="true" style="margin:0 0 12px" placeholder="@instagramhandle or display name"><button class="primary" id="start" type="button" style="display:block!important;visibility:visible!important;opacity:1!important;min-height:56px;margin:0 0 8px">START RAPID MEGACODE →</button><p id="startError" role="alert" style="color:#ffb1a0;margin:6px 0"></p><div class="rules"><div class="rule"><strong>7s</strong><span>read</span></div><div class="rule"><strong>7s</strong><span>answer</span></div><div class="rule"><strong>🐐🐐🐐</strong><span>three chances</span></div></div><p>Earn points for fast, correct decisions. Wrong answers and timeouts cost one goat. Explanations are untimed.</p></div>
 <div id="play" class="hidden"><div class="row"><div><div class="eyebrow" id="currentPlayer" style="margin-bottom:8px"></div><div class="eyebrow">GOATS REMAINING</div><div class="goats" id="goats" aria-label="Three goats">🐐 🐐 🐐</div></div><div style="text-align:right"><div class="eyebrow">SCORE</div><div class="score" id="score">0</div></div></div><div class="row" style="margin-top:20px"><span class="pill" id="round">DECISION 1</span><span class="pill" id="streak">0 STREAK</span></div><div class="scenario"><small id="stage">PATIENT UPDATE</small><h2 id="question"></h2></div><div id="read"><p class="center">Read the patient update. Answers appear automatically.</p><div class="row"><span class="eyebrow">READING TIME</span><span class="clock" id="readClock">7.0s</span></div><div class="bar"><div class="fill" id="readFill"></div></div></div><div id="choices" class="hidden"><div class="row"><span class="eyebrow">CHOOSE YOUR ACTION</span><span class="clock" id="clock" aria-live="off">7.0s</span></div><div class="bar"><div class="fill" id="fill"></div></div><div id="answers"></div></div><div id="feedback" class="feedback hidden" aria-live="polite"></div><button class="primary hidden" id="next">NEXT DECISION →</button></div>
