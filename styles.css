@@ -396,3 +396,13 @@ body:has(.training-leaderboards) .feature-card .btn.light{width:fit-content;max-
 
 /* Games: beige category labels only; retain original white-on-black cards. */
 body:has(.training-leaderboards) .feature-card .eyebrow{color:#d7c0a2}
+
+/* Games page: remove excess whitespace above the first leaderboard. */
+main:has(.training-leaderboards){padding-top:14px}
+main:has(.training-leaderboards)>.training-leaderboards{margin-top:0;margin-bottom:20px!important}
+main:has(.training-leaderboards)>.page-heading{padding-top:12px}
+@media(max-width:700px){
+ main:has(.training-leaderboards){padding-top:12px}
+ main:has(.training-leaderboards)>.training-leaderboards{margin-top:0;padding-top:16px!important;padding-bottom:16px!important}
+ main:has(.training-leaderboards)>.page-heading{padding-top:8px;padding-bottom:18px}
+}
