@@ -38,13 +38,13 @@ function startGiveawayCountdown(){
 
 let homeFeatureRotationInterval=null,homeFeatureIndex=0,homeFeatureFadeTimeout=null,homeFeatureActiveId=null;
 function updateHomeFeature(){
- const slides=[["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"],["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"]];
+ const slides=[["whatsNewFeature","THE MEDIC GOATS • WHAT’S NEW","What’s New"],["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"],["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"]];
  const hero=document.getElementById("homeFeatureHero");if(!hero)return;
  renderDailyBlogFeature();
  homeFeatureIndex=((homeFeatureIndex%slides.length)+slides.length)%slides.length;
  const active=slides[homeFeatureIndex];
  const applySlide=()=>{
-  ["giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
+  ["whatsNewFeature","giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
   document.getElementById("homeFeatureKicker").textContent=active[1];
   hero.setAttribute("aria-label",active[2]);
   homeFeatureActiveId=active[0];
@@ -68,19 +68,13 @@ function siteHome(){
  app.innerHTML=`
  <section class="brand-hero blog-day-hero" id="homeFeatureHero" aria-label="Featured Medic Goats content">
   <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
+  <div id="whatsNewFeature" hidden><h1 id="whatsNewTitle">What's new</h1><p id="whatsNewDescription">Discover the latest Medic Goats updates.</p><a id="whatsNewLink" class="btn light" href="/blog">Read the latest →</a><div id="whatsNewPagination" style="font-size:.8rem;margin-top:14px;opacity:.8"></div></div>
   <div id="giveawayFeature" hidden><h1>10K Follower Giveaway</h1><p>We’ve partnered with IntuBlade to give away a video laryngoscope and gift box. Open to eligible U.S. healthcare professionals and students.</p><a class="btn light" href="/giveaway">Enter the Giveaway →</a></div>
   <div id="dailyBlogFeature" hidden></div>
   <div id="gamesFeature" hidden><h1>Think fast. Train smarter.</h1><p>Challenge your clinical decision-making with Rapid MegaCode, Rapid Rhythms, and more interactive EMS training games.</p><a class="btn light" href="/training">Explore Games →</a></div>
   <div class="home-feature-controls"><button type="button" id="homeFeaturePrev" aria-label="Previous featured item">‹</button><div id="homeFeatureDots" aria-label="Featured item selection"></div><button type="button" id="homeFeatureNext" aria-label="Next featured item">›</button></div>
  </section>
  
- <section class="home-news" aria-label="What's new on The Medic Goats" style="padding:30px 0 14px">
-  <div class="kicker">LATEST UPDATES • THE MEDIC GOATS</div>
-  <h2 style="font-size:clamp(1.8rem,5vw,2.8rem);margin:10px 0 8px">What's new</h2>
-  <p style="color:#756f69;margin:0 0 22px">Fresh EMS education, new articles, and updates from the training library.</p>
-  <div id="homeLatestPosts" class="medic-blog-grid" aria-live="polite"></div>
-  <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn primary" href="/blog">Explore all articles →</a><a class="btn" href="/training">Visit the games →</a></div>
- </section>
  <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
  homeFeatureIndex=0;
  updateHomeFeature();
@@ -88,8 +82,14 @@ function siteHome(){
  document.getElementById("homeFeaturePrev").onclick=()=>{homeFeatureIndex--;updateHomeFeature();startHomeFeatureRotation();};
  document.getElementById("homeFeatureNext").onclick=()=>{homeFeatureIndex++;updateHomeFeature();startHomeFeatureRotation();};
  const latestPosts=(window.MEDIC_BLOG_POSTS||[]).filter(p=>p&&p.slug&&p.title).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))).slice(0,4);
- const safeHomeText=value=>String(value||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
- document.getElementById("homeLatestPosts").innerHTML=latestPosts.map((p,index)=>'<a class="medic-blog-card" href="/blog/'+encodeURIComponent(p.slug)+'"><span>'+(index===0?'JUST ADDED • ':'')+safeHomeText(p.category||'EMS EDUCATION')+'</span><h2>'+safeHomeText(p.title)+'</h2><p>'+safeHomeText(p.description||'Read the latest article')+'</p><span>Read article →</span></a>').join("");
+ const newest=latestPosts[0];
+ if(newest){
+  document.getElementById("whatsNewTitle").textContent=newest.title;
+  document.getElementById("whatsNewDescription").textContent=newest.description||"Explore the latest EMS education article.";
+  document.getElementById("whatsNewLink").href="/blog/"+encodeURIComponent(newest.slug);
+  document.getElementById("whatsNewLink").textContent="Read the new blog →";
+  document.getElementById("whatsNewPagination").textContent="LATEST ARTICLE • "+(newest.category||"EMS EDUCATION");
+ }
  closingTrain.onclick=()=>{location.href="/training";};
 }
 function training(){
