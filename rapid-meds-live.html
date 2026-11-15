@@ -32,6 +32,27 @@ body:has(#lobby:not(.hidden)) main>p{max-width:680px;margin:0 auto 28px}
 body{background:radial-gradient(ellipse at top,#1d1d1d,#111111 70%)}
 .panel{background:#202020;border-color:#484848}
 .eyebrow{color:#d7c0a2}
+
+/* Medic Match-inspired light cream theme for the Rapid games. */
+:root{color-scheme:light!important;background:#f4f1eb!important;color:#17130f!important;--bg:#f4f1eb;--ink:#17130f;--muted:#777065;--line:#dcd4c8}
+html,body{background:#f4f1eb!important;color:#17130f!important}
+header{border-bottom-color:#dcd4c8}
+header a,main>header a,a{color:#17130f}
+h1,h2,h3,.score,.clock,.pin{color:#17130f!important}
+p,.muted{color:#777065!important}
+.eyebrow, .scenario small{color:#777065!important}
+.panel,#welcome,#lobby,.scenario,.feedback{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important;box-shadow:none}
+input,select,textarea{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important}
+input::placeholder,textarea::placeholder{color:#8a837a!important}
+.primary{background:#17130f!important;color:#fff!important;border-color:#17130f!important}
+.secondary{background:#fff!important;color:#17130f!important;border:1px solid #dcd4c8!important}
+.answer{background:#fff!important;color:#17130f!important;border-color:#dcd4c8!important}
+.answer b{color:#17130f!important}
+.answer.correct{background:#e5f2e9!important;color:#164d2b!important;border-color:#24764c!important}
+.answer.wrong{background:#fae9e5!important;color:#782f24!important;border-color:#c36e5f!important}
+.pill,.badge{background:#f4f1eb!important;color:#17130f!important;border-color:#dcd4c8!important}
+.bar{background:#e6dfd5!important}.fill{background:#17130f!important}
+.board li,.rapid-collection-item{border-color:#dcd4c8!important}
 </style></head><body><main><header><a href="/training">← THE MEDIC GOATS / TRAINING</a><span class="eyebrow">RAPID MEDS</span></header><div class="eyebrow">QUICK PLAY • MEDICATION KNOWLEDGE</div><h1>Rapid Meds.</h1><p>You have seven seconds to read, then seven seconds to answer. Make the call. Protect your three goats and test your medication knowledge.</p>
 <section id="welcome" class="panel"><div class="row"><button class="primary" id="playSoloBtn">SOLO</button><button class="secondary" id="hostBtn">MULTIPLAYER →</button><button class="secondary hidden" id="joinBtn">JOIN WITH GAME PIN</button></div><div id="soloFields"><p>Enter your Instagram handle to begin the challenge.</p><label class="eyebrow" for="soloName">INSTAGRAM HANDLE OR DISPLAY NAME</label><input id="soloName" maxlength="24" placeholder="@instagramhandle or display name"><button class="primary wide" id="soloStartBtn">START RAPID MEDS →</button><div class="meds-rules"><div><strong>7s</strong><span>read</span></div><div><strong>7s</strong><span>answer</span></div><div><strong>🐐🐐🐐</strong><span>three chances</span></div></div><p>Earn points for fast, correct decisions. Wrong answers and timeouts cost one goat.</p></div><div id="joinFields" class="hidden"><label class="eyebrow" for="pinInput">GAME PIN</label><input id="pinInput" inputmode="numeric" maxlength="6" placeholder="6-digit PIN"><label class="eyebrow" for="nameInput">YOUR NAME</label><input id="nameInput" maxlength="24" placeholder="@instagramhandle or display name"><button class="primary wide" id="joinSubmit">JOIN GAME →</button></div><p class="error" id="welcomeError"></p></section>
 <section id="lobby" class="panel hidden"><div class="lobby-main"><div class="lobby-top"><div class="eyebrow">GAME PIN</div><div class="pin" id="lobbyPin"></div></div><div class="lobby-body"><div id="hostTools" class="hidden center"><div id="qr"></div><p>Scan to join from any phone</p><div class="scenario" style="margin-bottom:16px;text-align:left"><div class="eyebrow">GAME MODE</div><div class="row" style="margin-top:12px"><button class="secondary" id="soloModeBtn">SOLO BATTLE</button><button class="secondary" id="teamsModeBtn">TEAM BATTLE</button></div><p id="modeLabel" style="font-size:13px">Individual competition</p></div><div id="hostJoinBox" style="margin:16px 0;text-align:left"><label class="eyebrow" for="hostPlayerName">HOST: JOIN AS A PLAYER TO COMPETE AND APPEAR ON THE SCOREBOARD</label><input id="hostPlayerName" maxlength="24" placeholder="@instagramhandle or display name" autocomplete="nickname"><button class="secondary wide" id="hostJoinBtn" style="margin-top:10px">JOIN AS PLAYER →</button><p id="hostJoinStatus" style="font-size:13px;margin:10px 0"></p></div><button class="primary wide" id="startBtn">START GAME →</button><p id="hostPlayerReminder" style="font-size:13px;color:#e6c39f;margin:10px 0">Hosting does not automatically enter you as a player. Enter your handle and tap JOIN AS PLAYER first.</p></div><p class="center" id="lobbyInfo">Waiting for host to start…</p><div id="teamPicker" class="hidden center" style="margin:18px 0"><div class="eyebrow">CHOOSE YOUR TEAM</div><div class="row" style="margin-top:12px"><button id="teamABtn" class="secondary">JOIN TEAM A</button><button id="teamBBtn" class="secondary">JOIN TEAM B</button></div><p id="teamChoiceStatus"></p></div><p class="error" id="lobbyError"></p></div></div><aside class="lobby-players"><div class="lobby-players-head"><h2>Players in lobby</h2><span class="player-count" id="playerCount">0 PLAYERS</span></div><ol class="board" id="lobbyPlayers"></ol></aside></section>
