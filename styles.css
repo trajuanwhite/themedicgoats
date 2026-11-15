@@ -442,3 +442,14 @@ body:has(.training-leaderboards) .rapid-collection-item:last-child{border-bottom
 body:has(.training-leaderboards) .rapid-collection-item h3{font-size:18px;color:#fff;margin:0 0 5px}
 body:has(.training-leaderboards) .rapid-collection-item p{font-size:13px;line-height:1.4;color:#ded8cf;margin:0}
 body:has(.training-leaderboards) .rapid-collection-item .btn.light{display:inline-flex!important;flex:0 0 auto!important;width:fit-content!important;min-width:0!important;padding:8px 17px!important;min-height:36px!important;font-size:14px!important;border-radius:999px!important;text-decoration:none;color:#201c18}
+
+/* Unified Games palette: neutral black cards, white type and Play pills, beige labels.
+   Removes the brown tint from the grouped Rapid Challenges card and keeps it
+   visually identical to Medic Match and Rapid Hoops. */
+body:has(.training-leaderboards) .feature-card{background:#171717!important;color:#fff!important}
+body:has(.training-leaderboards) .rapid-collection .rapid-collection-heading strong,
+body:has(.training-leaderboards) .rapid-collection .rapid-collection-item h3,
+body:has(.training-leaderboards) .rapid-collection .rapid-collection-toggle{color:#fff!important}
+body:has(.training-leaderboards) .rapid-collection .rapid-collection-heading small,
+body:has(.training-leaderboards) .rapid-collection .rapid-collection-item p{color:#d8d8d8!important}
+body:has(.training-leaderboards) .rapid-collection .rapid-collection-item .btn.light{background:#fff!important;color:#171717!important;border-color:#fff!important}
