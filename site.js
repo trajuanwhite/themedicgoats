@@ -84,7 +84,8 @@ function siteHome(){
  const latestPosts=(window.MEDIC_BLOG_POSTS||[]).filter(p=>p&&p.slug&&p.title).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))).slice(0,4);
  const newest=latestPosts[0];
  if(newest){
-  document.getElementById("whatsNewTitle").textContent=newest.title.length>62?newest.title.split(":")[0]:newest.title;\n  document.getElementById("whatsNewTitle").setAttribute("title",newest.title);
+  document.getElementById("whatsNewTitle").textContent=newest.title.length>62?newest.title.split(":")[0]:newest.title;
+  document.getElementById("whatsNewTitle").setAttribute("title",newest.title);
   document.getElementById("whatsNewDescription").textContent=newest.description||"Explore the latest EMS education article.";
   document.getElementById("whatsNewLink").href="/blog/"+encodeURIComponent(newest.slug);
   document.getElementById("whatsNewLink").textContent="Read the new blog →";
