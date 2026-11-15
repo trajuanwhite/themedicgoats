@@ -384,3 +384,12 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 @media(max-width:700px){#homeFeatureHero.blog-day-hero,#homeFeatureHero.blog-day-hero.giveaway-active{height:390px;min-height:390px;max-height:390px;padding:25px 24px 20px}#homeFeatureHero.blog-day-hero h1,#homeFeatureHero.blog-day-hero.giveaway-active h1{font-size:clamp(27px,7vw,36px);line-height:1.12;margin:7px 0 12px;-webkit-line-clamp:3}#homeFeatureHero.blog-day-hero p,#homeFeatureHero.blog-day-hero.giveaway-active p{font-size:15px;line-height:1.42;-webkit-line-clamp:3;margin:0 0 13px}#homeFeatureHero .home-feature-detail{font-size:10px;margin:0 0 13px;letter-spacing:.06em}#homeFeatureHero.blog-day-hero a.btn{font-size:14px;min-height:42px}#homeFeatureHero.blog-day-hero .daily-blog-category{margin-top:5px;font-size:11px}#homeFeatureHero.blog-day-hero .home-feature-controls{padding-top:8px}}
 @media(max-width:390px){#homeFeatureHero.blog-day-hero,#homeFeatureHero.blog-day-hero.giveaway-active{height:410px;min-height:410px;max-height:410px;padding:22px 20px 18px}#homeFeatureHero.blog-day-hero h1,#homeFeatureHero.blog-day-hero.giveaway-active h1{font-size:26px}#homeFeatureHero.blog-day-hero p,#homeFeatureHero.blog-day-hero.giveaway-active p{font-size:14px}}
 @media(prefers-reduced-motion:reduce){#homeFeatureHero #whatsNewFeature{transition:none;transform:none}}
+
+/* Compact, consistent Games page cards without previews. */
+body:has(.training-leaderboards) .feature-card{display:flex;flex-direction:column;justify-content:center;min-height:0;padding:clamp(24px,4vw,36px);gap:0;margin-top:20px!important;margin-bottom:20px!important}
+body:has(.training-leaderboards) .feature-card>.feature-copy{width:100%;max-width:100%}
+body:has(.training-leaderboards) .feature-card .feature-copy h2{font-size:clamp(34px,6vw,52px);line-height:1.05;margin:12px 0 14px}
+body:has(.training-leaderboards) .feature-card .feature-copy p{font-size:clamp(15px,2vw,17px);line-height:1.5;max-width:700px;margin:0 0 22px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+body:has(.training-leaderboards) .feature-card .row.mobile{margin-top:auto}
+body:has(.training-leaderboards) .feature-card .btn.light{width:fit-content;max-width:100%;text-decoration:none}
+@media(max-width:700px){body:has(.training-leaderboards) .feature-card{min-height:0;padding:25px 22px}body:has(.training-leaderboards) .feature-card .feature-copy h2{font-size:clamp(32px,8vw,42px)}body:has(.training-leaderboards) .feature-card .row.mobile .btn{width:100%;text-align:center}}
