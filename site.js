@@ -38,13 +38,13 @@ function startGiveawayCountdown(){
 
 let homeFeatureRotationInterval=null,homeFeatureIndex=0,homeFeatureFadeTimeout=null,homeFeatureActiveId=null;
 function updateHomeFeature(){
- const slides=[["whatsNewFeature","THE MEDIC GOATS • WHAT’S NEW","What’s New"],["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"],["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"]];
+ const slides=[["dailyBlogFeature","THE MEDIC GOATS • BLOG OF THE DAY","Blogs"],["gamesFeature","THE MEDIC GOATS • TRAIN YOUR MIND","Games"],["giveawayFeature","THE MEDIC GOATS × INTUBLADE • 10K GIVEAWAY","Giveaway"]];
  const hero=document.getElementById("homeFeatureHero");if(!hero)return;
  renderDailyBlogFeature();
  homeFeatureIndex=((homeFeatureIndex%slides.length)+slides.length)%slides.length;
  const active=slides[homeFeatureIndex];
  const applySlide=()=>{
-  ["whatsNewFeature","giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
+  ["giveawayFeature","dailyBlogFeature","gamesFeature"].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=id!==active[0];});
   document.getElementById("homeFeatureKicker").textContent=active[1];
   hero.setAttribute("aria-label",active[2]);
   homeFeatureActiveId=active[0];
@@ -68,7 +68,6 @@ function siteHome(){
  app.innerHTML=`
  <section class="brand-hero blog-day-hero" id="homeFeatureHero" aria-label="Featured Medic Goats content">
   <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
-  <div id="whatsNewFeature" hidden><h1 id="whatsNewTitle">What's new</h1><p id="whatsNewDescription">Discover the latest Medic Goats updates.</p><a id="whatsNewLink" class="btn light" href="/blog">Read the latest →</a><div id="whatsNewPagination" style="font-size:.8rem;margin-top:14px;opacity:.8"></div></div>
   <div id="giveawayFeature" hidden><h1>10K Follower Giveaway</h1><p>We’ve partnered with IntuBlade to give away a video laryngoscope and gift box. Open to eligible U.S. healthcare professionals and students.</p><div class="home-feature-detail">COMMUNITY MILESTONE • 10,000 FOLLOWERS</div><a class="btn light" href="/giveaway">Enter the Giveaway →</a></div>
   <div id="dailyBlogFeature" hidden></div>
   <div id="gamesFeature" hidden><h1>Think fast. Train smarter.</h1><p>Challenge your clinical decision-making with Rapid MegaCode, Rapid Rhythms, and more interactive EMS training games.</p><div class="home-feature-detail">7 SECONDS TO READ • 7 SECONDS TO ANSWER • SOLO & MULTIPLAYER</div><a class="btn light" href="/training">Explore Games →</a></div>
@@ -81,17 +80,7 @@ function siteHome(){
  startHomeFeatureRotation();
  document.getElementById("homeFeaturePrev").onclick=()=>{homeFeatureIndex--;updateHomeFeature();startHomeFeatureRotation();};
  document.getElementById("homeFeatureNext").onclick=()=>{homeFeatureIndex++;updateHomeFeature();startHomeFeatureRotation();};
- const latestPosts=(window.MEDIC_BLOG_POSTS||[]).filter(p=>p&&p.slug&&p.title).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))).slice(0,4);
- const newest=latestPosts[0];
- if(newest){
-  document.getElementById("whatsNewTitle").textContent=newest.title.length>62?newest.title.split(":")[0]:newest.title;
-  document.getElementById("whatsNewTitle").setAttribute("title",newest.title);
-  document.getElementById("whatsNewDescription").textContent=newest.description||"Explore the latest EMS education article.";
-  document.getElementById("whatsNewDetail").textContent="JUST ADDED  •  "+(newest.category||"EMS EDUCATION").toUpperCase();
-  document.getElementById("whatsNewLink").href="/blog/"+encodeURIComponent(newest.slug);
-  document.getElementById("whatsNewLink").textContent="Read the new blog →";
-  document.getElementById("whatsNewPagination").textContent="LATEST ARTICLE • "+(newest.category||"EMS EDUCATION");
- }
+
 }
 function training(){
  clearInterval(timer);
