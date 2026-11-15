@@ -75,7 +75,7 @@ function siteHome(){
   <div class="home-feature-controls"><button type="button" id="homeFeaturePrev" aria-label="Previous featured item">‹</button><div id="homeFeatureDots" aria-label="Featured item selection"></div><button type="button" id="homeFeatureNext" aria-label="Next featured item">›</button></div>
  </section>
  
- <section class="closing"><div class="kicker">THE MEDIC GOATS</div><h2>Better thinking.<br>Better decisions.<br>Better patient care.</h2><button class="btn primary" id="closingTrain">Start Training →</button></section>`;
+`;
  homeFeatureIndex=0;
  updateHomeFeature();
  startHomeFeatureRotation();
@@ -91,7 +91,6 @@ function siteHome(){
   document.getElementById("whatsNewLink").textContent="Read the new blog →";
   document.getElementById("whatsNewPagination").textContent="LATEST ARTICLE • "+(newest.category||"EMS EDUCATION");
  }
- closingTrain.onclick=()=>{location.href="/training";};
 }
 function training(){
  clearInterval(timer);
