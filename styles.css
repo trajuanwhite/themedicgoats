@@ -368,3 +368,17 @@ footer .medic-instagram-link{flex-shrink:0;margin:0;min-height:40px}
 .home-hoops-preview-link{position:absolute;inset:0;z-index:1;cursor:pointer}
 .home-hoops-preview-link:focus-visible{outline:3px solid #a66b48;outline-offset:-4px}
 @media(max-width:700px){.home-hoops-preview{height:280px}.home-hoops-preview iframe{transform:translateX(-50%) scale(.63)}}
+
+/* Uniform homepage carousel: match the 10K giveaway card on every slide. */
+#homeFeatureHero.blog-day-hero{height:440px;min-height:440px;padding:clamp(26px,5vw,62px) clamp(24px,5vw,68px);display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+#homeFeatureHero.blog-day-hero.giveaway-active{height:440px;min-height:440px;padding:clamp(26px,5vw,62px) clamp(24px,5vw,68px)}
+#homeFeatureHero #whatsNewFeature,#homeFeatureHero #dailyBlogFeature,#homeFeatureHero #gamesFeature,#homeFeatureHero #giveawayFeature{min-height:0;max-width:100%;overflow:hidden}
+#homeFeatureHero.blog-day-hero h1,#homeFeatureHero.blog-day-hero.giveaway-active h1{font-size:clamp(28px,4.3vw,52px);line-height:1.08;letter-spacing:-.04em;margin:12px 0 14px;max-width:850px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere}
+#homeFeatureHero.blog-day-hero p,#homeFeatureHero.blog-day-hero.giveaway-active p{font-size:clamp(14px,1.7vw,18px);line-height:1.45;margin:0 0 18px;max-width:730px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+#homeFeatureHero.blog-day-hero .home-feature-controls,#homeFeatureHero.blog-day-hero.giveaway-active .home-feature-controls{margin-top:22px;flex-shrink:0}
+#homeFeatureHero #whatsNewPagination{margin-top:10px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#homeFeatureHero #whatsNewFeature{transition:opacity .26s ease-in-out,transform .26s ease-in-out}
+#homeFeatureHero.home-feature-fading #whatsNewFeature{opacity:0;transform:translateY(5px)}
+@media(max-width:700px){#homeFeatureHero.blog-day-hero,#homeFeatureHero.blog-day-hero.giveaway-active{height:390px;min-height:390px;padding:28px 24px}#homeFeatureHero.blog-day-hero h1,#homeFeatureHero.blog-day-hero.giveaway-active h1{font-size:clamp(27px,7vw,36px);-webkit-line-clamp:3}#homeFeatureHero.blog-day-hero p,#homeFeatureHero.blog-day-hero.giveaway-active p{font-size:15px;-webkit-line-clamp:3}#homeFeatureHero.blog-day-hero .home-feature-controls{margin-top:18px}}
+@media(max-width:390px){#homeFeatureHero.blog-day-hero,#homeFeatureHero.blog-day-hero.giveaway-active{height:410px;min-height:410px;padding:22px 20px}#homeFeatureHero.blog-day-hero h1,#homeFeatureHero.blog-day-hero.giveaway-active h1{font-size:27px}}
+@media(prefers-reduced-motion:reduce){#homeFeatureHero #whatsNewFeature{transition:none;transform:none}}
