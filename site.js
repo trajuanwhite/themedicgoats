@@ -148,7 +148,7 @@ function training(){
  <section class="feature-card rapid-collection" aria-label="Rapid Challenge games">
   <div class="feature-copy">
    <span class="eyebrow">EMS KNOWLEDGE GAMES • TIMED QUIZZES &amp; BASKETBALL</span>
-   <details class="rapid-collection-details">
+   <details class="rapid-collection-details" open>
     <summary><span class="rapid-collection-heading"><strong>Rapid Challenges</strong><small>MegaCode, Meds, Rhythms, Cardiology, and Hoops</small></span><span class="rapid-collection-toggle" aria-hidden="true">⌄</span></summary>
     <div class="rapid-collection-list">
      <div class="rapid-collection-item"><div><h3>Rapid MegaCode</h3><p>Critical decisions and resuscitation scenarios.</p></div><a class="btn light" href="/rapid-megacode">Play</a></div>
