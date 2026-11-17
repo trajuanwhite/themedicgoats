@@ -144,17 +144,16 @@ function training(){
    </details>
   </div>
  </section>
- <section class="feature-card" aria-label="Rapid Hoops game" style="margin-bottom:22px"><div class="feature-copy"><span class="eyebrow">NEW GAME • EMS BASKETBALL</span><div class="game-title-action"><h2>Rapid Hoops</h2><a class="btn light" href="/rapid-hoops.html" style="text-decoration:none;color:#201c18;display:inline-flex;align-items:center;justify-content:center">Play</a></div><p>Answer EMS questions by shooting into the correct hoop. Build three perfect shots to ignite the ball, burn the net, and earn double points while on fire.</p></div></section>
  <section class="feature-card rapid-collection" aria-label="Rapid Challenge games">
   <div class="feature-copy">
-   <span class="eyebrow">FOUR SUBJECTS • ONE GAME FORMAT</span>
    <details class="rapid-collection-details">
-    <summary><span class="rapid-collection-heading"><strong>Rapid Challenges</strong><small>Choose a subject: MegaCode, Meds, Rhythms, or Cardiology</small></span><span class="rapid-collection-toggle" aria-hidden="true">⌄</span></summary>
+    <summary><span class="rapid-collection-heading"><strong>Rapid Challenges</strong><small>MegaCode, Meds, Rhythms, Cardiology, and Hoops</small></span><span class="rapid-collection-toggle" aria-hidden="true">⌄</span></summary>
     <div class="rapid-collection-list">
      <div class="rapid-collection-item"><div><h3>Rapid MegaCode</h3><p>Critical decisions and resuscitation scenarios.</p></div><a class="btn light" href="/rapid-megacode">Play</a></div>
      <div class="rapid-collection-item"><div><h3>Rapid Meds</h3><p>Medication classes, mechanisms, and clinical uses.</p></div><a class="btn light" href="/rapid-meds-live">Play</a></div>
      <div class="rapid-collection-item"><div><h3>Rapid Rhythms</h3><p>Identify cardiac rhythms from clinical clues.</p></div><a class="btn light" href="/rapid-rhythms">Play</a></div>
      <div class="rapid-collection-item"><div><h3>Rapid Cardiology</h3><p>Cardiac anatomy, blood flow, and perfusion.</p></div><a class="btn light" href="/rapid-cardiology">Play</a></div>
+     <div class="rapid-collection-item"><div><h3>Rapid Hoops</h3><p>Answer EMS questions by shooting into the correct hoop.</p></div><a class="btn light" href="/rapid-hoops.html" aria-label="Play Rapid Hoops">Play</a></div>
     </div>
    </details>
   </div>
