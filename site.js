@@ -136,7 +136,7 @@ function training(){
  <section class="feature-card rapid-collection" aria-label="Brain Exercises" style="margin-bottom:22px">
   <div class="feature-copy">
    <span class="eyebrow">MEMORY &amp; VISUAL REACTION GAMES</span>
-   <details class="rapid-collection-details">
+   <details class="rapid-collection-details" open>
     <summary><span class="rapid-collection-heading"><strong>Brain Exercises</strong><small>Medic Match and Orbit</small></span><span class="rapid-collection-toggle" aria-hidden="true">⌄</span></summary>
     <div class="rapid-collection-list">
      <div class="rapid-collection-item"><div><h3>Medic Match</h3><p>Flip cards and remember their positions to match EMS symbols.</p></div><a class="btn light" href="/medic-match.html" aria-label="Play Medic Match">Play</a></div>
