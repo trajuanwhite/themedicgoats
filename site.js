@@ -135,6 +135,7 @@ function training(){
 
  <section class="feature-card rapid-collection" aria-label="Brain Exercises" style="margin-bottom:22px">
   <div class="feature-copy">
+   <span class="eyebrow">MEMORY &amp; VISUAL REACTION GAMES</span>
    <details class="rapid-collection-details">
     <summary><span class="rapid-collection-heading"><strong>Brain Exercises</strong><small>Medic Match and Orbit</small></span><span class="rapid-collection-toggle" aria-hidden="true">⌄</span></summary>
     <div class="rapid-collection-list">
