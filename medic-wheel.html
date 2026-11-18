@@ -99,7 +99,7 @@ $("solve").onclick=()=>{if(done||spinning)return;$("modal").classList.add("show"
 function closeModal(){$("modal").classList.remove("show")}
 $("cancel").onclick=closeModal;
 $("solveForm").onsubmit=e=>{e.preventDefault();const a=$("answer").value.toUpperCase().trim().replace(/[^A-Z]/g,"");const correct=puzzle[2].replace(/[^A-Z]/g,"");closeModal();if(a===correct){complete(true)}else{bank=Math.max(0,bank-250);mode="spin";message("Not quite. $250 penalty (or $0 if your bank was empty). Spin again.");render()}};
-$("next").onclick=()=>{index++;load()};$("restart").onclick=()=>{total=0;pickOrder();angle=0;$("wheel").style.transform="rotate(0deg)";load()};
+$("next").onclick=()=>{index++;load()};$("restart").onclick=()=>{total=0;pickOrder();clearInterval(slotTicker);slotTicker=null;$("slotMachine").classList.remove("rolling","finished");slotFrame(0);load()};
 $("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 slotFrame(0);pickOrder();load();
 </script></body></html>
