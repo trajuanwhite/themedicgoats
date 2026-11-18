@@ -149,7 +149,7 @@ function spin(byCpu=false){
  },3300)
 }
 
-$("spin").onclick=spin;$("buy").onclick=()=>{if(!cpuTurn&&bank>=250&&!spinning&&mode!=="consonant"&&!done){mode="vowel";message("Pick one vowel ($250).");render()}};
+$("spin").onclick=()=>spin(false);$("buy").onclick=()=>{if(!cpuTurn&&bank>=250&&!spinning&&mode!=="consonant"&&!done){mode="vowel";message("Pick one vowel ($250).");render()}};
 $("solve").onclick=()=>{if(done||cpuTurn||spinning)return;$("modal").classList.add("show");$("answer").value="";$("answer").focus()};
 function closeModal(){$("modal").classList.remove("show")}
 $("cancel").onclick=closeModal;
