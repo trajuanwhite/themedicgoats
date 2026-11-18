@@ -78,7 +78,7 @@ async function act(action,value=null){if(busy||!state||(!playerToken&& !["start"
  const s=await rpc("action",{p_pin:pin,p_token:token,p_action:action,p_value:value});state=s;
  if(action==="start"||action==="next"||action==="replay")mode="ready";
  if(action==="replay"){lobbyManual=false;display("lobby")}else if(action==="start"||action==="next"){lobbyManual=false;display("game")}
- if(action==="spin")mode="ready";
+ if(["spin","vowel","consonant","solve"].includes(action))mode="ready";
  renderLobby(s);if(s.status!=="lobby"){renderGame(s);showSpin(s)}
  }catch(e){showError($("game").classList.contains("hidden")?"lobbyError":"status",e)}finally{busy=false}}
 $("hostGame").onclick=async()=>{try{$("welcomeError").textContent="";const r=await rpc("create");initRoom(r,true)}catch(e){showError("welcomeError",e)}};
