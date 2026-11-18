@@ -76,7 +76,11 @@ function guess(ch){if(done||spinning||used.has(ch))return;const isVowel=vowels.i
  if(!checkDone())render();
 }
 function makeWheel(){const el=$("wheel");slices.forEach((s,i)=>{const x=document.createElement("span");x.className="slice";x.style.setProperty("--a",(i*45+22.5)+"deg");x.textContent=typeof s==="number"?"$"+s:(s==="BANKRUPT"?"0":"SKIP");el.append(x)})}
-function spin(){if(done||spinning||mode==="consonant")return;mode="spin";spinning=true;$("spinOverlay").classList.add("show");$("spinOverlay").setAttribute("aria-hidden","false");document.body.classList.add("wheel-active");render();const i=Math.floor(Math.random()*slices.length);const normalized=((angle%360)+360)%360;const target=(360-(i*45+22.5))%360;const delta=(target-normalized+360)%360;angle+=1800+delta;$("wheel").style.transform="rotate("+angle+"deg)";$("result").textContent="Spinning…";
+function spin(){if(done||spinning||mode==="consonant")return;mode="spin";spinning=true;$("spinOverlay").classList.add("show");$("spinOverlay").setAttribute("aria-hidden","false");document.body.classList.add("wheel-active");render();const i=Math.floor(Math.random()*slices.length);const normalized=((angle%360)+360)%360;const target=(360-(i*45+22.5))%360;const delta=(target-normalized+360)%360;angle+=1800+delta;$("result").textContent="Spinning…";
+ // The wheel starts inside a display:none popup. Wait for it to be visibly painted
+ // before changing the rotation, otherwise the browser skips the CSS transition.
+ const wheel=$("wheel");wheel.getBoundingClientRect();
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{wheel.style.transform="rotate("+angle+"deg)"}));
  setTimeout(()=>{spinning=false;const outcome=slices[i];$("result").textContent=typeof outcome==="number"?"$"+outcome:outcome;
  if(outcome==="BANKRUPT"){bank=0;message("BANKRUPT! Your round bank is gone. Spin again.");mode="spin"}
  else if(outcome==="LOSE TURN"){message("LOSE TURN! No letter this spin. Try again.");mode="spin"}
