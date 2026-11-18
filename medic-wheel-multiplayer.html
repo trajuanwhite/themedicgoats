@@ -26,13 +26,13 @@
 <script>
 const db=window.supabase?.createClient("https://jjzjqjvdnaeuftptvmyw.supabase.co","sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4");
 const $=id=>document.getElementById(id);const vowels="AEIOU",letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-let pin="",hostToken="",playerToken="",myName="",host=false,state=null,pollTimer=null,busy=false,wheelAngle=0,lastSpinId=0,spinTimeout=null,mode="ready",spinClosing=null,refreshing=false;
+let pin="",hostToken="",playerToken="",myName="",host=false,state=null,pollTimer=null,lobbyManual=false,busy=false,wheelAngle=0,lastSpinId=0,spinTimeout=null,mode="ready",spinClosing=null,refreshing=false;
 async function rpc(name,args={}){if(!db)throw Error("Game service is unavailable. Reload the page.");const {data,error}=await db.rpc("medic_wheel_"+name,args);if(error)throw Error(error.message);return data}
 function showError(id,e){$(id).textContent=e.message||String(e)}
 function fmt(n){return "$"+Number(n||0).toLocaleString()}
 function display(id){for(const view of ["welcome","lobby","game"])$(view).classList.toggle("hidden",id!==view);window.scrollTo({top:0,behavior:"instant"})}
 function sessionSave(){try{sessionStorage.setItem("medicWheelRoom",JSON.stringify({pin,hostToken,playerToken,myName}))}catch(e){}}
-function initRoom(info,isHost){pin=info.pin;host=isHost;hostToken=isHost?info.hostToken:"";playerToken=isHost?"":info.playerToken;myName=isHost?"":($("joinName").value.trim());sessionSave();$("roomCode").textContent=pin;$("hostInvite").classList.toggle("hidden",!host);$("playerJoinBox").classList.toggle("hidden",!playerToken);$("startGame").classList.toggle("hidden",!host);$("inviteUrl").textContent=location.origin+"/medic-wheel-multiplayer.html?pin="+pin;$("inviteUrl").href=$("inviteUrl").textContent;
+function initRoom(info,isHost){pin=info.pin;host=isHost;hostToken=isHost?info.hostToken:"";playerToken=info.playerToken||"";myName=info.myName||($("joinName").value.trim());sessionSave();$("roomCode").textContent=pin;$("hostInvite").classList.toggle("hidden",!host);$("playerJoinBox").classList.toggle("hidden",!playerToken);$("startGame").classList.toggle("hidden",!host);$("inviteUrl").textContent=location.origin+"/medic-wheel-multiplayer.html?pin="+pin;$("inviteUrl").href=$("inviteUrl").textContent;
  $("qr").replaceChildren();if(window.QRCode)new QRCode($("qr"),{text:$("inviteUrl").href,width:148,height:148,colorDark:"#352c23",colorLight:"#ffffff"});display("lobby");startPolling()}
 function renderLobby(s){$("roomCode").textContent=s.pin;$("lobbyPlayers").replaceChildren();s.players.forEach(p=>{const span=document.createElement("span");span.className="chip";span.textContent=p.name;$("lobbyPlayers").append(span)});$("lobbyMessage").textContent=s.players.length+" player"+(s.players.length===1?"":"s")+" connected · "+(s.status==="lobby"?"Waiting for host to start":s.status==="ended"?"Game complete":"Round in progress");
  $("startGame").disabled=s.players.length===0;$("startGame").classList.toggle("hidden",!host||s.status!=="lobby");
@@ -70,14 +70,14 @@ function showSpin(s){if(!s.spinId||s.spinId===lastSpinId||s.spinIndex==null)retu
 }
 function closeWheel(){$("wheelOverlay").classList.remove("show");$("wheelOverlay").setAttribute("aria-hidden","true");document.body.classList.remove("overlay-open")}
 async function refresh(){if(!pin||refreshing)return;refreshing=true;try{
- let s=await rpc("state",{p_pin:pin,p_token:hostToken||playerToken});state=s;renderLobby(s);if(s.status!=="lobby"){displayIfGame();renderGame(s);showSpin(s)}else if(!document.getElementById("lobby").classList.contains("hidden")){}else display("lobby");
+ let s=await rpc("state",{p_pin:pin,p_token:playerToken||hostToken});state=s;renderLobby(s);if(s.status!=="lobby"){displayIfGame();renderGame(s);showSpin(s)}else if(!document.getElementById("lobby").classList.contains("hidden")){}else display("lobby");
  }catch(e){$("status").textContent="Connection: "+e.message;$("lobbyError").textContent=e.message}finally{refreshing=false}}
-function displayIfGame(){if(!$("game").classList.contains("hidden"))return;if(state.status!=="lobby" && $("lobby").classList.contains("hidden"))display("game");}
+function displayIfGame(){if(state.status!=="lobby"&&!lobbyManual&&$("game").classList.contains("hidden"))display("game");}
 function startPolling(){if(pollTimer)clearInterval(pollTimer);refresh();pollTimer=setInterval(refresh,850)}
 async function act(action,value=null){if(busy||!state||(!playerToken&& !["start","next","replay"].includes(action)))return;busy=true;try{let token=["start","next","replay"].includes(action)?hostToken:playerToken;
  const s=await rpc("action",{p_pin:pin,p_token:token,p_action:action,p_value:value});state=s;
  if(action==="start"||action==="next"||action==="replay")mode="ready";
- if(action==="replay"){display("lobby")}else if(action==="start"||action==="next"){display("game")}
+ if(action==="replay"){lobbyManual=false;display("lobby")}else if(action==="start"||action==="next"){lobbyManual=false;display("game")}
  if(action==="spin")mode="ready";
  renderLobby(s);if(s.status!=="lobby"){renderGame(s);showSpin(s)}
  }catch(e){showError($("game").classList.contains("hidden")?"lobbyError":"status",e)}finally{busy=false}}
@@ -85,7 +85,7 @@ $("hostGame").onclick=async()=>{try{$("welcomeError").textContent="";const r=awa
 $("showJoin").onclick=()=>{$("joinFields").classList.remove("hidden");$("pinInput").focus()};
 $("joinGame").onclick=async()=>{try{$("welcomeError").textContent="";const code=$("pinInput").value.trim(),name=$("joinName").value.trim();if(!/^\d{6}$/.test(code))throw Error("Enter the six-digit room code");if(name.length<2)throw Error("Enter your name");const r=await rpc("join",{p_pin:code,p_name:name});initRoom({pin:code,playerToken:r.playerToken},false)}catch(e){showError("welcomeError",e)}};
 $("hostJoin").onclick=async()=>{try{$("lobbyError").textContent="";const name=$("hostPlayerName").value.trim();if(name.length<2)throw Error("Enter your player name");const r=await rpc("join",{p_pin:pin,p_name:name});playerToken=r.playerToken;myName=name;sessionSave();$("playerJoinBox").classList.add("hidden");await refresh()}catch(e){showError("lobbyError",e)}};
-$("startGame").onclick=()=>act("start");$("enterGame").onclick=()=>display("game");$("backLobby").onclick=()=>display("lobby");$("nextRound").onclick=()=>act("next");$("newSession").onclick=()=>act("replay");
+$("startGame").onclick=()=>act("start");$("enterGame").onclick=()=>{lobbyManual=false;display("game")};$("backLobby").onclick=()=>{lobbyManual=true;display("lobby")};$("nextRound").onclick=()=>act("next");$("newSession").onclick=()=>act("replay");
 $("copyInvite").onclick=async()=>{const link=$("inviteUrl").href;try{await navigator.clipboard.writeText(link);$("copyInvite").textContent="Copied!"}catch(e){prompt("Copy this link:",link)}};
 $("spin").onclick=()=>act("spin");$("buy").onclick=()=>{mode="vowel";if(state)renderGame(state);$("status").textContent="Choose a vowel ($250).";};
 $("solve").onclick=()=>{$("solveOverlay").classList.add("show");$("solution").value="";$("solution").focus()};
