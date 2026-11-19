@@ -42,12 +42,12 @@
   }
   tube([[.25,.85,.05],[.27,1.35,.02],[.45,1.6,-.03],[.73,1.52,-.08]],.19,arteryMat);
   tube([[-.44,.88,.15],[-.65,1.36,.15],[-.75,1.56,.1]],.17,veinMat);
-  const tractMat=new THREE.MeshBasicMaterial({color:0xf0c59d,transparent:true,opacity:.85});
+  const tractMat=()=>new THREE.MeshBasicMaterial({color:0xbca18e,transparent:true,opacity:.95});
   const tracts=[
-    tube([[-.52,.71,.67],[-.40,.35,.83],[-.22,.11,.92]],.018,tractMat),
-    tube([[-.22,.11,.92],[-.03,-.26,.85]],.018,tractMat),
-    tube([[-.03,-.26,.85],[.34,-.77,.62]],.015,tractMat),
-    tube([[-.03,-.26,.85],[-.46,-.78,.56]],.015,tractMat)
+    tube([[-.52,.71,.67],[-.40,.35,.83],[-.22,.11,.92]],.018,tractMat()),
+    tube([[-.22,.11,.92],[-.03,-.26,.85]],.018,tractMat()),
+    tube([[-.03,-.26,.85],[.34,-.77,.62]],.015,tractMat()),
+    tube([[-.03,-.26,.85],[-.46,-.78,.56]],.015,tractMat())
   ];
   const sparks=[];
   for(const pt of [[-.52,.71,.67],[-.22,.11,.92],[-.03,-.26,.85],[.34,-.77,.62],[-.46,-.78,.56]]){
