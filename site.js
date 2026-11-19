@@ -70,7 +70,7 @@ function siteHome(){
   <div class="kicker" id="homeFeatureKicker">THE MEDIC GOATS • BLOG OF THE DAY</div>
   <div id="giveawayFeature" hidden><h1>10K Follower Giveaway</h1><p>We’ve partnered with IntuBlade to give away a video laryngoscope and gift box. Open to eligible U.S. healthcare professionals and students.</p><div class="home-feature-detail">COMMUNITY MILESTONE • 10,000 FOLLOWERS</div><a class="btn light" href="/giveaway">Enter the Giveaway →</a></div>
   <div id="dailyBlogFeature" hidden></div>
-  <div id="gamesFeature" hidden><h1>Think fast. Train smarter.</h1><p>Challenge your clinical decision-making with Rapid MegaCode, Rapid Rhythms, and more interactive EMS training games.</p><div class="home-feature-detail">7 SECONDS TO READ • 7 SECONDS TO ANSWER • SOLO & MULTIPLAYER</div><a class="btn light" href="/training">Explore Games →</a></div>
+  <div id="gamesFeature" hidden><h1>Think fast. Train smarter.</h1><p>Challenge your clinical decision-making with Rapid MegaCode, Rapid Rhythms, and more interactive EMS training games.</p><div class="home-feature-detail">7 SECONDS TO READ • 7 SECONDS TO ANSWER • SOLO & MULTIPLAYER</div><a class="btn light" href="/games">Explore Games →</a></div>
   <div class="home-feature-controls"><button type="button" id="homeFeaturePrev" aria-label="Previous featured item">‹</button><div id="homeFeatureDots" aria-label="Featured item selection"></div><button type="button" id="homeFeatureNext" aria-label="Next featured item">›</button></div>
  </section>
  
@@ -81,6 +81,19 @@ function siteHome(){
  document.getElementById("homeFeaturePrev").onclick=()=>{homeFeatureIndex--;updateHomeFeature();startHomeFeatureRotation();};
  document.getElementById("homeFeatureNext").onclick=()=>{homeFeatureIndex++;updateHomeFeature();startHomeFeatureRotation();};
 
+}
+function trainingHub(){
+ clearInterval(timer);
+ app.innerHTML=`
+ <section class="page-heading"><div class="kicker">THE MEDIC GOATS • TRAINING</div><h1>Training that goes<br>deeper than memorization.</h1><p>Explore interactive clinical education built to connect the physiology to the decisions we make in the field.</p></section>
+ <section class="card" style="padding:clamp(22px,5vw,46px);background:#181512;color:#fff;border-color:#40382f;margin:24px 0">
+  <div class="kicker" style="color:#d9bda0">CARDIOLOGY • FIRST TRAINING LAB</div>
+  <h2 style="font-size:clamp(30px,5vw,54px);margin:12px 0">ECG Lab</h2>
+  <p style="color:#ddd0c2;max-width:660px;line-height:1.65">Follow the heart's electrical conduction through an interactive ECG timeline. Our first foundation build is live, with expanded 12-lead and 3D simulation tools planned.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:23px"><a class="btn" style="background:#e4c6a5;border-color:#e4c6a5;color:#211811" href="/training/ecg-lab">Open ECG Lab →</a><span style="align-self:center;font-size:12px;font-weight:850;letter-spacing:.08em;color:#e0c8ae">FOUNDATION V0.1</span></div>
+ </section>
+ <div class="grid" style="margin-top:18px"><article class="card"><div class="kicker">BUILDING NEXT</div><h3>12-Lead ECG Simulation</h3><p class="muted">Validated lead relationships, authentic waveforms, and electrophysiology-driven teaching.</p></article><article class="card"><div class="kicker">KEEP PRACTICING</div><h3>Rapid Challenges & Brain Exercises</h3><p class="muted">All your existing Medic Goats games, solo and multiplayer.</p><a class="btn" href="/games">Explore Games →</a></article></div>
+ <p class="muted" style="font-size:13px;margin-top:22px">Teaching While Learning. These tools are for education, not clinical diagnosis or patient care.</p>`;
 }
 function training(){
  clearInterval(timer);
@@ -292,9 +305,9 @@ function giveawayLanding(){
  };
 }
 
-const routes={home:"/",game:"/training",leaderboard:"/training"};
-function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,education:education,leaderboard:training}[view]||siteHome)();}
+const routes={home:"/",game:"/games",training:"/training",leaderboard:"/games"};
+function navigate(view){const path=routes[view]||"/";if(location.pathname!==path)history.pushState({view},"",path);({home:siteHome,game:training,training:trainingHub,education:education,leaderboard:training}[view]||siteHome)();}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
 window.addEventListener("popstate",()=>renderRoute());
-function renderRoute(){const path=location.pathname;if(path==="/giveaway"||path==="/giveaway/")return giveawayLanding();if(path==="/education"){history.replaceState({view:"game"},"","/training");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,education:education,leaderboard:leaderboard}[view])();}
+function renderRoute(){const path=location.pathname;if(path==="/giveaway"||path==="/giveaway/")return giveawayLanding();if(path==="/education"){history.replaceState({view:"game"},"","/games");return training()}if(path==="/blog/be-the-fto-you-needed-making-field-training-better")return ftoArticle();if(path==="/rapid-differentials")return rapidDifferentialsLanding();if(path==="/leaderboard"){history.replaceState({view:"game"},"","/training");return training()}const view=Object.keys(routes).find(k=>routes[k]===path)||"home";({home:siteHome,game:training,training:trainingHub,education:education,leaderboard:leaderboard}[view])();}
 renderRoute();
