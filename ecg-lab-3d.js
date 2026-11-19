@@ -32,7 +32,57 @@
     p.setXYZ(i,x,y,z);
   }
   shape.computeVertexNormals();
+  // Four individually animated chamber silhouettes replace the single opaque heart.
+  // These meshes are a stylized exterior teaching model, NOT a segmented CT/MRI heart.
+  heartMat.opacity=.27;
   const main=new THREE.Mesh(shape,heartMat);main.rotation.z=-.18;group.add(main);
+  const chamberMaterials={
+    ra:new THREE.MeshPhysicalMaterial({color:0xbb6464,roughness:.56,clearcoat:.22,transparent:true,opacity:.95}),
+    la:new THREE.MeshPhysicalMaterial({color:0xd17b72,roughness:.54,clearcoat:.22,transparent:true,opacity:.94}),
+    rv:new THREE.MeshPhysicalMaterial({color:0xa94444,roughness:.52,clearcoat:.24,transparent:true,opacity:.98}),
+    lv:new THREE.MeshPhysicalMaterial({color:0x8d3039,roughness:.51,clearcoat:.26,transparent:true,opacity:.98})
+  };
+  const chamberGroups={};
+  function chamber(name,center,size,angle){
+    const pivot=new THREE.Group();
+    pivot.position.set(...center);
+    const geometry=new THREE.SphereGeometry(1,40,28);
+    const mesh=new THREE.Mesh(geometry,chamberMaterials[name]);
+    mesh.scale.set(...size);mesh.rotation.z=angle;
+    pivot.add(mesh);group.add(pivot);
+    chamberGroups[name]=pivot;
+    return pivot;
+  }
+  // Screen-facing ventricular shells taper toward the apex; left/right are
+  // visually descriptive and should not be interpreted as clinical segmentation.
+  chamber("ra",[-.52,.51,.35],[.40,.43,.43],-.30);
+  chamber("la",[.41,.53,.12],[.44,.40,.42],.22);
+  chamber("rv",[-.42,-.30,.41],[.47,.73,.45],-.24);
+  chamber("lv",[.37,-.38,.29],[.51,.81,.49],.25);
+  const relaxed={ra:chamberGroups.ra.scale.clone(),la:chamberGroups.la.scale.clone(),rv:chamberGroups.rv.scale.clone(),lv:chamberGroups.lv.scale.clone()};
+  function smoothstep(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+  // Smooth contraction envelopes deliberately lag electrical events.
+  // Values are illustrative timing windows in the 800-ms reference cycle.
+  function envelope(ms,start,peakStart,peakEnd,end){
+    return smoothstep((ms-start)/(peakStart-start))*(1-smoothstep((ms-peakEnd)/(end-peakEnd)));
+  }
+  function showMechanical(phase,enabled){
+    const ms=((phase%1)+1)%1*800;
+    const atrial=enabled?envelope(ms,155,205,245,310):0;
+    const ventricular=enabled?envelope(ms,345,430,510,705):0;
+    for(const name of ["ra","la"]){
+      const pivot=chamberGroups[name];
+      pivot.scale.set(1-.075*atrial,1-.065*atrial,1-.08*atrial);
+      pivot.rotation.z=(name==="ra"?-.018:.018)*atrial;
+    }
+    for(const name of ["rv","lv"]){
+      const pivot=chamberGroups[name];
+      pivot.scale.set(1-.105*ventricular,1-.085*ventricular,1-.11*ventricular);
+      pivot.rotation.z=(name==="rv"?-.038:.038)*ventricular;
+      pivot.position.y=(name==="rv"?-.30:-.38)+.045*ventricular;
+    }
+    main.scale.set(1-.018*ventricular,1-.03*ventricular,1-.018*ventricular);
+  }
   const arteryMat=new THREE.MeshStandardMaterial({color:0xb45b50,roughness:.6});
   const veinMat=new THREE.MeshStandardMaterial({color:0x6b7d9f,roughness:.6});
   function tube(coords,r,material){
@@ -109,6 +159,9 @@
     if(stage==="recovery")heartMat.color.setRGB(.68,.32,.32);
     else heartMat.color.copy(originalHeartColor);
   }
+  const modeSelect=document.getElementById("heart-display-mode");
+  const showsElectrical=()=>!modeSelect||modeSelect.value!=="mechanical";
+  const showsMechanical=()=>!modeSelect||modeSelect.value!=="electrical";
   function resize(){
     const w=Math.max(host.clientWidth,230),h=Math.max(host.clientHeight,290);
     camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);
@@ -121,12 +174,17 @@
   renderer.domElement.addEventListener("pointerup",()=>drag=false);
   renderer.domElement.addEventListener("pointercancel",()=>drag=false);
   if(fallback)fallback.hidden=true;
-  if(status)status.textContent="Drag to rotate • follow the glowing impulse • illustrative conduction";
+  if(status)status.textContent="Drag to rotate • chamber contraction + traveling impulse • illustrative anatomy";
   let alive=true;
   function render(){
     if(!host.isConnected){alive=false;observer.disconnect();renderer.dispose();return;}
     const phase=(window.MedicLabState&&window.MedicLabState.phase)||0;
     showConduction(phase);
+    showMechanical(phase,showsMechanical());
+    const electrical=showsElectrical();
+    tracts.forEach(tr=>tr.visible=electrical);
+    if(!electrical)trails.forEach(tr=>tr.visible=false);
+    moving.forEach(marker=>{if(!electrical)marker.visible=false});
     renderer.render(scene,camera);if(alive)requestAnimationFrame(render);
   }
   render();
