@@ -15,6 +15,8 @@ const modes={
  mobitz2:{label:"Second-degree AV block — Mobitz II",rate:80,detail:"Intermittent nonconducted P waves with a constant PR interval for conducted beats. Block is depicted below the AV node."},
  av3:{label:"Third-degree AV block (complete)",rate:38,detail:"Sinus P waves continue independently of a slower ventricular escape rhythm: no atrial impulses conduct to the ventricles."},
  vt:{label:"Monomorphic ventricular tachycardia (VT)",rate:165,detail:"Rapid wide-complex ventricular activation originates in ventricular myocardium, not the SA node. Simplified monomorphic VT, not a diagnostic tracing."},
+ pvt:{label:"Polymorphic ventricular tachycardia (VT)",rate:190,detail:"Rapid ventricular beats change in QRS shape and axis from beat to beat. This is illustrative polymorphic VT, not specifically torsades de pointes."},
+ vf:{label:"Ventricular fibrillation (VFib)",rate:180,detail:"Chaotic electrical activity in the ventricular myocardium with no organized QRS complexes or meaningful ventricular rate. This is an illustrative waveform, not a diagnostic tracing."},
  wpw:{label:"WPW pre-excitation pattern",rate:85,detail:"A sinus impulse reaches the ventricles early through an accessory AV pathway (short PR and delta-wave illustration), while normal AV/His conduction also occurs. This is a WPW pattern, not an episode of AVRT."}
 };
 const ids=Object.keys(modes),leads=base.labels,GAUSS=(x,c,w)=>Math.exp(-.5*Math.pow((x-c)/w,2));
@@ -41,8 +43,13 @@ function schedule(mode,bpm){
   const atrialInterval=60/75; // fixed 75-bpm sinus P waves, independent of escape.
   for(let i=0;i<80;i++){const t=-2.12+i*atrialInterval;if(t>52)break;addAtrium(t,false,0,"complete");}
   for(let i=0;i<80;i++){const t=-1.65+i*interval;if(t>52)break;vents.push({t,source:"escape",wide:true});}
- }else if(mode==="vt"){
-  for(let i=0;i<180;i++){const t=-1.8+i*interval;if(t>52)break;vents.push({t,source:"ventricular",wide:true});}
+ }else if(mode==="vt"||mode==="pvt"){
+  let t=-1.8;
+  for(let i=0;i<190;i++){
+   t+=mode==="pvt"?interval*(1+.10*Math.sin(i*1.73)) : interval;
+   if(t>52)break;
+   vents.push({t,source:mode==="pvt"?"polymorphic":"ventricular",wide:true,index:i});
+  }
  }else if(mode==="afib"){
   const factor=75/Math.max(45,bpm);let t=-2.4;
   for(let i=0;i<180;i++){t+=afIntervals[i%afIntervals.length]*factor;if(t>52)break;vents.push({t,source:"conducted",wide:false});}
@@ -66,7 +73,24 @@ function limb(out){
 }
 function sample(seconds,bpm,mode="sinus"){
  if(mode==="sinus")return base.sample(seconds*bpm/60).leads;
- const result=schedule(mode,bpm),out=Object.fromEntries(leads.map(l=>[l,0]));
+ const out=Object.fromEntries(leads.map(l=>[l,0]));
+ if(mode==="vf"){
+  // Continuous, irregular, nonperiodic-looking fibrillatory activity.
+  // Frequency and amplitude modulation prevents QRS-like repeating beats.
+  const phase=2*Math.PI;
+  const drift=.4*Math.sin(phase*.37*seconds);
+  const x=Math.sin(phase*6.4*seconds+1.35*Math.sin(phase*.71*seconds)+drift);
+  const y=Math.sin(phase*8.25*seconds+.83*Math.sin(phase*.53*seconds)+.6);
+  const z=Math.sin(phase*4.95*seconds+1.7*Math.sin(phase*.39*seconds)+1.3);
+  const envelope=.48+.21*Math.sin(phase*.31*seconds)+.15*Math.sin(phase*.17*seconds+1.1);
+  for(const l of leads){
+   const c=coeff[l],mag=Math.max(.16,Math.abs(c.r));
+   out[l]=mag*envelope*(.78*x+.64*y+.48*z)*Math.sign(c.r||1)
+     +.22*(Math.abs(c.t)+.18)*Math.sin(phase*7.18*seconds+1.3*Math.sin(seconds*2.4)+(l.length*.45));
+  }
+  return limb(out);
+ }
+ const result=schedule(mode,bpm);
  // Independent, regular sinus-origin P waves in AV block / WPW.
  if(["av1","mobitz1","mobitz2","av3","wpw"].includes(mode)){
   for(const a of result.atria){
@@ -87,7 +111,16 @@ function sample(seconds,bpm,mode="sinus"){
   const wide=q.wide;
   for(const l of leads){
    const c=coeff[l];
-   if(q.source==="ventricular"||q.source==="escape"){
+   if(q.source==="polymorphic"){
+    // A changing wide QRS vector across successive ventricular beats.
+    // Twisting amplitude here is schematic and does not imply torsades.
+    const n=q.index||0,axis=Math.cos(n*.83+.15),rot=Math.sin(n*.83+.15);
+    const v1=c.r*(.30+1.03*axis)+c.t*.62*rot;
+    const v2=c.r*(-.22+.48*rot)-c.t*.30*axis;
+    out[l]+=v1*(1.17*GAUSS(d,-.015,.072)-.33*GAUSS(d,-.11,.049))
+      +v2*.88*GAUSS(d,.095,.071)
+      -v1*.23*GAUSS(d,.27,.115);
+   }else if(q.source==="ventricular"||q.source==="escape"){
     out[l]+=c.r*(1.28*GAUSS(d,0,q.source==="ventricular"?.076:.068)-.38*GAUSS(d,-.085,.035)-.42*GAUSS(d,.105,.045))
        +c.t*.65*GAUSS(d,.30,.094);
    }else{
@@ -104,6 +137,7 @@ function sample(seconds,bpm,mode="sinus"){
 }
 function state(seconds,bpm,mode="sinus"){
  const phase=((seconds*bpm/60)%1+1)%1;
+ if(mode==="vf")return {mode,phase,stage:"fibrillation",progress:((seconds*6.7)%1+1)%1,seconds,origin:"ventricular-chaos",atrialActive:false};
  if(mode==="sinus"){
   const a=root.MedicActivation?.at(phase);
   return {mode,phase,stage:a?.stage.id||"sa",progress:a?.progress||0,atrium:"sinus",seconds,atrialActive:["sa","atria"].includes(a?.stage.id)};
@@ -118,7 +152,7 @@ function state(seconds,bpm,mode="sinus"){
  const atrialProgress=atrialActive?Math.min(1,aElapsed/.16):0;
  let stage="rest",progress=0,blockSite=null,origin="sinus";
  if(["afib","flutter"].includes(mode)){origin="atrial";}
- if(mode==="vt")origin="ventricular";
+ if(mode==="vt"||mode==="pvt")origin="ventricular";
  if(mode==="av3")origin="escape";
  if(mode==="wpw")origin="accessory";
  if(mode==="mobitz1"||mode==="mobitz2"){
@@ -127,7 +161,7 @@ function state(seconds,bpm,mode="sinus"){
  if(mode==="av3"&&atrialActive)blockSite="complete";
  // A QRS event always wins over simultaneous atrial action (AV dissociation).
  if(vElapsed>=-.13&&vElapsed<.39){
-  if(vent.source==="ventricular"||vent.source==="escape"){
+  if(vent.source==="ventricular"||vent.source==="polymorphic"||vent.source==="escape"){
    if(vElapsed<0){stage="ventricular-origin";progress=(vElapsed+.13)/.13;}
    else if(vElapsed<.16){stage="ventricles";progress=vElapsed/.16;}
    else {stage="recovery";progress=(vElapsed-.16)/.23;}
