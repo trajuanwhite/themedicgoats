@@ -1,257 +1,53 @@
-/* Medic Goats ECG Lab — hand-modeled cutaway teaching heart.
-   No scanned human anatomy: approximate 3D teaching illustration, not physiologic simulation.
-   Existing MedicActivation timeline remains the single source of cycle phase. */
-(async function(){
+/* New original reference-style 2D cutaway animation, replaces procedural 3D.
+ * Illustrative anatomy, approximate contraction and electrical timing. */
+(function(){
 "use strict";
-const host=document.getElementById("heart-view"), status=document.getElementById("heart-status");
+const host=document.getElementById("heart-view");
 if(!host)return;
-const fallback=document.getElementById("heart-fallback");
-let THREE;
-try { THREE=await import("https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"); }
-catch(e){if(status)status.textContent="Schematic view • 3D renderer unavailable";return;}
-if(!host.isConnected)return;
-let renderer;
-try {renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"low-power"});}
-catch(e){if(status)status.textContent="Schematic view • 3D graphics unavailable";return;}
-renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.setClearAlpha(0);
-host.appendChild(renderer.domElement);
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(35,1,.1,100);
-camera.position.set(0,.12,7.8);
-scene.add(new THREE.HemisphereLight(0xffffff,0x8d4851,2.0));
-const key=new THREE.DirectionalLight(0xffe8de,2.7);key.position.set(-3,4,7);scene.add(key);
-const fill=new THREE.DirectionalLight(0xcfe1ff,1.1);fill.position.set(3,0,3);scene.add(fill);
-const rim=new THREE.DirectionalLight(0xffccb4,1.5);rim.position.set(2,3,-3);scene.add(rim);
-const spin=new THREE.Group();scene.add(spin);
-const heart=new THREE.Group();spin.add(heart);
-// This is the normal slightly oblique anatomical presentation. The apex points
-// inferior-left from the viewer's perspective instead of straight down.
-heart.rotation.set(.09,-.20,-.30);
-spin.rotation.y=-.12;
-const mat=(color,roughness=.56,extras={})=>new THREE.MeshPhysicalMaterial({color,roughness,metalness:0,clearcoat:.17,side:THREE.DoubleSide,...extras});
-const wall=mat(0xb75d61,.66),wallEdge=mat(0xeaa29b,.62),wallLight=mat(0xf2b1a7,.63);
-const blood={ra:mat(0xbb6931,.49),la:mat(0xc88437,.50),rv:mat(0x254a95,.45),lv:mat(0x9f223d,.45)};
-const vessels={aorta:mat(0xc9595e,.49),pulmonary:mat(0x667fa1,.51),vein:mat(0x6582a8,.54),coronary:mat(0xcc7667,.58)};
-function vector(x,y,z){return new THREE.Vector3(x,y,z);}
-function pathTube(points,r,material,div=55){
- const curve=new THREE.CatmullRomCurve3(points.map(p=>Array.isArray(p)?vector(...p):p));
- const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,div,r,9,false),material);
- mesh.userData.curve=curve;heart.add(mesh);return mesh;
-}
-function lineTube(points,r,material,closed=false){
- const c=new THREE.CatmullRomCurve3(points,closed);
- const mesh=new THREE.Mesh(new THREE.TubeGeometry(c,Math.max(60,points.length*2),r,8,closed),material);
- heart.add(mesh);return mesh;
-}
-// Asymmetric loft of the back and side myocardial shell. Its anterior wedge
-// is actually open: unlike a transparent sphere it cannot cover the chambers.
-const verts=[],normals=[],indices=[],ySteps=48,angleSteps=76;
-function outlineAt(y){
- const taper=Math.sqrt(Math.max(.002,1-y*y));
- return {cx:.17*y-.045,rx:(1.08+.11*y)*taper,rz:(.57+.06*y)*taper};
-}
-for(let i=0;i<=ySteps;i++){
- const y=-.988+1.976*i/ySteps;
- const o=outlineAt(y);
- for(let j=0;j<=angleSteps;j++){
-   const theta=.83+(Math.PI*2-1.66)*j/angleSteps;
-   const x=o.cx+o.rx*Math.sin(theta),z=-.17+o.rz*Math.cos(theta);
-   verts.push(x,y*1.23,z);
- }
-}
-for(let i=0;i<ySteps;i++)for(let j=0;j<angleSteps;j++){
- const a=i*(angleSteps+1)+j,b=a+angleSteps+1;
- indices.push(a,a+1,b,a+1,b+1,b);
-}
-const shellGeo=new THREE.BufferGeometry();
-shellGeo.setAttribute("position",new THREE.Float32BufferAttribute(verts,3));
-shellGeo.setIndex(indices);shellGeo.computeVertexNormals();
-const shell=new THREE.Mesh(shellGeo,wall);heart.add(shell);
-for(const angle of [.83,Math.PI*2-.83]){
- const pts=[];
- for(let i=2;i<ySteps-1;i++){
-  const y=-.988+1.976*i/ySteps,o=outlineAt(y);
-  pts.push(vector(o.cx+o.rx*Math.sin(angle),y*1.23,-.17+o.rz*Math.cos(angle)));
- }
- lineTube(pts,.065,wallEdge);
-}
-// Recessed cavity surfaces, framed by muscular walls. Each chamber can alter
-// its internal aperture separately so contraction is visible as narrowing.
-const chambers={};
-function cavity(id,cx,cy,rx,ry,front,tilt,wallThickness){
- const root=new THREE.Group();root.position.set(cx,cy,front);root.rotation.z=tilt;heart.add(root);
- const contour=[],inner=[],segments=72,radial=12;
- for(let i=0;i<=radial;i++){
-  const u=i/radial;
-  for(let j=0;j<=segments;j++){
-   const a=2*Math.PI*j/segments;
-   const pear=(id==="lv"||id==="rv")?1-.18*Math.max(0,-Math.sin(a)):1;
-   const x=rx*u*Math.cos(a)*pear, y=ry*u*Math.sin(a);
-   const z=-.23*(1-u*u)-.014*Math.cos(a*3)*u;
-   inner.push(x,y,z);
-  }
- }
- const tris=[];
- for(let i=0;i<radial;i++)for(let j=0;j<segments;j++){
-  const a=i*(segments+1)+j,b=a+segments+1;
-  tris.push(a,b,a+1,a+1,b,b+1);
- }
- const surfaceGeo=new THREE.BufferGeometry();
- surfaceGeo.setAttribute("position",new THREE.Float32BufferAttribute(inner,3));
- surfaceGeo.setIndex(tris);surfaceGeo.computeVertexNormals();
- const opening=new THREE.Group();root.add(opening);
- const innerMesh=new THREE.Mesh(surfaceGeo,blood[id]);opening.add(innerMesh);
- const boundary=[];
- for(let j=0;j<=segments;j++){
-  const a=2*Math.PI*j/segments;
-  const pear=(id==="lv"||id==="rv")?1-.18*Math.max(0,-Math.sin(a)):1;
-  boundary.push(vector(rx*Math.cos(a)*pear,ry*Math.sin(a),.025));
- }
- const rimMesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(boundary,true),100,wallThickness,10,true),wallEdge);
- root.add(rimMesh);
- // A second inner, darker lip gives the cavity its visible depth.
- const darkLip=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(boundary.map(v=>vector(v.x*.93,v.y*.93,v.z-.058)),true),90,.027,7,true),wall);
- opening.add(darkLip);
- chambers[id]={root,opening,rimMesh,cx,cy,rx,ry};
- return root;
-}
-// Upper chambers are smaller and slightly posterior; LV is tall with a thick
-// muscular edge, while RV wraps anteriorly across the visual left.
-cavity("ra",-.52,.54,.34,.27,.39,-.16,.072);
-cavity("la",.35,.60,.31,.26,.34,.14,.078);
-cavity("rv",-.44,-.30,.40,.65,.53,-.15,.080);
-cavity("lv",.39,-.36,.44,.74,.51,.21,.135);
-// Interventricular muscular septum rather than a central divider line.
-const septum=new THREE.Mesh(new THREE.CapsuleGeometry(.083,1.03,8,16),wallLight);
-septum.position.set(.016,-.33,.64);septum.rotation.z=-.045;heart.add(septum);
-// Atrioventricular valve planes (schematic) add anatomic landmarks.
-for(const [x,y,r] of [[-.43,.19,.22],[.36,.21,.21]]){
- const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.033,10,40),wallEdge);
- ring.position.set(x,y,.61);ring.scale.y=.38;ring.rotation.z=.14;heart.add(ring);
-}
-// Ascending aorta with arch; blue pulmonary trunk crosses its anterior side.
-// Four venous stubs help the anatomy read as an organ rather than a symbol.
-pathTube([[.28,.69,-.03],[.30,1.15,.05],[.52,1.44,-.07],[.77,1.43,-.19],[.85,1.16,-.30]],.155,vessels.aorta);
-pathTube([[-.15,.52,.14],[-.11,.94,.27],[-.33,1.30,.32],[-.69,1.40,.23]],.145,vessels.pulmonary);
-pathTube([[-.65,.71,-.17],[-.76,1.18,-.24],[-.87,1.43,-.35]],.14,vessels.vein);
-pathTube([[-.69,.24,-.24],[-.89,-.07,-.26],[-.93,-.42,-.28]],.13,vessels.vein);
-pathTube([[.53,.76,-.20],[.88,.87,-.28],[1.10,.95,-.30]],.080,vessels.vein);
-pathTube([[.49,.60,-.26],[.80,.59,-.40],[1.03,.55,-.45]],.077,vessels.vein);
-// Anterior coronary branches, small enough not to obscure cavity openings.
-pathTube([[.03,.36,.62],[.12,.08,.67],[.15,-.23,.68],[.12,-.65,.59]],.022,vessels.coronary);
-pathTube([[.02,.31,.60],[-.22,.16,.67],[-.66,-.06,.52]],.018,vessels.coronary);
-function smooth(v){v=Math.max(0,Math.min(1,v));return v*v*(3-2*v);}
-function envelope(ms,start,on,off,end){
- return smooth((ms-start)/(on-start))*(1-smooth((ms-off)/(end-off)));
-}
-function animateChambers(phase,enabled){
- const ms=((phase%1)+1)%1*800;
- const atr=enabled?envelope(ms,155,205,245,310):0;
- const ven=enabled?envelope(ms,345,430,515,705):0;
- for(const name of ["ra","la"]){
-  const c=chambers[name];
-  c.opening.scale.set(1-.17*atr,1-.12*atr,1);
-  c.root.scale.set(1-.025*atr,1-.038*atr,1);
- }
- for(const name of ["rv","lv"]){
-  const c=chambers[name];
-  // Distinct aperture and wall change models inward cavity narrowing,
-  // mild longitudinal shortening and opposed torsion.
-  c.opening.scale.set(1-.22*ven,1-.17*ven,1);
-  c.root.scale.set(1-.018*ven,1-.055*ven,1);
-  c.root.rotation.z=(name==="rv"?-.15:.21)+(name==="rv"?-.039:.039)*ven;
-  c.root.position.y=c.cy+.042*ven;
-  c.rimMesh.scale.set(1+.045*ven,1+.01*ven,1+.03*ven);
- }
- shell.scale.set(1-.018*ven,1-.018*ven,1);
- septum.scale.x=1+.14*ven;
-}
-// Electrical paths are front-facing so they remain visible against the
-// recessed cutaway. The pulse markers move continuously along spline curves.
-const conductionMaterial=()=>new THREE.MeshBasicMaterial({color:0xa7a5a2,transparent:true,opacity:.77,depthTest:false});
-const tracts=[
- pathTube([[-.62,.80,.72],[-.48,.54,.76],[-.21,.24,.77]],.014,conductionMaterial()),
- pathTube([[-.21,.24,.77],[-.06,-.02,.79],[-.01,-.24,.80]],.014,conductionMaterial()),
- pathTube([[-.01,-.24,.80],[.23,-.58,.79],[.38,-.97,.64]],.015,conductionMaterial()),
- pathTube([[-.01,-.24,.80],[-.26,-.53,.82],[-.45,-.95,.65]],.015,conductionMaterial())
-];
-const markerGeometry=new THREE.SphereGeometry(.048,16,12);
-const haloGeometry=new THREE.SphereGeometry(.096,16,12);
-const coreMat=new THREE.MeshBasicMaterial({color:0xffef5c,depthTest:false});
-const haloMat=new THREE.MeshBasicMaterial({color:0xffe16b,transparent:true,opacity:.28,depthTest:false});
-const sparks=[];
-for(let i=0;i<2;i++){
- const pair=new THREE.Group();
- pair.add(new THREE.Mesh(haloGeometry,haloMat),new THREE.Mesh(markerGeometry,coreMat));
- pair.renderOrder=12;heart.add(pair);pair.visible=false;sparks.push(pair);
-}
-const trails=tracts.map(t=>{
- const points=t.userData.curve.getPoints(100),geometry=new THREE.BufferGeometry().setFromPoints(points);
- const line=new THREE.Line(geometry,new THREE.LineBasicMaterial({color:0xffe373,depthTest:false,transparent:true,opacity:.97}));
- line.renderOrder=12;line.visible=false;heart.add(line);return line;
-});
-function showTrail(i,p){
- trails[i].visible=p>0;
- trails[i].geometry.setDrawRange(0,Math.max(2,Math.min(101,Math.ceil(p*100)+1)));
-}
-function positionSpark(i,index,ratio){
- sparks[index].position.copy(tracts[i].userData.curve.getPointAt(Math.max(0,Math.min(1,ratio))));
- sparks[index].visible=true;
-}
-function showElectrical(phase,enabled){
- const timing=window.MedicActivation?.at(phase);
- const stage=timing?.stage.id||"sa",p=timing?.progress||0;
- sparks.forEach(s=>{s.visible=false;s.scale.setScalar(1);});
- let done=0;
- if(stage==="sa")positionSpark(0,0,0);
- else if(stage==="atria")positionSpark(0,0,p);
- else if(stage==="av"){done=1;positionSpark(0,0,1);}
- else if(stage==="his"){done=1;positionSpark(1,0,p);}
- else if(stage==="bundles"){done=2;positionSpark(2,0,p);positionSpark(3,1,p);}
- else if(stage==="ventricles"){
-  done=4;positionSpark(2,0,1);positionSpark(3,1,1);
-  for(const obj of sparks)obj.scale.setScalar(1+.75*p);
- }else done=4;
- tracts.forEach((tract,i)=>{
-  const partial=(stage==="atria"&&i===0)||(stage==="his"&&i===1)||(stage==="bundles"&&i>=2);
-  showTrail(i,i<done?1:partial?p:0);
-  tract.visible=enabled;
-  trails[i].visible=enabled&&trails[i].visible;
- });
- if(!enabled)sparks.forEach(s=>s.visible=false);
-}
-const mode=document.getElementById("heart-display-mode");
-function resize(){
- const w=Math.max(host.clientWidth,230),h=Math.max(host.clientHeight,290);
- camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);
-}
-const observer=new ResizeObserver(resize);observer.observe(host);resize();
-let drag=false,lastX=0,lastY=0;
-renderer.domElement.style.touchAction="none";
-renderer.domElement.addEventListener("pointerdown",e=>{
- drag=true;lastX=e.clientX;lastY=e.clientY;
- renderer.domElement.setPointerCapture(e.pointerId);
-});
-renderer.domElement.addEventListener("pointermove",e=>{
- if(!drag)return;
- spin.rotation.y+=(e.clientX-lastX)*.008;
- spin.rotation.x=Math.max(-.5,Math.min(.5,spin.rotation.x+(e.clientY-lastY)*.006));
- lastX=e.clientX;lastY=e.clientY;
-});
-renderer.domElement.addEventListener("pointerup",()=>drag=false);
-renderer.domElement.addEventListener("pointercancel",()=>drag=false);
+const status=document.getElementById("heart-status"), fallback=document.getElementById("heart-fallback");
+const holder=document.createElement("div");
+holder.className="heart-cutaway-stage";
+holder.style.cssText="width:100%;height:100%;display:flex;justify-content:center;align-items:center;overflow:hidden";
+holder.innerHTML="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 440 460\" role=\"img\" aria-label=\"Tilted cutaway heart with orange atria, blue right ventricle, red left ventricle, great vessels and moving electrical impulse\" style=\"display:block;width:100%;height:100%;max-height:470px\">\n<defs>\n<linearGradient id=\"m-wall\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fbb1a3\"/><stop offset=\".55\" stop-color=\"#d77a7c\"/><stop offset=\"1\" stop-color=\"#a83857\"/></linearGradient>\n<linearGradient id=\"m-atria\" x2=\".8\" y2=\"1\"><stop stop-color=\"#ffda7f\"/><stop offset=\"1\" stop-color=\"#c77234\"/></linearGradient>\n<linearGradient id=\"m-rv\" x2=\".8\" y2=\"1\"><stop stop-color=\"#6698e6\"/><stop offset=\"1\" stop-color=\"#1b49a5\"/></linearGradient>\n<linearGradient id=\"m-lv\" x2=\".9\" y2=\"1\"><stop stop-color=\"#fa747d\"/><stop offset=\"1\" stop-color=\"#b21d42\"/></linearGradient>\n<linearGradient id=\"m-aorta\" x2=\".8\" y2=\"1\"><stop stop-color=\"#ffb0a9\"/><stop offset=\"1\" stop-color=\"#b83b5b\"/></linearGradient>\n<linearGradient id=\"m-pulm\" x2=\".7\" y2=\"1\"><stop stop-color=\"#bdedff\"/><stop offset=\"1\" stop-color=\"#2e6ab8\"/></linearGradient>\n<radialGradient id=\"m-glow\"><stop stop-color=\"#fffbb2\"/><stop offset=\".35\" stop-color=\"#ffeb48\" stop-opacity=\".7\"/><stop offset=\"1\" stop-color=\"#ffeb48\" stop-opacity=\"0\"/></radialGradient>\n</defs>\n<g transform=\"rotate(-10 220 220)\">\n<path d=\"M125 148 C105 118 103 54 118 20\" fill=\"none\" stroke=\"#2e65ac\" stroke-width=\"39\" stroke-linecap=\"round\"/>\n<path d=\"M125 148 C105 118 103 54 118 20\" fill=\"none\" stroke=\"url(#m-pulm)\" stroke-width=\"31\" stroke-linecap=\"round\"/>\n<path d=\"M228 145 C208 85 212 24 248 22 C283 20 294 68 269 107\" fill=\"none\" stroke=\"#9c3253\" stroke-width=\"57\" stroke-linecap=\"round\"/>\n<path d=\"M228 145 C208 85 212 24 248 22 C283 20 294 68 269 107\" fill=\"none\" stroke=\"url(#m-aorta)\" stroke-width=\"48\" stroke-linecap=\"round\"/>\n<path d=\"M200 141 C200 103 184 83 145 42\" fill=\"none\" stroke=\"#24619f\" stroke-width=\"45\" stroke-linecap=\"round\"/>\n<path d=\"M200 141 C200 103 184 83 145 42\" fill=\"none\" stroke=\"url(#m-pulm)\" stroke-width=\"35\" stroke-linecap=\"round\"/>\n<path d=\"M286 149 C318 116 339 113 366 119 M289 173 C321 163 345 169 365 180\" fill=\"none\" stroke=\"#c85669\" stroke-width=\"24\" stroke-linecap=\"round\"/>\n<path d=\"M125 295 C106 331 115 363 123 391\" fill=\"none\" stroke=\"#4278bd\" stroke-width=\"32\" stroke-linecap=\"round\"/>\n<!-- Continuous tapered, off-axis heart silhouette: not four circular chamber blobs -->\n<path d=\"M128 140 C145 113 174 113 189 129 C214 104 254 115 276 146 C308 140 337 167 347 210 C360 264 334 326 293 379 C274 402 246 420 227 414 C176 397 131 355 108 309 C83 266 88 190 128 140Z\" fill=\"url(#m-wall)\" stroke=\"#9a475b\" stroke-width=\"8\"/>\n<path d=\"M118 170 C105 228 111 293 150 345 C169 370 199 394 230 405\" fill=\"none\" stroke=\"#ffc3b3\" stroke-opacity=\".65\" stroke-width=\"13\"/>\n<!-- Atrial cutaway cavities -->\n<g id=\"heart-ra\">\n<path d=\"M129 153 C148 135 178 141 187 164 C199 197 181 236 161 245 C139 244 119 222 115 194 C113 177 118 162 129 153Z\" fill=\"#a45b3b\" stroke=\"#ffc0b1\" stroke-width=\"14\"/>\n<path d=\"M131 160 C148 143 172 150 181 170 C189 194 180 220 163 232 C143 230 126 214 123 191 C122 174 124 165 131 160Z\" fill=\"url(#m-atria)\"/>\n<path d=\"M132 185 Q153 178 165 193 M131 205 Q147 203 161 215\" stroke=\"#ffe3a0\" stroke-width=\"4\" stroke-opacity=\".65\" fill=\"none\"/>\n</g>\n<g id=\"heart-la\">\n<path d=\"M231 156 C250 140 278 143 295 164 C308 188 299 223 282 234 C259 243 235 231 228 206 C218 181 222 165 231 156Z\" fill=\"#aa6040\" stroke=\"#ffbdb2\" stroke-width=\"14\"/>\n<path d=\"M232 162 C252 145 275 151 289 169 C299 188 291 213 279 224 C259 233 239 222 232 204 C224 182 223 172 232 162Z\" fill=\"url(#m-atria)\"/>\n</g>\n<!-- Blue right ventricular cavity, elongated toward apex -->\n<g id=\"heart-rv\">\n<path d=\"M133 230 C160 215 190 227 207 253 C228 283 229 349 235 391 C195 371 162 342 140 310 C117 275 120 246 133 230Z\" fill=\"#163c82\" stroke=\"#ffbcb0\" stroke-width=\"16\"/>\n<path d=\"M137 237 C163 224 187 239 203 265 C221 292 223 348 227 380 C193 358 166 330 147 304 C127 273 124 251 137 237Z\" fill=\"url(#m-rv)\"/>\n<path d=\"M148 257 Q176 254 188 275\" fill=\"none\" stroke=\"#96c6ff\" stroke-width=\"7\" stroke-opacity=\".5\"/>\n</g>\n<!-- LV larger, thicker, slanted and deeply recessed -->\n<g id=\"heart-lv\">\n<path d=\"M249 228 C272 215 310 229 321 269 C336 322 294 383 247 409 C234 385 234 357 224 315 C218 279 225 243 249 228Z\" fill=\"#971b3d\" stroke=\"#ffc0ae\" stroke-width=\"27\" stroke-linejoin=\"round\"/>\n<path d=\"M251 238 C274 225 299 239 308 274 C319 314 286 365 251 388 C240 364 245 337 233 304 C229 272 233 248 251 238Z\" fill=\"url(#m-lv)\"/>\n<path d=\"M296 269 Q312 319 256 378\" fill=\"none\" stroke=\"#ff9aa0\" stroke-width=\"8\" stroke-opacity=\".44\"/>\n</g>\n<path d=\"M207 228 Q229 270 233 310 Q243 358 249 386\" fill=\"none\" stroke=\"#ffbaae\" stroke-width=\"16\" stroke-linecap=\"round\"/>\n<path d=\"M170 235 Q187 228 204 250 M239 236 Q270 225 289 244\" stroke=\"#ffd0ba\" stroke-width=\"8\" fill=\"none\" stroke-linecap=\"round\"/>\n<!-- conduction routes are independent of the visible chamber shapes -->\n<g id=\"heart-conduction\" stroke=\"#ffcb65\" stroke-opacity=\".39\" stroke-width=\"3.5\" fill=\"none\">\n<path id=\"heart-path-0\" d=\"M142 167 Q168 198 205 219\"/>\n<path id=\"heart-path-1\" d=\"M205 219 Q215 240 222 261\"/>\n<path id=\"heart-path-2\" d=\"M222 261 Q188 297 199 355\"/>\n<path id=\"heart-path-3\" d=\"M222 261 Q249 308 263 370\"/>\n</g>\n<g id=\"heart-spark-0\" style=\"display:none\"><circle r=\"21\" fill=\"url(#m-glow)\"/><circle r=\"6\" fill=\"#fffbb9\" stroke=\"#ffe239\" stroke-width=\"2\"/></g>\n<g id=\"heart-spark-1\" style=\"display:none\"><circle r=\"21\" fill=\"url(#m-glow)\"/><circle r=\"6\" fill=\"#fffbb9\" stroke=\"#ffe239\" stroke-width=\"2\"/></g>\n</g></svg>";
+const svg=holder.querySelector("svg");
+host.appendChild(holder);
 if(fallback)fallback.hidden=true;
-if(status)status.textContent="Tilted anatomical cutaway • drag to rotate • illustrative chamber motion";
-function render(){
- if(!host.isConnected){observer.disconnect();renderer.dispose();return;}
- const phase=window.MedicLabState?.phase||0;
- const setting=mode?.value||"both";
- animateChambers(phase,setting!=="electrical");
- showElectrical(phase,setting!=="mechanical");
- renderer.render(scene,camera);
- requestAnimationFrame(render);
+if(status)status.textContent="New tilted cutaway heart • yellow impulse follows conduction • illustrative anatomy";
+const $=id=>svg.querySelector("#"+id);
+const mode=document.getElementById("heart-display-mode");
+const paths=[0,1,2,3].map(i=>$("heart-path-"+i));
+const sparks=[$("heart-spark-0"),$("heart-spark-1")];
+const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
+const env=(t,s,a,b,e)=>smooth((t-s)/(a-s))*(1-smooth((t-b)/(e-b)));
+function place(route,which,progress){
+ const p=paths[route],dot=sparks[which],at=p.getPointAtLength(p.getTotalLength()*Math.max(0,Math.min(1,progress)));
+ dot.setAttribute("transform","translate("+at.x.toFixed(1)+" "+at.y.toFixed(1)+")");
+ dot.style.display="";
 }
-render();
+function draw(phase){
+ const timing=window.MedicActivation?.at(phase),stage=timing?.stage.id||"sa",p=timing?.progress||0;
+ const ms=((phase%1)+1)%1*800;
+ const electric=mode?.value!=="mechanical",mechanical=mode?.value!=="electrical";
+ const atr=mechanical?env(ms,155,205,245,310):0,ven=mechanical?env(ms,345,430,510,705):0;
+ for(const [id,cx,cy] of [["heart-ra",153,193],["heart-la",261,188]]){
+  const sx=1-.12*atr,sy=1-.09*atr;
+  $(id).setAttribute("transform","translate("+cx+" "+cy+") scale("+sx+" "+sy+") translate("+(-cx)+" "+(-cy)+")");
+ }
+ for(const [id,cx,cy,angle] of [["heart-rv",178,306,-1.8],["heart-lv",268,314,1.8]]){
+  const sx=1-.145*ven,sy=1-.11*ven;
+  $(id).setAttribute("transform","translate("+cx+" "+cy+") rotate("+(angle*ven)+") scale("+sx+" "+sy+") translate("+(-cx)+" "+(-cy)+")");
+ }
+ $("heart-conduction").style.display=electric?"":"none";
+ sparks.forEach(el=>el.style.display="none");
+ if(!electric)return;
+ if(stage==="sa")place(0,0,0);
+ if(stage==="atria")place(0,0,p);
+ if(stage==="av")place(0,0,1);
+ if(stage==="his")place(1,0,p);
+ if(stage==="bundles"){place(2,0,p);place(3,1,p);}
+ if(stage==="ventricles"){place(2,0,1);place(3,1,1);}
+}
+let frame;
+function update(){if(!host.isConnected)return;draw(window.MedicLabState?.phase||0);frame=requestAnimationFrame(update);}
+update();
 })();
