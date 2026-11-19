@@ -71,9 +71,10 @@
   function render(){
     if(!host.isConnected){alive=false;observer.disconnect();renderer.dispose();return;}
     const phase=(window.MedicLabState&&window.MedicLabState.phase)||0;
-    const idx=phase<.27?0:phase<.35?1:phase<.37?2:phase<.46?3:4;
+    const stage=window.MedicActivation?window.MedicActivation.at(phase).stage.id:"sa";
+    const idx=stage==="sa"||stage==="atria"?0:stage==="av"?1:stage==="his"?2:stage==="bundles"||stage==="ventricles"?3:4;
     sparks.forEach((obj,i)=>{obj.material.color.setHex((idx===3&&i>=3)||i===idx?0xffe37b:0x9f6244);obj.scale.setScalar((idx===3&&i>=3)||i===idx?1.6:1)});
-    tracts.forEach((tr,i)=>tr.material.color.setHex(i<idx?0xffd68d:0xbca18e));
+    tracts.forEach((tr,i)=>tr.material.color.setHex((idx===3&&i>=2)||i<idx?0xffd68d:0xbca18e));
     renderer.render(scene,camera);if(alive)requestAnimationFrame(render);
   }
   render();
