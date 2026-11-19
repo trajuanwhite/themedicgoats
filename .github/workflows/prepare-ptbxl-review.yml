@@ -1,0 +1,95 @@
+name: Prepare PTB-XL ECG review candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      ecg_id:
+        description: "PTB-XL ECG record number to prepare for clinical review"
+        required: true
+        default: "3"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install conversion dependencies
+        run: python -m pip install "wfdb>=4,<5" "numpy>=1.26,<3"
+      - name: Download official record and verify metadata
+        shell: bash
+        env:
+          ECG_ID: ${{ inputs.ecg_id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast, csv, os, pathlib, re, urllib.request
+          ident=os.environ["ECG_ID"]
+          if not re.fullmatch(r"[1-9][0-9]{0,4}",ident):
+              raise SystemExit("Invalid ECG ID")
+          ident=int(ident)
+          base="https://physionet.org/files/ptb-xl/1.0.3/"
+          headers={"User-Agent":"MedicGoatsECGLabResearch/0.1"}
+          def get(url):
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req,timeout=35) as response:
+                  return response.read()
+          raw=get(base+"ptbxl_database.csv")
+          rows=csv.DictReader(raw.decode("utf-8-sig").splitlines())
+          record=next((r for r in rows if int(r["ecg_id"])==ident),None)
+          if record is None: raise SystemExit("ECG ID does not exist in official PTB-XL metadata")
+          # An NORM code alone is NOT a final expert diagnosis.
+          codes=ast.literal_eval(record["scp_codes"])
+          if not isinstance(codes,dict) or "NORM" not in codes or "SR" not in codes:
+              raise SystemExit("This workflow only prepares a source-labeled NORM + SR example")
+          if record["electrodes_problems"].strip() or record["pacemaker"].strip():
+              raise SystemExit("Selected record has a flagged electrode or pacing field; choose another")
+          stem=record["filename_lr"]
+          if not re.fullmatch(r"records100/[0-9]{5}/[0-9]{5}_lr",stem):
+              raise SystemExit("Unexpected record path")
+          path=pathlib.Path("review-candidate")/stem
+          path.parent.mkdir(parents=True,exist_ok=True)
+          for ext in (".hea",".dat"):
+              data=get(base+stem+ext)
+              if not data or len(data)>2_000_000: raise SystemExit("Unreasonable source file size")
+              path.with_suffix(ext).write_bytes(data)
+          import json
+          summary={"dataset":"PTB-XL v1.0.3","ecg_id":ident,"source_file":stem,"source_scp_codes":codes,"annotation":"NORM and SR in source metadata; requires qualified clinical review","clinical_review_completed":False,
+            "license":"CC BY 4.0","source":"https://physionet.org/content/ptb-xl/1.0.3/","source_report":record["report"]}
+          (pathlib.Path("review-candidate")/"review-metadata.json").write_text(json.dumps(summary,indent=2),encoding="utf-8")
+          print("Downloaded official PTB-XL data for review, not public release:",stem)
+          PY
+      - name: Convert to ECG Lab 12-lead schema
+        shell: bash
+        env:
+          ECG_ID: ${{ inputs.ecg_id }}
+        run: |
+          set -euo pipefail
+          STEM="$(find review-candidate/records100 -name '*_lr.hea' -print -quit)"
+          test -n "$STEM"
+          python scripts/convert_ptbxl_ecg.py "${STEM%.hea}" --record-id "$ECG_ID" --output review-candidate/clinical-ecg.json
+          python - <<'PY'
+          import json, pathlib
+          ecg=json.loads(pathlib.Path("review-candidate/clinical-ecg.json").read_text())
+          assert ecg["source"]["validatedForTeaching"] is False
+          assert len(ecg["waveforms"])==12
+          assert len(set(map(len,ecg["waveforms"].values())))==1
+          print("Verified 12-channel schema. Recording remains unreviewed.")
+          PY
+      - name: Upload review artifact only (no production publishing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ptbxl-clinical-review-candidate
+          path: |
+            review-candidate/clinical-ecg.json
+            review-candidate/review-metadata.json
+          retention-days: 7
