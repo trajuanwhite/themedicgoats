@@ -34,32 +34,68 @@
   shape.computeVertexNormals();
   // Four individually animated chamber silhouettes replace the single opaque heart.
   // These meshes are a stylized exterior teaching model, NOT a segmented CT/MRI heart.
-  heartMat.opacity=.27;
-  const main=new THREE.Mesh(shape,heartMat);main.rotation.z=-.18;group.add(main);
+  // Reference-inspired open cutaway: warm myocardial wall, clearly visible
+  // orange atrial interiors, blue right ventricle and red left ventricle.
+  // The geometry is artist-made and schematic, not a segmented anatomic mesh.
+  heartMat.opacity=.30;
+  const main=new THREE.Mesh(shape,heartMat);main.rotation.z=-.18;
+  main.position.z=-.55;group.add(main);
   const chamberMaterials={
-    ra:new THREE.MeshPhysicalMaterial({color:0xbb6464,roughness:.56,clearcoat:.22,transparent:true,opacity:.95}),
-    la:new THREE.MeshPhysicalMaterial({color:0xd17b72,roughness:.54,clearcoat:.22,transparent:true,opacity:.94}),
-    rv:new THREE.MeshPhysicalMaterial({color:0xa94444,roughness:.52,clearcoat:.24,transparent:true,opacity:.98}),
-    lv:new THREE.MeshPhysicalMaterial({color:0x8d3039,roughness:.51,clearcoat:.26,transparent:true,opacity:.98})
+    ra:new THREE.MeshPhysicalMaterial({color:0xe0a041,roughness:.48,clearcoat:.22}),
+    la:new THREE.MeshPhysicalMaterial({color:0xf0b54a,roughness:.47,clearcoat:.23}),
+    rv:new THREE.MeshPhysicalMaterial({color:0x275bbb,roughness:.42,clearcoat:.33}),
+    lv:new THREE.MeshPhysicalMaterial({color:0xd72f40,roughness:.43,clearcoat:.3})
   };
+  const wallMat=new THREE.MeshStandardMaterial({color:0xe59886,roughness:.55});
+  const cavityBorderMat=new THREE.MeshStandardMaterial({color:0xffb1a1,roughness:.52});
   const chamberGroups={};
   function chamber(name,center,size,angle){
-    const pivot=new THREE.Group();
-    pivot.position.set(...center);
-    const geometry=new THREE.SphereGeometry(1,40,28);
-    const mesh=new THREE.Mesh(geometry,chamberMaterials[name]);
-    mesh.scale.set(...size);mesh.rotation.z=angle;
-    pivot.add(mesh);group.add(pivot);
-    chamberGroups[name]=pivot;
-    return pivot;
+    const pivot=new THREE.Group();pivot.position.set(...center);
+    const surface=new THREE.Mesh(new THREE.SphereGeometry(1,40,28),chamberMaterials[name]);
+    surface.scale.set(...size);surface.rotation.z=angle;pivot.add(surface);
+    // Raised muscular perimeter and darker center provide a visible cutaway.
+    const outline=[];
+    for(let i=0;i<=72;i++){
+      const a=2*Math.PI*i/72,rx=Math.cos(a),ry=Math.sin(a);
+      const tip=name==="rv"||name==="lv"?(.90+.10*ry):1;
+      outline.push(new THREE.Vector3(rx*size[0]*.91*tip,ry*size[1]*.91,
+        size[2]*(.77+.10*Math.max(0,1-rx*rx-ry*ry))));
+    }
+    const border=new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(outline,true),96,.045,8,true),
+      cavityBorderMat);
+    border.rotation.z=angle;pivot.add(border);
+    const shading=new THREE.Mesh(new THREE.SphereGeometry(1,28,20),
+      new THREE.MeshPhysicalMaterial({color:name==="rv"?0x174393:name==="lv"?0xaa1f33:0xc8842d,
+        roughness:.6,transparent:true,opacity:.55}));
+    shading.scale.set(size[0]*.79,size[1]*.78,size[2]*.15);
+    shading.position.z=size[2]*.87;shading.rotation.z=angle;pivot.add(shading);
+    group.add(pivot);chamberGroups[name]=pivot;return pivot;
   }
-  // Screen-facing ventricular shells taper toward the apex; left/right are
-  // visually descriptive and should not be interpreted as clinical segmentation.
-  chamber("ra",[-.52,.51,.35],[.40,.43,.43],-.30);
-  chamber("la",[.41,.53,.12],[.44,.40,.42],.22);
-  chamber("rv",[-.42,-.30,.41],[.47,.73,.45],-.24);
-  chamber("lv",[.37,-.38,.29],[.51,.81,.49],.25);
-  const relaxed={ra:chamberGroups.ra.scale.clone(),la:chamberGroups.la.scale.clone(),rv:chamberGroups.rv.scale.clone(),lv:chamberGroups.lv.scale.clone()};
+  // Front-facing chamber illustration, similar in visual hierarchy to
+  // medical animation cutaways. Their physical orientation is approximate.
+  chamber("ra",[-.52,.48,.51],[.39,.39,.27],-.22);
+  chamber("la",[.41,.50,.47],[.39,.36,.27],.15);
+  chamber("rv",[-.41,-.32,.51],[.46,.66,.27],-.20);
+  chamber("lv",[.39,-.33,.50],[.47,.69,.28],.18);
+  // Muscle border around outer heart and prominent interventricular septum.
+  const heartContour=[];
+  for(let i=0;i<=100;i++){
+    const t=2*Math.PI*i/100;
+    const x=Math.cos(t)*(.97-(.12*Math.max(0,-Math.sin(t))));
+    const y=Math.sin(t)*1.21-.04;
+    heartContour.push(new THREE.Vector3(x,y,.49));
+  }
+  const borderHeart=new THREE.Mesh(new THREE.TubeGeometry(
+    new THREE.CatmullRomCurve3(heartContour,true),128,.072,10,true),wallMat);
+  group.add(borderHeart);
+  const septum=new THREE.Mesh(new THREE.CapsuleGeometry(.063,1.05,7,15),wallMat);
+  septum.position.set(.045,-.27,.80);septum.rotation.z=-.08;group.add(septum);
+  // Heart valve landmarks are schematic thin rings between chambers.
+  for(const [x,y] of [[-.43,.13],[.39,.14]]){
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(.20,.026,8,32),wallMat);
+    ring.position.set(x,y,.84);ring.rotation.z=.08;ring.scale.y=.38;group.add(ring);
+  }
   function smoothstep(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
   // Smooth contraction envelopes deliberately lag electrical events.
   // Values are illustrative timing windows in the 800-ms reference cycle.
@@ -79,7 +115,7 @@
       const pivot=chamberGroups[name];
       pivot.scale.set(1-.105*ventricular,1-.085*ventricular,1-.11*ventricular);
       pivot.rotation.z=(name==="rv"?-.038:.038)*ventricular;
-      pivot.position.y=(name==="rv"?-.30:-.38)+.045*ventricular;
+      pivot.position.y=(name==="rv"?-.32:-.33)+.045*ventricular;
     }
     main.scale.set(1-.018*ventricular,1-.03*ventricular,1-.018*ventricular);
   }
@@ -110,7 +146,7 @@
   ];
   // A moving impulse follows the SAME continuous centerlines as the visible tracts.
   // Both bundle branches receive an independent marker simultaneously.
-  const impulseMat=new THREE.MeshBasicMaterial({color:0xfff3a6,depthTest:false,transparent:true,opacity:1});
+  const impulseMat=new THREE.MeshBasicMaterial({color:0xffffad,depthTest:false,transparent:true,opacity:1});
   const glowMat=new THREE.MeshBasicMaterial({color:0xffbb4a,depthTest:false,transparent:true,opacity:.28});
   const pulseGeometry=new THREE.SphereGeometry(.044,16,12);
   const haloGeometry=new THREE.SphereGeometry(.09,16,12);
@@ -183,7 +219,7 @@
   renderer.domElement.addEventListener("pointerup",()=>drag=false);
   renderer.domElement.addEventListener("pointercancel",()=>drag=false);
   if(fallback)fallback.hidden=true;
-  if(status)status.textContent="Drag to rotate • chamber contraction + traveling impulse • illustrative anatomy";
+  if(status)status.textContent="Cutaway heart • orange atria, blue/right and red/left ventricles • drag to rotate";
   let alive=true;
   function render(){
     if(!host.isConnected){alive=false;observer.disconnect();renderer.dispose();return;}
