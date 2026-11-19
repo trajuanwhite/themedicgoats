@@ -17,7 +17,7 @@
 <p class="heart-wave-key"><span class="heart-wave-swatch" aria-hidden="true"></span>Amber shading = muscle activating; yellow lines = rapid conduction fibers. This is a simplified 2D teaching projection.</p>
 <p class="lab-sub" id="stage-description" aria-live="off">SA node initiates atrial activation.</p>
 <div class="stat-row"><div class="stat"><strong id="phase">P</strong><span>ECG PHASE</span></div><div class="stat"><strong id="bpm-readout">75</strong><span>SELECTED RATE</span></div><div class="stat"><strong>12</strong><span>DISPLAYED LEADS</span></div></div>
-<div class="rhythm-mode"><label for="rhythm-mode"><strong>Electrical rhythm</strong></label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select><p id="rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><small>Illustrative teaching patterns only; not patient ECGs, accurate 12-lead morphology, or validated conduction simulations. Selected rate may represent atrial, ventricular, or escape pacing depending on rhythm.</small></div>
+<div class="rhythm-mode"><label for="rhythm-mode"><strong>Electrical rhythm</strong></label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="pvt">Polymorphic ventricular tachycardia</option><option value="vf">Ventricular fibrillation (VFib)</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select><p id="rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><small>Illustrative teaching patterns only—not patient ECGs or validated 12-lead morphologies. In VFib there is no organized ventricular rate; the displayed activity is a conceptual simulation.</small></div>
 <div class="controls"><button id="play-btn" type="button" aria-pressed="true">Pause</button><button id="restart-btn" type="button">Restart</button></div>
 <div class="controls"><label for="rate"><span id="rate-label">Rate</span> <output id="rate-value">75 bpm</output></label><input id="rate" type="range" min="45" max="180" step="1" value="75"></div>
 <div class="lab-slider-group"><div class="lab-slider-heading"><label for="speed">Playback speed</label><output id="speed-value" for="speed">0.08× · Teaching</output></div><input id="speed" type="range" min="0" max="100" step="1" value="26" aria-label="Playback speed, extremely slow to fast"><div class="lab-slider-endpoints"><span>Very slow · 0.02×</span><span>Real time · 1×</span><span>Fast · 4×</span></div></div>
@@ -56,7 +56,7 @@
 </main><footer><div class="medic-footer-info"><strong>THE MEDIC GOATS</strong><span>Teaching While Learning • Educational practice only</span></div></footer>
 <script src="/ecg-lab-engine.js?v=2"></script>
 <script src="/ecg-lab-activation.js?v=5"></script>
-<script src="/ecg-lab-rhythms.js?v=3"></script>
+<script src="/ecg-lab-rhythms.js?v=4"></script>
 <script>
 (function(){
  "use strict";
@@ -113,12 +113,13 @@
  rhythmMode.onchange=()=>{
   time=0;lastCycleIndex=-1;
   bpm=window.MedicRhythm.modes[rhythmMode.value].rate;
-  $("rate").min=rhythmMode.value==="av3"?"25":rhythmMode.value==="vt"?"100":rhythmMode.value==="flutter"?"90":"45";
-  $("rate").max=rhythmMode.value==="av3"?"70":rhythmMode.value==="vt"?"230":"180";
-  $("rate-label").textContent=rhythmMode.value==="av3"?"Ventricular escape rate":rhythmMode.value==="vt"?"VT rate":rhythmMode.value==="flutter"?"Ventricular rate":rhythmMode.value==="mobitz1"||rhythmMode.value==="mobitz2"||rhythmMode.value==="av1"?"Atrial rate":"Rate";
+  $("rate").min=rhythmMode.value==="av3"?"25":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"100":rhythmMode.value==="flutter"?"90":"45";
+  $("rate").max=rhythmMode.value==="av3"?"70":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"230":"180";
+  $("rate").disabled=rhythmMode.value==="vf";
+  $("rate-label").textContent=rhythmMode.value==="vf"?"No organized ventricular rate":rhythmMode.value==="av3"?"Ventricular escape rate":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"VT rate":rhythmMode.value==="flutter"?"Ventricular rate":rhythmMode.value==="mobitz1"||rhythmMode.value==="mobitz2"||rhythmMode.value==="av1"?"Atrial rate":"Rate";
   $("rate").value=String(bpm);
-  $("rate-value").textContent=bpm+" bpm";
-  $("bpm-readout").textContent=bpm;
+  $("rate-value").textContent=rhythmMode.value==="vf"?"Not measurable":bpm+" bpm";
+  $("bpm-readout").textContent=rhythmMode.value==="vf"?"—":bpm;
   $("rhythm-explanation").textContent=window.MedicRhythm.modes[rhythmMode.value].detail;
   $("cycle-step").disabled=rhythmMode.value!=="sinus";
   $("cycle-step").setAttribute("aria-label",rhythmMode.value==="sinus"?"Jump between nine stages of the cardiac cycle":"Cycle-step navigation is available in sinus rhythm only");
@@ -152,7 +153,7 @@
   const selectedMode=rhythmMode.value;
   const note=rhythm.blockSite?rhythm.blockSite==="av"?" • AV node: nonconducted P wave":rhythm.blockSite==="infranodal"?" • Impulse blocked below AV junction":" • Atrial impulse does not conduct":selectedMode==="wpw"&&stage==="accessory"?" • Accessory pathway pre-excitation":selectedMode==="vt"?" • Ventricular myocardial origin":"";
   $("stage-description").textContent=selectedMode==="sinus"?(window.MedicActivation?.at(phase).stage.description||descriptions[0]):window.MedicRhythm.modes[selectedMode].detail+note;
-  $("phase").textContent=rhythmMode.value!=="sinus"?(stage==="blocked"?"BLOCK":stage==="accessory"?"DELTA":stage==="ventricular-origin"?"VT":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="av"?"AV":rhythm.atrialActive?"P":"—"):(stage==="sa"||stage==="atria"?"P":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="plateau"?"ST":"PR");
+  $("phase").textContent=rhythmMode.value!=="sinus"?(stage==="fibrillation"?"VF":stage==="blocked"?"BLOCK":stage==="accessory"?"DELTA":stage==="ventricular-origin"?"VT":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="av"?"AV":rhythm.atrialActive?"P":"—"):(stage==="sa"||stage==="atria"?"P":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="plateau"?"ST":"PR");
  }
  function animate(now){if(previous&&playing)time+=Math.min((now-previous)/1000,.1)*bpm/60*speed;previous=now;paint();requestAnimationFrame(animate)}
  $("play-btn").onclick=()=>{playing=!playing;$("play-btn").textContent=playing?"Pause":"Play";$("play-btn").setAttribute("aria-pressed",String(playing))};
@@ -181,5 +182,5 @@
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=1"></script>
 <script src="/ecg-lab-library.js?v=1"></script>
-<script src="/ecg-lab-3d.js?v=19"></script>
+<script src="/ecg-lab-3d.js?v=20"></script>
 </body></html>
