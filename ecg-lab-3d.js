@@ -1,236 +1,257 @@
-/* Optional Three.js anatomical teaching visualization; fall back to schematic when offline. */
+/* Medic Goats ECG Lab — hand-modeled cutaway teaching heart.
+   No scanned human anatomy: approximate 3D teaching illustration, not physiologic simulation.
+   Existing MedicActivation timeline remains the single source of cycle phase. */
 (async function(){
-  "use strict";
-  const host=document.getElementById("heart-view");
-  const status=document.getElementById("heart-status");
-  if(!host)return;
-  const fallback=document.getElementById("heart-fallback");
-  let THREE;
-  try { THREE=await import("https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"); }
-  catch(e){ if(status)status.textContent="Schematic mode — 3D renderer unavailable";return; }
-  if(!host.isConnected)return;
-  const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(35,1,.1,100);
-  camera.position.set(0,.15,7.2);
-  let renderer;try{renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"low-power"});}catch(e){if(status)status.textContent="Schematic mode — WebGL is unavailable";return;}
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  host.appendChild(renderer.domElement);
-  scene.add(new THREE.AmbientLight(0xffffff,2.1));
-  const key=new THREE.DirectionalLight(0xffffff,2.3);key.position.set(-3,4,6);scene.add(key);
-  const rim=new THREE.DirectionalLight(0xe5a688,1.5);rim.position.set(3,0,-2);scene.add(rim);
-  const group=new THREE.Group();scene.add(group);
-  const heartMat=new THREE.MeshPhysicalMaterial({color:0x9f3b3b,roughness:.56,metalness:0,clearcoat:.15,transparent:true,opacity:.9,side:THREE.DoubleSide});
-  // Educational organ silhouette, NOT a segmented anatomical heart mesh.
-  const shape=new THREE.SphereGeometry(1.15,48,32);
-  const p=shape.attributes.position;
-  for(let i=0;i<p.count;i++){
-    let x=p.getX(i),y=p.getY(i),z=p.getZ(i);
-    const taper=.63+.37*(y+1.15)/2.3;
-    x*=taper; z*=taper*.75;
-    if(y<-.15){x-=.12*(-y);y*=1.2;}
-    p.setXYZ(i,x,y,z);
+"use strict";
+const host=document.getElementById("heart-view"), status=document.getElementById("heart-status");
+if(!host)return;
+const fallback=document.getElementById("heart-fallback");
+let THREE;
+try { THREE=await import("https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"); }
+catch(e){if(status)status.textContent="Schematic view • 3D renderer unavailable";return;}
+if(!host.isConnected)return;
+let renderer;
+try {renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"low-power"});}
+catch(e){if(status)status.textContent="Schematic view • 3D graphics unavailable";return;}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.setClearAlpha(0);
+host.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(35,1,.1,100);
+camera.position.set(0,.12,7.8);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8d4851,2.0));
+const key=new THREE.DirectionalLight(0xffe8de,2.7);key.position.set(-3,4,7);scene.add(key);
+const fill=new THREE.DirectionalLight(0xcfe1ff,1.1);fill.position.set(3,0,3);scene.add(fill);
+const rim=new THREE.DirectionalLight(0xffccb4,1.5);rim.position.set(2,3,-3);scene.add(rim);
+const spin=new THREE.Group();scene.add(spin);
+const heart=new THREE.Group();spin.add(heart);
+// This is the normal slightly oblique anatomical presentation. The apex points
+// inferior-left from the viewer's perspective instead of straight down.
+heart.rotation.set(.09,-.20,-.30);
+spin.rotation.y=-.12;
+const mat=(color,roughness=.56,extras={})=>new THREE.MeshPhysicalMaterial({color,roughness,metalness:0,clearcoat:.17,side:THREE.DoubleSide,...extras});
+const wall=mat(0xb75d61,.66),wallEdge=mat(0xeaa29b,.62),wallLight=mat(0xf2b1a7,.63);
+const blood={ra:mat(0xbb6931,.49),la:mat(0xc88437,.50),rv:mat(0x254a95,.45),lv:mat(0x9f223d,.45)};
+const vessels={aorta:mat(0xc9595e,.49),pulmonary:mat(0x667fa1,.51),vein:mat(0x6582a8,.54),coronary:mat(0xcc7667,.58)};
+function vector(x,y,z){return new THREE.Vector3(x,y,z);}
+function pathTube(points,r,material,div=55){
+ const curve=new THREE.CatmullRomCurve3(points.map(p=>Array.isArray(p)?vector(...p):p));
+ const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,div,r,9,false),material);
+ mesh.userData.curve=curve;heart.add(mesh);return mesh;
+}
+function lineTube(points,r,material,closed=false){
+ const c=new THREE.CatmullRomCurve3(points,closed);
+ const mesh=new THREE.Mesh(new THREE.TubeGeometry(c,Math.max(60,points.length*2),r,8,closed),material);
+ heart.add(mesh);return mesh;
+}
+// Asymmetric loft of the back and side myocardial shell. Its anterior wedge
+// is actually open: unlike a transparent sphere it cannot cover the chambers.
+const verts=[],normals=[],indices=[],ySteps=48,angleSteps=76;
+function outlineAt(y){
+ const taper=Math.sqrt(Math.max(.002,1-y*y));
+ return {cx:.17*y-.045,rx:(1.08+.11*y)*taper,rz:(.57+.06*y)*taper};
+}
+for(let i=0;i<=ySteps;i++){
+ const y=-.988+1.976*i/ySteps;
+ const o=outlineAt(y);
+ for(let j=0;j<=angleSteps;j++){
+   const theta=.83+(Math.PI*2-1.66)*j/angleSteps;
+   const x=o.cx+o.rx*Math.sin(theta),z=-.17+o.rz*Math.cos(theta);
+   verts.push(x,y*1.23,z);
+ }
+}
+for(let i=0;i<ySteps;i++)for(let j=0;j<angleSteps;j++){
+ const a=i*(angleSteps+1)+j,b=a+angleSteps+1;
+ indices.push(a,a+1,b,a+1,b+1,b);
+}
+const shellGeo=new THREE.BufferGeometry();
+shellGeo.setAttribute("position",new THREE.Float32BufferAttribute(verts,3));
+shellGeo.setIndex(indices);shellGeo.computeVertexNormals();
+const shell=new THREE.Mesh(shellGeo,wall);heart.add(shell);
+for(const angle of [.83,Math.PI*2-.83]){
+ const pts=[];
+ for(let i=2;i<ySteps-1;i++){
+  const y=-.988+1.976*i/ySteps,o=outlineAt(y);
+  pts.push(vector(o.cx+o.rx*Math.sin(angle),y*1.23,-.17+o.rz*Math.cos(angle)));
+ }
+ lineTube(pts,.065,wallEdge);
+}
+// Recessed cavity surfaces, framed by muscular walls. Each chamber can alter
+// its internal aperture separately so contraction is visible as narrowing.
+const chambers={};
+function cavity(id,cx,cy,rx,ry,front,tilt,wallThickness){
+ const root=new THREE.Group();root.position.set(cx,cy,front);root.rotation.z=tilt;heart.add(root);
+ const contour=[],inner=[],segments=72,radial=12;
+ for(let i=0;i<=radial;i++){
+  const u=i/radial;
+  for(let j=0;j<=segments;j++){
+   const a=2*Math.PI*j/segments;
+   const pear=(id==="lv"||id==="rv")?1-.18*Math.max(0,-Math.sin(a)):1;
+   const x=rx*u*Math.cos(a)*pear, y=ry*u*Math.sin(a);
+   const z=-.23*(1-u*u)-.014*Math.cos(a*3)*u;
+   inner.push(x,y,z);
   }
-  shape.computeVertexNormals();
-  // Four individually animated chamber silhouettes replace the single opaque heart.
-  // These meshes are a stylized exterior teaching model, NOT a segmented CT/MRI heart.
-  // Reference-inspired open cutaway: warm myocardial wall, clearly visible
-  // orange atrial interiors, blue right ventricle and red left ventricle.
-  // The geometry is artist-made and schematic, not a segmented anatomic mesh.
-  heartMat.opacity=.30;
-  const main=new THREE.Mesh(shape,heartMat);main.rotation.z=-.18;
-  main.position.z=-.55;group.add(main);
-  const chamberMaterials={
-    ra:new THREE.MeshPhysicalMaterial({color:0xe0a041,roughness:.48,clearcoat:.22}),
-    la:new THREE.MeshPhysicalMaterial({color:0xf0b54a,roughness:.47,clearcoat:.23}),
-    rv:new THREE.MeshPhysicalMaterial({color:0x275bbb,roughness:.42,clearcoat:.33}),
-    lv:new THREE.MeshPhysicalMaterial({color:0xd72f40,roughness:.43,clearcoat:.3})
-  };
-  const wallMat=new THREE.MeshStandardMaterial({color:0xe59886,roughness:.55});
-  const cavityBorderMat=new THREE.MeshStandardMaterial({color:0xffb1a1,roughness:.52});
-  const chamberGroups={};
-  function chamber(name,center,size,angle){
-    const pivot=new THREE.Group();pivot.position.set(...center);
-    const surface=new THREE.Mesh(new THREE.SphereGeometry(1,40,28),chamberMaterials[name]);
-    surface.scale.set(...size);surface.rotation.z=angle;pivot.add(surface);
-    // Raised muscular perimeter and darker center provide a visible cutaway.
-    const outline=[];
-    for(let i=0;i<=72;i++){
-      const a=2*Math.PI*i/72,rx=Math.cos(a),ry=Math.sin(a);
-      const tip=name==="rv"||name==="lv"?(.90+.10*ry):1;
-      outline.push(new THREE.Vector3(rx*size[0]*.91*tip,ry*size[1]*.91,
-        size[2]*(.77+.10*Math.max(0,1-rx*rx-ry*ry))));
-    }
-    const border=new THREE.Mesh(
-      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(outline,true),96,.045,8,true),
-      cavityBorderMat);
-    border.rotation.z=angle;pivot.add(border);
-    const shading=new THREE.Mesh(new THREE.SphereGeometry(1,28,20),
-      new THREE.MeshPhysicalMaterial({color:name==="rv"?0x174393:name==="lv"?0xaa1f33:0xc8842d,
-        roughness:.6,transparent:true,opacity:.55}));
-    shading.scale.set(size[0]*.79,size[1]*.78,size[2]*.15);
-    shading.position.z=size[2]*.87;shading.rotation.z=angle;pivot.add(shading);
-    group.add(pivot);chamberGroups[name]=pivot;return pivot;
-  }
-  // Front-facing chamber illustration, similar in visual hierarchy to
-  // medical animation cutaways. Their physical orientation is approximate.
-  chamber("ra",[-.52,.48,.51],[.39,.39,.27],-.22);
-  chamber("la",[.41,.50,.47],[.39,.36,.27],.15);
-  chamber("rv",[-.41,-.32,.51],[.46,.66,.27],-.20);
-  chamber("lv",[.39,-.33,.50],[.47,.69,.28],.18);
-  // Muscle border around outer heart and prominent interventricular septum.
-  const heartContour=[];
-  for(let i=0;i<=100;i++){
-    const t=2*Math.PI*i/100;
-    const x=Math.cos(t)*(.97-(.12*Math.max(0,-Math.sin(t))));
-    const y=Math.sin(t)*1.21-.04;
-    heartContour.push(new THREE.Vector3(x,y,.49));
-  }
-  const borderHeart=new THREE.Mesh(new THREE.TubeGeometry(
-    new THREE.CatmullRomCurve3(heartContour,true),128,.072,10,true),wallMat);
-  group.add(borderHeart);
-  const septum=new THREE.Mesh(new THREE.CapsuleGeometry(.063,1.05,7,15),wallMat);
-  septum.position.set(.045,-.27,.80);septum.rotation.z=-.08;group.add(septum);
-  // Heart valve landmarks are schematic thin rings between chambers.
-  for(const [x,y] of [[-.43,.13],[.39,.14]]){
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(.20,.026,8,32),wallMat);
-    ring.position.set(x,y,.84);ring.rotation.z=.08;ring.scale.y=.38;group.add(ring);
-  }
-  function smoothstep(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
-  // Smooth contraction envelopes deliberately lag electrical events.
-  // Values are illustrative timing windows in the 800-ms reference cycle.
-  function envelope(ms,start,peakStart,peakEnd,end){
-    return smoothstep((ms-start)/(peakStart-start))*(1-smoothstep((ms-peakEnd)/(end-peakEnd)));
-  }
-  function showMechanical(phase,enabled){
-    const ms=((phase%1)+1)%1*800;
-    const atrial=enabled?envelope(ms,155,205,245,310):0;
-    const ventricular=enabled?envelope(ms,345,430,510,705):0;
-    for(const name of ["ra","la"]){
-      const pivot=chamberGroups[name];
-      pivot.scale.set(1-.075*atrial,1-.065*atrial,1-.08*atrial);
-      pivot.rotation.z=(name==="ra"?-.018:.018)*atrial;
-    }
-    for(const name of ["rv","lv"]){
-      const pivot=chamberGroups[name];
-      pivot.scale.set(1-.105*ventricular,1-.085*ventricular,1-.11*ventricular);
-      pivot.rotation.z=(name==="rv"?-.038:.038)*ventricular;
-      pivot.position.y=(name==="rv"?-.32:-.33)+.045*ventricular;
-    }
-    main.scale.set(1-.018*ventricular,1-.03*ventricular,1-.018*ventricular);
-  }
-  const arteryMat=new THREE.MeshStandardMaterial({color:0xb45b50,roughness:.6});
-  const veinMat=new THREE.MeshStandardMaterial({color:0x6b7d9f,roughness:.6});
-  function tube(coords,r,material){
-    const path=new THREE.CatmullRomCurve3(coords.map(v=>new THREE.Vector3(...v)));
-    const mesh=new THREE.Mesh(new THREE.TubeGeometry(path,36,r,9,false),material);
-    mesh.userData.curve=path;group.add(mesh);return mesh;
-  }
-  tube([[.25,.85,.05],[.27,1.35,.02],[.45,1.6,-.03],[.73,1.52,-.08]],.19,arteryMat);
-  tube([[-.44,.88,.15],[-.65,1.36,.15],[-.75,1.56,.1]],.17,veinMat);
-  // Great vessels, pulmonary outflow and superficial coronary branches
-  // distinguish this illustration from the former single-heart silhouette.
-  const pulmonaryMat=new THREE.MeshStandardMaterial({color:0x7188a7,roughness:.49,metalness:0});
-  const coronaryMat=new THREE.MeshStandardMaterial({color:0xdf997e,roughness:.6});
-  tube([[.05,.62,-.04],[.02,1.05,-.01],[-.12,1.36,-.07],[-.36,1.48,-.09]],.135,pulmonaryMat);
-  tube([[-.61,.53,-.03],[-.98,.79,-.12],[-1.11,1.05,-.15]],.092,veinMat);
-  tube([[.57,.54,-.10],[.92,.74,-.18],[1.05,.99,-.2]],.086,veinMat);
-  tube([[.12,.47,.72],[.22,.13,.88],[.37,-.22,.76],[.45,-.68,.55]],.018,coronaryMat);
-  tube([[.12,.48,.73],[-.20,.25,.84],[-.55,-.13,.77],[-.60,-.46,.56]],.017,coronaryMat);
-  const tractMat=()=>new THREE.MeshBasicMaterial({color:0xbca18e,transparent:true,opacity:.95});
-  const tracts=[
-    tube([[-.52,.71,.67],[-.40,.35,.83],[-.22,.11,.92]],.018,tractMat()),
-    tube([[-.22,.11,.92],[-.03,-.26,.85]],.018,tractMat()),
-    tube([[-.03,-.26,.85],[.34,-.77,.62]],.015,tractMat()),
-    tube([[-.03,-.26,.85],[-.46,-.78,.56]],.015,tractMat())
-  ];
-  // A moving impulse follows the SAME continuous centerlines as the visible tracts.
-  // Both bundle branches receive an independent marker simultaneously.
-  const impulseMat=new THREE.MeshBasicMaterial({color:0xffffad,depthTest:false,transparent:true,opacity:1});
-  const glowMat=new THREE.MeshBasicMaterial({color:0xffbb4a,depthTest:false,transparent:true,opacity:.28});
-  const pulseGeometry=new THREE.SphereGeometry(.044,16,12);
-  const haloGeometry=new THREE.SphereGeometry(.09,16,12);
-  const moving=[];
-  for(let i=0;i<2;i++){
-    const marker=new THREE.Group();
-    const halo=new THREE.Mesh(haloGeometry,glowMat);
-    const core=new THREE.Mesh(pulseGeometry,impulseMat);
-    marker.add(halo,core);marker.visible=false;group.add(marker);moving.push(marker);
-  }
-  // Bright trail progressively draws across each conduction branch.
-  const trails=tracts.map(tr=>{
-    const positions=tr.userData.curve.getPoints(100);
-    const geo=new THREE.BufferGeometry().setFromPoints(positions);
-    const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xffdc75,transparent:true,opacity:.98,depthTest:false}));
-    line.renderOrder=5;line.visible=false;group.add(line);return line;
-  });
-  function positionOn(tractIndex,t,marker){
-    const point=tracts[tractIndex].userData.curve.getPointAt(Math.max(0,Math.min(1,t)));
-    moving[marker].position.copy(point);moving[marker].visible=true;
-  }
-  function progressTrail(i,fraction){
-    trails[i].visible=fraction>0;
-    trails[i].geometry.setDrawRange(0,Math.max(2,Math.min(101,Math.ceil(fraction*100)+1)));
-  }
-  const originalHeartColor=heartMat.color.clone();
-  function showConduction(phase){
-    const a=window.MedicActivation?.at(phase);
-    const stage=a?.stage.id||"sa",t=a?.progress||0;
-    moving.forEach(m=>m.visible=false);
-    let completed=0;
-    if(stage==="sa"){positionOn(0,0,0);}
-    else if(stage==="atria"){positionOn(0,t,0);progressTrail(0,t);completed=0;}
-    else if(stage==="av"){positionOn(0,1,0);completed=1;}
-    else if(stage==="his"){positionOn(1,t,0);completed=1;progressTrail(1,t);}
-    else if(stage==="bundles"){
-      positionOn(2,t,0);positionOn(3,t,1);completed=2;
-      progressTrail(2,t);progressTrail(3,t);
-    }else if(stage==="ventricles"){
-      // Pedagogical wavefront spreads away from the two bundle endings.
-      completed=4;
-      const spread=.10+.54*t;
-      moving[0].position.copy(tracts[2].userData.curve.getPoint(1)).add(new THREE.Vector3(.17*t,-.17*t,.04*t));
-      moving[1].position.copy(tracts[3].userData.curve.getPoint(1)).add(new THREE.Vector3(-.17*t,-.17*t,.04*t));
-      moving[0].scale.setScalar(1+spread);moving[1].scale.setScalar(1+spread);
-      moving[0].visible=true;moving[1].visible=true;
-    }else{completed=4;}
-    for(let i=0;i<4;i++){
-      const partial=stage==="atria"&&i===0||stage==="his"&&i===1||stage==="bundles"&&i>=2;
-      progressTrail(i,i<completed?1:partial?t:0);
-      tracts[i].material.color.setHex(i<completed?0xd7a463:0xbca18e);
-    }
-    if(stage!=="ventricles")moving.forEach(m=>m.scale.setScalar(1));
-    // Repolarization is a recovery stage, not a second conduction pulse.
-    if(stage==="recovery")heartMat.color.setRGB(.68,.32,.32);
-    else heartMat.color.copy(originalHeartColor);
-  }
-  const modeSelect=document.getElementById("heart-display-mode");
-  const showsElectrical=()=>!modeSelect||modeSelect.value!=="mechanical";
-  const showsMechanical=()=>!modeSelect||modeSelect.value!=="electrical";
-  function resize(){
-    const w=Math.max(host.clientWidth,230),h=Math.max(host.clientHeight,290);
-    camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);
-  }
-  const observer=new ResizeObserver(resize);observer.observe(host);resize();
-  let drag=false,lastX=0,lastY=0;group.rotation.y=-.25;
-  renderer.domElement.style.touchAction="none";
-  renderer.domElement.addEventListener("pointerdown",e=>{drag=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)});
-  renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;group.rotation.y+=(e.clientX-lastX)*.009;group.rotation.x=Math.max(-.6,Math.min(.6,group.rotation.x+(e.clientY-lastY)*.006));lastX=e.clientX;lastY=e.clientY});
-  renderer.domElement.addEventListener("pointerup",()=>drag=false);
-  renderer.domElement.addEventListener("pointercancel",()=>drag=false);
-  if(fallback)fallback.hidden=true;
-  if(status)status.textContent="Cutaway heart • orange atria, blue/right and red/left ventricles • drag to rotate";
-  let alive=true;
-  function render(){
-    if(!host.isConnected){alive=false;observer.disconnect();renderer.dispose();return;}
-    const phase=(window.MedicLabState&&window.MedicLabState.phase)||0;
-    showConduction(phase);
-    showMechanical(phase,showsMechanical());
-    const electrical=showsElectrical();
-    tracts.forEach(tr=>tr.visible=electrical);
-    if(!electrical)trails.forEach(tr=>tr.visible=false);
-    moving.forEach(marker=>{if(!electrical)marker.visible=false});
-    renderer.render(scene,camera);if(alive)requestAnimationFrame(render);
-  }
-  render();
+ }
+ const tris=[];
+ for(let i=0;i<radial;i++)for(let j=0;j<segments;j++){
+  const a=i*(segments+1)+j,b=a+segments+1;
+  tris.push(a,b,a+1,a+1,b,b+1);
+ }
+ const surfaceGeo=new THREE.BufferGeometry();
+ surfaceGeo.setAttribute("position",new THREE.Float32BufferAttribute(inner,3));
+ surfaceGeo.setIndex(tris);surfaceGeo.computeVertexNormals();
+ const opening=new THREE.Group();root.add(opening);
+ const innerMesh=new THREE.Mesh(surfaceGeo,blood[id]);opening.add(innerMesh);
+ const boundary=[];
+ for(let j=0;j<=segments;j++){
+  const a=2*Math.PI*j/segments;
+  const pear=(id==="lv"||id==="rv")?1-.18*Math.max(0,-Math.sin(a)):1;
+  boundary.push(vector(rx*Math.cos(a)*pear,ry*Math.sin(a),.025));
+ }
+ const rimMesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(boundary,true),100,wallThickness,10,true),wallEdge);
+ root.add(rimMesh);
+ // A second inner, darker lip gives the cavity its visible depth.
+ const darkLip=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(boundary.map(v=>vector(v.x*.93,v.y*.93,v.z-.058)),true),90,.027,7,true),wall);
+ opening.add(darkLip);
+ chambers[id]={root,opening,rimMesh,cx,cy,rx,ry};
+ return root;
+}
+// Upper chambers are smaller and slightly posterior; LV is tall with a thick
+// muscular edge, while RV wraps anteriorly across the visual left.
+cavity("ra",-.52,.54,.34,.27,.39,-.16,.072);
+cavity("la",.35,.60,.31,.26,.34,.14,.078);
+cavity("rv",-.44,-.30,.40,.65,.53,-.15,.080);
+cavity("lv",.39,-.36,.44,.74,.51,.21,.135);
+// Interventricular muscular septum rather than a central divider line.
+const septum=new THREE.Mesh(new THREE.CapsuleGeometry(.083,1.03,8,16),wallLight);
+septum.position.set(.016,-.33,.64);septum.rotation.z=-.045;heart.add(septum);
+// Atrioventricular valve planes (schematic) add anatomic landmarks.
+for(const [x,y,r] of [[-.43,.19,.22],[.36,.21,.21]]){
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.033,10,40),wallEdge);
+ ring.position.set(x,y,.61);ring.scale.y=.38;ring.rotation.z=.14;heart.add(ring);
+}
+// Ascending aorta with arch; blue pulmonary trunk crosses its anterior side.
+// Four venous stubs help the anatomy read as an organ rather than a symbol.
+pathTube([[.28,.69,-.03],[.30,1.15,.05],[.52,1.44,-.07],[.77,1.43,-.19],[.85,1.16,-.30]],.155,vessels.aorta);
+pathTube([[-.15,.52,.14],[-.11,.94,.27],[-.33,1.30,.32],[-.69,1.40,.23]],.145,vessels.pulmonary);
+pathTube([[-.65,.71,-.17],[-.76,1.18,-.24],[-.87,1.43,-.35]],.14,vessels.vein);
+pathTube([[-.69,.24,-.24],[-.89,-.07,-.26],[-.93,-.42,-.28]],.13,vessels.vein);
+pathTube([[.53,.76,-.20],[.88,.87,-.28],[1.10,.95,-.30]],.080,vessels.vein);
+pathTube([[.49,.60,-.26],[.80,.59,-.40],[1.03,.55,-.45]],.077,vessels.vein);
+// Anterior coronary branches, small enough not to obscure cavity openings.
+pathTube([[.03,.36,.62],[.12,.08,.67],[.15,-.23,.68],[.12,-.65,.59]],.022,vessels.coronary);
+pathTube([[.02,.31,.60],[-.22,.16,.67],[-.66,-.06,.52]],.018,vessels.coronary);
+function smooth(v){v=Math.max(0,Math.min(1,v));return v*v*(3-2*v);}
+function envelope(ms,start,on,off,end){
+ return smooth((ms-start)/(on-start))*(1-smooth((ms-off)/(end-off)));
+}
+function animateChambers(phase,enabled){
+ const ms=((phase%1)+1)%1*800;
+ const atr=enabled?envelope(ms,155,205,245,310):0;
+ const ven=enabled?envelope(ms,345,430,515,705):0;
+ for(const name of ["ra","la"]){
+  const c=chambers[name];
+  c.opening.scale.set(1-.17*atr,1-.12*atr,1);
+  c.root.scale.set(1-.025*atr,1-.038*atr,1);
+ }
+ for(const name of ["rv","lv"]){
+  const c=chambers[name];
+  // Distinct aperture and wall change models inward cavity narrowing,
+  // mild longitudinal shortening and opposed torsion.
+  c.opening.scale.set(1-.22*ven,1-.17*ven,1);
+  c.root.scale.set(1-.018*ven,1-.055*ven,1);
+  c.root.rotation.z=(name==="rv"?-.15:.21)+(name==="rv"?-.039:.039)*ven;
+  c.root.position.y=c.cy+.042*ven;
+  c.rimMesh.scale.set(1+.045*ven,1+.01*ven,1+.03*ven);
+ }
+ shell.scale.set(1-.018*ven,1-.018*ven,1);
+ septum.scale.x=1+.14*ven;
+}
+// Electrical paths are front-facing so they remain visible against the
+// recessed cutaway. The pulse markers move continuously along spline curves.
+const conductionMaterial=()=>new THREE.MeshBasicMaterial({color:0xa7a5a2,transparent:true,opacity:.77,depthTest:false});
+const tracts=[
+ pathTube([[-.62,.80,.72],[-.48,.54,.76],[-.21,.24,.77]],.014,conductionMaterial()),
+ pathTube([[-.21,.24,.77],[-.06,-.02,.79],[-.01,-.24,.80]],.014,conductionMaterial()),
+ pathTube([[-.01,-.24,.80],[.23,-.58,.79],[.38,-.97,.64]],.015,conductionMaterial()),
+ pathTube([[-.01,-.24,.80],[-.26,-.53,.82],[-.45,-.95,.65]],.015,conductionMaterial())
+];
+const markerGeometry=new THREE.SphereGeometry(.048,16,12);
+const haloGeometry=new THREE.SphereGeometry(.096,16,12);
+const coreMat=new THREE.MeshBasicMaterial({color:0xffef5c,depthTest:false});
+const haloMat=new THREE.MeshBasicMaterial({color:0xffe16b,transparent:true,opacity:.28,depthTest:false});
+const sparks=[];
+for(let i=0;i<2;i++){
+ const pair=new THREE.Group();
+ pair.add(new THREE.Mesh(haloGeometry,haloMat),new THREE.Mesh(markerGeometry,coreMat));
+ pair.renderOrder=12;heart.add(pair);pair.visible=false;sparks.push(pair);
+}
+const trails=tracts.map(t=>{
+ const points=t.userData.curve.getPoints(100),geometry=new THREE.BufferGeometry().setFromPoints(points);
+ const line=new THREE.Line(geometry,new THREE.LineBasicMaterial({color:0xffe373,depthTest:false,transparent:true,opacity:.97}));
+ line.renderOrder=12;line.visible=false;heart.add(line);return line;
+});
+function showTrail(i,p){
+ trails[i].visible=p>0;
+ trails[i].geometry.setDrawRange(0,Math.max(2,Math.min(101,Math.ceil(p*100)+1)));
+}
+function positionSpark(i,index,ratio){
+ sparks[index].position.copy(tracts[i].userData.curve.getPointAt(Math.max(0,Math.min(1,ratio))));
+ sparks[index].visible=true;
+}
+function showElectrical(phase,enabled){
+ const timing=window.MedicActivation?.at(phase);
+ const stage=timing?.stage.id||"sa",p=timing?.progress||0;
+ sparks.forEach(s=>{s.visible=false;s.scale.setScalar(1);});
+ let done=0;
+ if(stage==="sa")positionSpark(0,0,0);
+ else if(stage==="atria")positionSpark(0,0,p);
+ else if(stage==="av"){done=1;positionSpark(0,0,1);}
+ else if(stage==="his"){done=1;positionSpark(1,0,p);}
+ else if(stage==="bundles"){done=2;positionSpark(2,0,p);positionSpark(3,1,p);}
+ else if(stage==="ventricles"){
+  done=4;positionSpark(2,0,1);positionSpark(3,1,1);
+  for(const obj of sparks)obj.scale.setScalar(1+.75*p);
+ }else done=4;
+ tracts.forEach((tract,i)=>{
+  const partial=(stage==="atria"&&i===0)||(stage==="his"&&i===1)||(stage==="bundles"&&i>=2);
+  showTrail(i,i<done?1:partial?p:0);
+  tract.visible=enabled;
+  trails[i].visible=enabled&&trails[i].visible;
+ });
+ if(!enabled)sparks.forEach(s=>s.visible=false);
+}
+const mode=document.getElementById("heart-display-mode");
+function resize(){
+ const w=Math.max(host.clientWidth,230),h=Math.max(host.clientHeight,290);
+ camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);
+}
+const observer=new ResizeObserver(resize);observer.observe(host);resize();
+let drag=false,lastX=0,lastY=0;
+renderer.domElement.style.touchAction="none";
+renderer.domElement.addEventListener("pointerdown",e=>{
+ drag=true;lastX=e.clientX;lastY=e.clientY;
+ renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener("pointermove",e=>{
+ if(!drag)return;
+ spin.rotation.y+=(e.clientX-lastX)*.008;
+ spin.rotation.x=Math.max(-.5,Math.min(.5,spin.rotation.x+(e.clientY-lastY)*.006));
+ lastX=e.clientX;lastY=e.clientY;
+});
+renderer.domElement.addEventListener("pointerup",()=>drag=false);
+renderer.domElement.addEventListener("pointercancel",()=>drag=false);
+if(fallback)fallback.hidden=true;
+if(status)status.textContent="Tilted anatomical cutaway • drag to rotate • illustrative chamber motion";
+function render(){
+ if(!host.isConnected){observer.disconnect();renderer.dispose();return;}
+ const phase=window.MedicLabState?.phase||0;
+ const setting=mode?.value||"both";
+ animateChambers(phase,setting!=="electrical");
+ showElectrical(phase,setting!=="mechanical");
+ renderer.render(scene,camera);
+ requestAnimationFrame(render);
+}
+render();
 })();
