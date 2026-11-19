@@ -1,53 +1,73 @@
-/* New original reference-style 2D cutaway animation, replaces procedural 3D.
- * Illustrative anatomy, approximate contraction and electrical timing. */
+/* Medic Goats ECG Lab — deliberately simple, original 2D electrical conduction drawing.
+ * No mechanical movement, gradients or clinical simulation claims.
+ * Phase is read from existing ECG Lab playback for synchronized teachable motion. */
 (function(){
 "use strict";
 const host=document.getElementById("heart-view");
 if(!host)return;
-const status=document.getElementById("heart-status"), fallback=document.getElementById("heart-fallback");
-const holder=document.createElement("div");
-holder.className="heart-cutaway-stage";
-holder.style.cssText="width:100%;height:100%;display:flex;justify-content:center;align-items:center;overflow:hidden";
-holder.innerHTML="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 440 460\" role=\"img\" aria-label=\"Tilted cutaway heart with orange atria, blue right ventricle, red left ventricle, great vessels and moving electrical impulse\" style=\"display:block;width:100%;height:100%;max-height:490px\">\n<defs>\n<linearGradient id=\"m-wall\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fbb1a3\"/><stop offset=\".55\" stop-color=\"#d77a7c\"/><stop offset=\"1\" stop-color=\"#a83857\"/></linearGradient>\n<linearGradient id=\"m-atria\" x2=\".8\" y2=\"1\"><stop stop-color=\"#ffda7f\"/><stop offset=\"1\" stop-color=\"#c77234\"/></linearGradient>\n<linearGradient id=\"m-rv\" x2=\".8\" y2=\"1\"><stop stop-color=\"#6698e6\"/><stop offset=\"1\" stop-color=\"#1b49a5\"/></linearGradient>\n<linearGradient id=\"m-lv\" x2=\".9\" y2=\"1\"><stop stop-color=\"#fa747d\"/><stop offset=\"1\" stop-color=\"#b21d42\"/></linearGradient>\n<linearGradient id=\"m-aorta\" x2=\".8\" y2=\"1\"><stop stop-color=\"#ffb0a9\"/><stop offset=\"1\" stop-color=\"#b83b5b\"/></linearGradient>\n<linearGradient id=\"m-pulm\" x2=\".7\" y2=\"1\"><stop stop-color=\"#bdedff\"/><stop offset=\"1\" stop-color=\"#2e6ab8\"/></linearGradient>\n<radialGradient id=\"m-glow\"><stop stop-color=\"#fffbb2\"/><stop offset=\".35\" stop-color=\"#ffeb48\" stop-opacity=\".7\"/><stop offset=\"1\" stop-color=\"#ffeb48\" stop-opacity=\"0\"/></radialGradient>\n<linearGradient id=\"m-tissue\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#f5b29d\"/><stop offset=\".47\" stop-color=\"#b94c51\"/><stop offset=\"1\" stop-color=\"#7b2c3e\"/></linearGradient>\n<radialGradient id=\"m-recess\"><stop stop-color=\"#3f1721\" stop-opacity=\".66\"/><stop offset=\".78\" stop-color=\"#7f2835\" stop-opacity=\".2\"/><stop offset=\"1\" stop-color=\"#9a3d4a\" stop-opacity=\"0\"/></radialGradient>\n<filter id=\"m-tissue-grain\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\" color-interpolation-filters=\"sRGB\">\n <feTurbulence type=\"fractalNoise\" baseFrequency=\".055\" numOctaves=\"2\" seed=\"12\" result=\"grain\"/>\n <feColorMatrix in=\"grain\" type=\"saturate\" values=\"0\" result=\"mono\"/>\n <feComponentTransfer in=\"mono\" result=\"subtle\"><feFuncA type=\"linear\" slope=\".15\"/></feComponentTransfer>\n <feBlend in=\"SourceGraphic\" in2=\"subtle\" mode=\"multiply\"/>\n</filter>\n<linearGradient id=\"m-trabecula\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#ffc2ab\"/><stop offset=\"1\" stop-color=\"#97384b\"/></linearGradient>\n</defs>\n<g transform=\"rotate(3 220 220)\">\n<path d=\"M125 148 C105 118 103 54 118 20\" fill=\"none\" stroke=\"#2e65ac\" stroke-width=\"39\" stroke-linecap=\"round\"/>\n<path d=\"M125 148 C105 118 103 54 118 20\" fill=\"none\" stroke=\"url(#m-pulm)\" stroke-width=\"31\" stroke-linecap=\"round\"/>\n<path d=\"M228 145 C208 85 212 24 248 22 C283 20 294 68 269 107\" fill=\"none\" stroke=\"#9c3253\" stroke-width=\"57\" stroke-linecap=\"round\"/>\n<path d=\"M228 145 C208 85 212 24 248 22 C283 20 294 68 269 107\" fill=\"none\" stroke=\"url(#m-aorta)\" stroke-width=\"48\" stroke-linecap=\"round\"/>\n<path d=\"M200 141 C200 103 184 83 145 42\" fill=\"none\" stroke=\"#24619f\" stroke-width=\"45\" stroke-linecap=\"round\"/>\n<path d=\"M200 141 C200 103 184 83 145 42\" fill=\"none\" stroke=\"url(#m-pulm)\" stroke-width=\"35\" stroke-linecap=\"round\"/>\n<path d=\"M286 149 C318 116 339 113 366 119 M289 173 C321 163 345 169 365 180\" fill=\"none\" stroke=\"#c85669\" stroke-width=\"24\" stroke-linecap=\"round\"/>\n<path d=\"M125 295 C106 331 115 363 123 391\" fill=\"none\" stroke=\"#4278bd\" stroke-width=\"32\" stroke-linecap=\"round\"/>\n<!-- Continuous tapered, off-axis heart silhouette: not four circular chamber blobs -->\n<path d=\"M128 140 C145 113 174 113 189 129 C214 104 254 115 276 146 C308 140 337 167 347 210 C360 264 334 326 293 379 C274 402 246 420 227 414 C176 397 131 355 108 309 C83 266 88 190 128 140Z\" fill=\"url(#m-wall)\" stroke=\"#9a475b\" stroke-width=\"8\"/>\n<path d=\"M118 170 C105 228 111 293 150 345 C169 370 199 394 230 405\" fill=\"none\" stroke=\"#ffc3b3\" stroke-opacity=\".65\" stroke-width=\"13\"/>\n<!-- Fine myocardial striations and surface tissue around the cutaway. -->\n<g fill=\"none\" stroke=\"#ef9b8d\" opacity=\".39\" stroke-linecap=\"round\" stroke-width=\"2.4\">\n <path d=\"M122 141 Q97 187 99 237 Q105 299 143 337\"/>\n <path d=\"M140 131 Q113 170 111 210\"/>\n <path d=\"M335 207 Q352 273 312 340 Q282 382 249 406\"/>\n <path d=\"M326 198 Q335 239 326 280\"/>\n <path d=\"M163 353 Q191 381 217 390\"/>\n</g>\n<!-- Atrial cutaway cavities -->\n<g id=\"heart-ra\">\n<path d=\"M129 153 C148 135 178 141 187 164 C199 197 181 236 161 245 C139 244 119 222 115 194 C113 177 118 162 129 153Z\" fill=\"#a45b3b\" stroke=\"#ffc0b1\" stroke-width=\"14\"/>\n<path d=\"M131 160 C148 143 172 150 181 170 C189 194 180 220 163 232 C143 230 126 214 123 191 C122 174 124 165 131 160Z\" fill=\"url(#m-atria)\"/>\n<path d=\"M132 185 Q153 178 165 193 M131 205 Q147 203 161 215\" stroke=\"#ffe3a0\" stroke-width=\"4\" stroke-opacity=\".65\" fill=\"none\"/>\n</g>\n<g id=\"heart-la\">\n<path d=\"M231 156 C250 140 278 143 295 164 C308 188 299 223 282 234 C259 243 235 231 228 206 C218 181 222 165 231 156Z\" fill=\"#aa6040\" stroke=\"#ffbdb2\" stroke-width=\"14\"/>\n<path d=\"M232 162 C252 145 275 151 289 169 C299 188 291 213 279 224 C259 233 239 222 232 204 C224 182 223 172 232 162Z\" fill=\"url(#m-atria)\"/>\n</g>\n<!-- Blue right ventricular cavity, elongated toward apex -->\n<g id=\"heart-rv\">\n<path d=\"M133 230 C160 215 190 227 207 253 C228 283 229 349 235 391 C195 371 162 342 140 310 C117 275 120 246 133 230Z\" fill=\"#163c82\" stroke=\"#ffbcb0\" stroke-width=\"16\"/>\n<path d=\"M137 237 C163 224 187 239 203 265 C221 292 223 348 227 380 C193 358 166 330 147 304 C127 273 124 251 137 237Z\" fill=\"url(#m-rv)\"/>\n<path d=\"M148 257 Q176 254 188 275\" fill=\"none\" stroke=\"#96c6ff\" stroke-width=\"7\" stroke-opacity=\".5\"/>\n</g>\n<!-- LV larger, thicker, slanted and deeply recessed -->\n<g id=\"heart-lv\">\n<path d=\"M249 228 C272 215 310 229 321 269 C336 322 294 383 247 409 C234 385 234 357 224 315 C218 279 225 243 249 228Z\" fill=\"#971b3d\" stroke=\"#ffc0ae\" stroke-width=\"27\" stroke-linejoin=\"round\"/>\n<path d=\"M251 238 C274 225 299 239 308 274 C319 314 286 365 251 388 C240 364 245 337 233 304 C229 272 233 248 251 238Z\" fill=\"url(#m-lv)\"/>\n<path d=\"M296 269 Q312 319 256 378\" fill=\"none\" stroke=\"#ff9aa0\" stroke-width=\"8\" stroke-opacity=\".44\"/>\n\n</g>\n<!-- Trabeculae carneae and papillary muscular ridges within ventricles. -->\n<g fill=\"none\" stroke=\"url(#m-trabecula)\" stroke-width=\"5.5\" stroke-linecap=\"round\" opacity=\".82\">\n <path d=\"M146 281 Q164 291 178 310 Q185 324 202 339\"/>\n <path d=\"M155 302 Q172 304 185 324\"/>\n <path d=\"M166 259 Q186 281 196 310\"/>\n <path d=\"M247 260 Q265 271 270 298 Q276 318 266 343\"/>\n <path d=\"M289 277 Q286 310 271 338\"/>\n <path d=\"M242 308 Q256 321 256 343\"/>\n</g>\n<!-- Valve leaflets and chordae; schematic but anatomically recognizable. -->\n<g fill=\"none\" stroke=\"#e8a29a\" stroke-width=\"2.1\" opacity=\".93\">\n <path d=\"M185 246 Q172 271 176 297 M196 246 Q207 269 199 302\"/>\n <path d=\"M260 237 Q249 263 257 284 M280 240 Q282 262 274 296\"/>\n <path d=\"M188 250 Q187 273 187 306 M276 239 Q271 263 267 307\"/>\n</g>\n<path d=\"M176 295 Q190 284 201 303 M256 288 Q267 278 277 297\" fill=\"#c75e6a\" stroke=\"#ffb7a7\" stroke-width=\"3\"/>\n<g fill=\"none\" stroke=\"#ffd1b8\" stroke-width=\"3.3\" stroke-linecap=\"round\">\n <path d=\"M164 232 Q183 224 202 250 M236 233 Q262 222 288 242\"/>\n</g>\n<path d=\"M207 228 Q229 270 233 310 Q243 358 249 386\" fill=\"none\" stroke=\"#ffbaae\" stroke-width=\"16\" stroke-linecap=\"round\"/>\n<path d=\"M170 235 Q187 228 204 250 M239 236 Q270 225 289 244\" stroke=\"#ffd0ba\" stroke-width=\"8\" fill=\"none\" stroke-linecap=\"round\"/>\n<!-- conduction routes are independent of the visible chamber shapes -->\n<g id=\"heart-conduction\" stroke=\"#ffcb65\" stroke-opacity=\".39\" stroke-width=\"3.5\" fill=\"none\">\n<path id=\"heart-path-0\" d=\"M142 167 Q168 198 205 219\"/>\n<path id=\"heart-path-1\" d=\"M205 219 Q215 240 222 261\"/>\n<path id=\"heart-path-2\" d=\"M222 261 Q188 297 199 355\"/>\n<path id=\"heart-path-3\" d=\"M222 261 Q249 308 263 370\"/>\n</g>\n<g id=\"heart-spark-0\" style=\"display:none\"><circle r=\"21\" fill=\"url(#m-glow)\"/><circle r=\"6\" fill=\"#fffbb9\" stroke=\"#ffe239\" stroke-width=\"2\"/></g>\n<g id=\"heart-spark-1\" style=\"display:none\"><circle r=\"21\" fill=\"url(#m-glow)\"/><circle r=\"6\" fill=\"#fffbb9\" stroke=\"#ffe239\" stroke-width=\"2\"/></g>\n</g></svg>";
-const svg=holder.querySelector("svg");
-host.appendChild(holder);
+const fallback=document.getElementById("heart-fallback");
+const status=document.getElementById("heart-status");
+const frame=document.createElement("div");
+frame.className="electrical-heart-drawing";
+frame.style.cssText="width:100%;height:100%;display:flex;align-items:center;justify-content:center";
+frame.innerHTML="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 520 490\" role=\"img\" aria-label=\"Textbook-style diagram of the cardiac conduction system with moving impulse from SA node to AV node, His bundle, bundle branches and Purkinje fibers\">\n<g transform=\"rotate(-6 258 242)\">\n<!-- Simplified chambers with intentional handwritten-textbook appearance -->\n<path d=\"M169 99 C135 78 108 104 101 151 C88 218 103 280 141 335 C181 391 224 436 260 449 C309 430 378 377 399 309 C417 250 398 169 356 119 C325 88 288 103 269 117 C239 92 199 84 169 99Z\" fill=\"#f3dcd0\" stroke=\"#7b5149\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n<path d=\"M125 157 C124 111 154 106 186 121 C219 140 225 189 211 214 C193 241 157 235 140 217 C125 202 123 181 125 157Z\" fill=\"#f8eee4\" stroke=\"#a4796b\" stroke-width=\"3\"/>\n<path d=\"M276 132 C291 104 334 107 357 138 C380 169 380 201 361 224 C342 247 296 236 280 211 C264 184 262 158 276 132Z\" fill=\"#f8eee4\" stroke=\"#a4796b\" stroke-width=\"3\"/>\n<path d=\"M138 241 C162 225 194 240 216 261 C232 282 246 350 259 422 C211 401 174 371 151 335 C128 300 115 264 138 241Z\" fill=\"#faeee7\" stroke=\"#a4796b\" stroke-width=\"4\"/>\n<path d=\"M277 258 C300 238 349 244 368 273 C390 314 344 389 267 426 C264 360 262 287 277 258Z\" fill=\"#f5dfd6\" stroke=\"#a4796b\" stroke-width=\"4\"/>\n<path d=\"M239 227 Q259 278 259 422\" stroke=\"#b17e75\" stroke-width=\"9\" fill=\"none\" stroke-linecap=\"round\"/>\n<!-- Light great vessel silhouettes: no gradients, gloss, or complicated shading -->\n<path d=\"M293 133 C292 87 280 64 297 44 Q313 28 333 47 Q352 67 329 101\" fill=\"none\" stroke=\"#b67b71\" stroke-width=\"20\" stroke-linecap=\"round\"/>\n<path d=\"M214 126 Q217 80 175 55 Q151 41 137 60\" fill=\"none\" stroke=\"#91abb0\" stroke-width=\"17\" stroke-linecap=\"round\"/>\n<path d=\"M142 158 L141 62 M140 293 L137 371\" stroke=\"#91abb0\" stroke-width=\"15\" fill=\"none\" stroke-linecap=\"round\"/>\n<!-- A simple surface annotation of approximate chamber boundaries -->\n<g fill=\"#785a50\" font-family=\"system-ui, sans-serif\" font-size=\"12\" font-weight=\"600\" opacity=\".8\">\n <text x=\"135\" y=\"186\">RA</text><text x=\"328\" y=\"180\">LA</text>\n <text x=\"162\" y=\"319\">RV</text><text x=\"319\" y=\"326\">LV</text>\n</g>\n<!-- Fine background conduction pathways -->\n<g id=\"conduction-tracks\" stroke=\"#977d57\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path id=\"ec-path-atrial-right\" d=\"M164 149 C177 165 196 173 218 198 C227 210 234 217 247 225\"/>\n<path id=\"ec-path-atrial-left\" d=\"M164 149 C204 126 248 125 288 144 C308 156 317 173 330 187\"/>\n<path id=\"ec-path-av-his\" d=\"M247 225 C252 239 251 248 258 266\"/>\n<path id=\"ec-path-right-bundle\" d=\"M258 266 C244 281 225 316 221 362\"/>\n<path id=\"ec-path-left-bundle\" d=\"M258 266 C274 287 294 322 305 354\"/>\n<path id=\"ec-path-purk-r1\" d=\"M221 362 Q192 351 169 319\"/>\n<path id=\"ec-path-purk-r2\" d=\"M221 362 Q195 379 176 365\"/>\n<path id=\"ec-path-purk-r3\" d=\"M221 362 Q232 393 249 402\"/>\n<path id=\"ec-path-purk-l1\" d=\"M305 354 Q329 345 346 311\"/>\n<path id=\"ec-path-purk-l2\" d=\"M305 354 Q331 375 351 355\"/>\n<path id=\"ec-path-purk-l3\" d=\"M305 354 Q286 396 267 409\"/>\n</g>\n<!-- Bright traveling overlay is clipped by progress rather than jumping -->\n<g id=\"conduction-progress\" stroke=\"#e6a126\" stroke-width=\"6\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" pointer-events=\"none\">\n<path data-progress=\"ec-path-atrial-right\"/><path data-progress=\"ec-path-atrial-left\"/>\n<path data-progress=\"ec-path-av-his\"/><path data-progress=\"ec-path-right-bundle\"/><path data-progress=\"ec-path-left-bundle\"/>\n<path data-progress=\"ec-path-purk-r1\"/><path data-progress=\"ec-path-purk-r2\"/><path data-progress=\"ec-path-purk-r3\"/>\n<path data-progress=\"ec-path-purk-l1\"/><path data-progress=\"ec-path-purk-l2\"/><path data-progress=\"ec-path-purk-l3\"/>\n</g>\n<g id=\"conduction-nodes\" fill=\"#df9a35\" stroke=\"#855828\" stroke-width=\"2.3\">\n <circle id=\"ec-sa\" cx=\"164\" cy=\"149\" r=\"10\"/><circle id=\"ec-av\" cx=\"247\" cy=\"225\" r=\"9\"/>\n</g>\n<g id=\"ec-impulse-a\" pointer-events=\"none\" visibility=\"hidden\"><circle r=\"11\" fill=\"#fff0aa\" stroke=\"#d28a18\" stroke-width=\"2.5\"/><circle r=\"3.8\" fill=\"#e29e1c\"/></g>\n<g id=\"ec-impulse-b\" pointer-events=\"none\" visibility=\"hidden\"><circle r=\"11\" fill=\"#fff0aa\" stroke=\"#d28a18\" stroke-width=\"2.5\"/><circle r=\"3.8\" fill=\"#e29e1c\"/></g>\n<g id=\"ec-impulse-c\" pointer-events=\"none\" visibility=\"hidden\"><circle r=\"9\" fill=\"#fff0aa\" stroke=\"#d28a18\" stroke-width=\"2.2\"/></g>\n<g id=\"ec-impulse-d\" pointer-events=\"none\" visibility=\"hidden\"><circle r=\"9\" fill=\"#fff0aa\" stroke=\"#d28a18\" stroke-width=\"2.2\"/></g>\n<g class=\"conduction-labels\" fill=\"#523c32\" font-family=\"system-ui, sans-serif\" font-size=\"14\" font-weight=\"650\">\n<text x=\"23\" y=\"111\">SA node</text><path d=\"M91 108 L154 143\" stroke=\"#8d7664\" fill=\"none\" stroke-width=\"1.4\"/>\n<text x=\"16\" y=\"224\">AV node</text><path d=\"M97 220 L238 225\" stroke=\"#8d7664\" fill=\"none\" stroke-width=\"1.4\"/>\n<text x=\"341\" y=\"249\">Bundle of His</text><path d=\"M335 246 L265 267\" stroke=\"#8d7664\" fill=\"none\" stroke-width=\"1.4\"/>\n<text x=\"13\" y=\"397\">Right bundle</text><path d=\"M112 393 L211 358\" stroke=\"#8d7664\" fill=\"none\" stroke-width=\"1.4\"/>\n<text x=\"354\" y=\"395\">Left bundle</text><path d=\"M348 391 L312 354\" stroke=\"#8d7664\" fill=\"none\" stroke-width=\"1.4\"/>\n<text x=\"291\" y=\"457\">Purkinje fibers</text><path d=\"M283 446 L268 411\" stroke=\"#8d7664\" fill=\"none\" stroke-width=\"1.4\"/>\n</g>\n</g></svg>";
+host.appendChild(frame);
 if(fallback)fallback.hidden=true;
-if(status)status.textContent="New tilted cutaway heart • yellow impulse follows conduction • illustrative anatomy";
-const $=id=>svg.querySelector("#"+id);
-const mode=document.getElementById("heart-display-mode");
-const paths=[0,1,2,3].map(i=>$("heart-path-"+i));
-const sparks=[$("heart-spark-0"),$("heart-spark-1")];
-const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
-const env=(t,s,a,b,e)=>smooth((t-s)/(a-s))*(1-smooth((t-b)/(e-b)));
-function place(route,which,progress){
- const p=paths[route],dot=sparks[which],at=p.getPointAtLength(p.getTotalLength()*Math.max(0,Math.min(1,progress)));
- dot.setAttribute("transform","translate("+at.x.toFixed(1)+" "+at.y.toFixed(1)+")");
- dot.style.display="";
+const svg=frame.querySelector("svg");
+svg.style.cssText="width:100%;height:100%;max-width:520px;display:block";
+if(status)status.textContent="2D textbook conduction drawing • follow the orange electrical impulse";
+const ids=["ec-path-atrial-right","ec-path-atrial-left","ec-path-av-his","ec-path-right-bundle","ec-path-left-bundle",
+"ec-path-purk-r1","ec-path-purk-r2","ec-path-purk-r3","ec-path-purk-l1","ec-path-purk-l2","ec-path-purk-l3"];
+const paths=ids.map(id=>svg.querySelector("#"+id));
+const overlays=ids.map((id,i)=>{
+ const source=paths[i],clone=svg.querySelector('[data-progress="'+id+'"]');
+ clone.setAttribute("d",source.getAttribute("d"));return clone;
+});
+const lengths=paths.map(p=>p.getTotalLength());
+const markers=["ec-impulse-a","ec-impulse-b","ec-impulse-c","ec-impulse-d"].map(id=>svg.querySelector("#"+id));
+const sa=svg.querySelector("#ec-sa"),av=svg.querySelector("#ec-av");
+const names=svg.querySelector(".conduction-labels");
+const labelSelect=document.getElementById("heart-labels");
+function progress(i,ratio){
+ const t=Math.max(0,Math.min(1,ratio));
+ overlays[i].setAttribute("stroke-dasharray",lengths[i]+" "+lengths[i]);
+ overlays[i].setAttribute("stroke-dashoffset",String(lengths[i]*(1-t)));
 }
-function draw(phase){
- const timing=window.MedicActivation?.at(phase),stage=timing?.stage.id||"sa",p=timing?.progress||0;
- const ms=((phase%1)+1)%1*800;
- const electric=mode?.value!=="mechanical",mechanical=mode?.value!=="electrical";
- const atr=mechanical?env(ms,155,205,245,310):0,ven=mechanical?env(ms,345,430,510,705):0;
- for(const [id,cx,cy] of [["heart-ra",153,193],["heart-la",261,188]]){
-  const sx=1-.12*atr,sy=1-.09*atr;
-  $(id).setAttribute("transform","translate("+cx+" "+cy+") scale("+sx+" "+sy+") translate("+(-cx)+" "+(-cy)+")");
- }
- for(const [id,cx,cy,angle] of [["heart-rv",178,306,-1.8],["heart-lv",268,314,1.8]]){
-  const sx=1-.145*ven,sy=1-.11*ven;
-  $(id).setAttribute("transform","translate("+cx+" "+cy+") rotate("+(angle*ven)+") scale("+sx+" "+sy+") translate("+(-cx)+" "+(-cy)+")");
- }
- $("heart-conduction").style.display=electric?"":"none";
- sparks.forEach(el=>el.style.display="none");
- if(!electric)return;
- if(stage==="sa")place(0,0,0);
- if(stage==="atria")place(0,0,p);
- if(stage==="av")place(0,0,1);
- if(stage==="his")place(1,0,p);
- if(stage==="bundles"){place(2,0,p);place(3,1,p);}
- if(stage==="ventricles"){place(2,0,1);place(3,1,1);}
+function marker(i,which,ratio){
+ const path=paths[i],point=path.getPointAtLength(lengths[i]*Math.max(0,Math.min(1,ratio)));
+ const obj=markers[which];
+ obj.setAttribute("transform","translate("+point.x.toFixed(1)+" "+point.y.toFixed(1)+")");
+ obj.setAttribute("visibility","visible");
 }
-let frame;
-function update(){if(!host.isConnected)return;draw(window.MedicLabState?.phase||0);frame=requestAnimationFrame(update);}
-update();
+function paint(phase){
+ const result=window.MedicActivation?.at(phase);
+ const stage=result?.stage.id||"sa",t=result?.progress||0;
+ const percent=stage==="sa"?0:stage==="atria"?1:stage==="av"?2:stage==="his"?3:stage==="bundles"?4:stage==="ventricles"?5:6;
+ const values=new Array(11).fill(0);
+ if(percent>=2){values[0]=1;values[1]=1;}
+ else if(percent===1){values[0]=t;values[1]=t;}
+ if(percent>=4)values[2]=1;else if(percent===3)values[2]=t;
+ if(percent>=5){values[3]=1;values[4]=1;}
+ else if(percent===4){values[3]=t;values[4]=t;}
+ if(percent>=6){for(let i=5;i<11;i++)values[i]=1;}
+ else if(percent===5){for(let i=5;i<11;i++)values[i]=t;}
+ values.forEach((v,i)=>progress(i,v));
+ markers.forEach(obj=>obj.setAttribute("visibility","hidden"));
+ sa.setAttribute("fill",stage==="sa"||stage==="atria"?"#ffd15f":"#df9a35");
+ av.setAttribute("fill",stage==="av"?"#ffd15f":"#df9a35");
+ if(stage==="sa")marker(0,0,0);
+ else if(stage==="atria"){marker(0,0,t);marker(1,1,t);}
+ else if(stage==="av")marker(0,0,1);
+ else if(stage==="his")marker(2,0,t);
+ else if(stage==="bundles"){marker(3,0,t);marker(4,1,t);}
+ else if(stage==="ventricles"){marker(5,0,t);marker(7,1,t);marker(8,2,t);marker(10,3,t);}
+ if(names)names.style.display=labelSelect?.value==="hide"?"none":"";
+}
+let handle;
+function tick(){
+ if(!host.isConnected){cancelAnimationFrame(handle);return;}
+ paint(window.MedicLabState?.phase||0);
+ handle=requestAnimationFrame(tick);
+}
+tick();
 })();
