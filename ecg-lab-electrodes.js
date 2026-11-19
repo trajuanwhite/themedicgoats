@@ -31,10 +31,51 @@ for(let i=1;i<=6;i++)formulas["V"+i]={
  formula:"V"+i+" = V"+i+" electrode − (RA + LA + LL)/3",
  highlight:["V"+i,"RA","LA","LL"]
 };
+// Standard frontal-plane lead axes. Patient's left is diagram-right.
+const limbAxes={I:0,II:60,III:120,aVR:-150,aVL:-30,aVF:90};
 const svg=document.getElementById("electrode-map");
 const NS="http://www.w3.org/2000/svg";
 const el=(tag)=>document.createElementNS(NS,tag);
 const markerElements=new Map();
+// A dedicated frontal-plane viewing vector, independent of electrode placement.
+const axesLayer=el("g");
+axesLayer.setAttribute("id","limb-axis-overlay");
+axesLayer.setAttribute("aria-label","Frontal-plane direction of selected limb lead");
+axesLayer.setAttribute("pointer-events","none");
+const axesRing=el("circle");
+for(const [key,value] of Object.entries({cx:207,cy:302,r:49,fill:"#fff9ed","fill-opacity":".88",stroke:"#bda28c","stroke-width":1.4}))axesRing.setAttribute(key,value);
+const axisGuide=el("line");
+for(const [key,value] of Object.entries({x1:159,y1:302,x2:255,y2:302,stroke:"#d7c1a9","stroke-width":1.1,"stroke-dasharray":"3 4"}))axisGuide.setAttribute(key,value);
+const verticalGuide=el("line");
+for(const [key,value] of Object.entries({x1:207,y1:254,x2:207,y2:350,stroke:"#d7c1a9","stroke-width":1.1,"stroke-dasharray":"3 4"}))verticalGuide.setAttribute(key,value);
+const arrowShaft=el("line");
+arrowShaft.setAttribute("stroke","#9d572e");
+arrowShaft.setAttribute("stroke-width","4.3");
+arrowShaft.setAttribute("stroke-linecap","round");
+const arrowHead=el("path");
+arrowHead.setAttribute("fill","none");
+arrowHead.setAttribute("stroke","#9d572e");
+arrowHead.setAttribute("stroke-width","4.3");
+arrowHead.setAttribute("stroke-linejoin","round");
+arrowHead.setAttribute("stroke-linecap","round");
+const origin=el("circle");origin.setAttribute("cx",207);origin.setAttribute("cy",302);origin.setAttribute("r",4);origin.setAttribute("fill","#9d572e");
+const axisCaption=el("text");axisCaption.setAttribute("x",207);axisCaption.setAttribute("y",247);axisCaption.setAttribute("text-anchor","middle");axisCaption.setAttribute("font-size","11");axisCaption.setAttribute("font-weight","750");axisCaption.setAttribute("fill","#785039");
+axesLayer.append(axesRing,axisGuide,verticalGuide,arrowShaft,arrowHead,origin,axisCaption);
+svg.append(axesLayer);
+function showLeadAxis(lead){
+ if(!(lead in limbAxes)){axesLayer.setAttribute("display","none");return;}
+ axesLayer.removeAttribute("display");
+ const degrees=limbAxes[lead],radians=degrees*Math.PI/180;
+ const vx=Math.cos(radians),vy=Math.sin(radians);
+ const endX=207+41*vx,endY=302+41*vy;
+ arrowShaft.setAttribute("x1",(207-15*vx).toFixed(1));
+ arrowShaft.setAttribute("y1",(302-15*vy).toFixed(1));
+ arrowShaft.setAttribute("x2",endX.toFixed(1));arrowShaft.setAttribute("y2",endY.toFixed(1));
+ const backX=endX-10*vx,backY=endY-10*vy,perpX=-vy,perpY=vx;
+ arrowHead.setAttribute("d",`M ${(backX+6*perpX).toFixed(1)} ${(backY+6*perpY).toFixed(1)} L ${endX.toFixed(1)} ${endY.toFixed(1)} L ${(backX-6*perpX).toFixed(1)} ${(backY-6*perpY).toFixed(1)}`);
+ axisCaption.textContent="Lead "+lead+" · "+(degrees>0?"+":"")+degrees+"°";
+}
+
 positions.forEach(p=>{
  const g=el("g");g.setAttribute("class","electrode-point");g.setAttribute("role","button");g.setAttribute("tabindex","0");g.setAttribute("aria-label","Select "+p.id+" electrode");
  const halo=el("circle");halo.setAttribute("cx",p.x);halo.setAttribute("cy",p.y);halo.setAttribute("r",20);halo.setAttribute("class","electrode-halo");g.append(halo);
@@ -51,14 +92,14 @@ const $=id=>document.getElementById(id);
 function mark(ids){markerElements.forEach((g,id)=>g.classList.toggle("selected",ids.includes(id)))}
 function selectLead(name){
  const entry=formulas[name];if(!entry)return;
- select.value=name;mark(entry.highlight);
+ select.value=name;mark(entry.highlight);showLeadAxis(name);
  $("electrode-selection").textContent="Lead "+name+" • "+entry.description;
  $("electrode-formula").textContent=entry.formula;
- $("electrode-detail").textContent="Blue markers show the electrodes used in this derived lead. The RL electrode is not part of the displayed voltage equation.";
+ $("electrode-detail").textContent="Blue markers show electrodes used in the lead equation. "+(name in limbAxes?"The arrow shows the lead’s frontal-plane viewing direction (negative toward positive), at "+(limbAxes[name]>0?"+":"")+limbAxes[name]+"°. ":"")+"RL is the reference/ground electrode.";
 }
 function selectElectrode(name){
  const p=positions.find(x=>x.id===name);if(!p)return;
- mark([name]);$("electrode-selection").textContent=name+" electrode";
+ mark([name]);showLeadAxis(null);$("electrode-selection").textContent=name+" electrode";
  $("electrode-formula").textContent=p.family==="chest"?"Precordial exploring electrode":name==="RL"?"Reference/ground electrode":"Limb electrode";
  $("electrode-detail").textContent=p.desc;
 }
