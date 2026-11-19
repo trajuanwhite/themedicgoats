@@ -19,15 +19,13 @@ printOrder.forEach(lead=>{
  const path=el("path");path.setAttribute("fill","none");path.setAttribute("stroke","#6b3630");path.setAttribute("stroke-width","1.6");path.setAttribute("stroke-linejoin","round");svg.appendChild(path);
  paths[lead]=path;cell.appendChild(svg);grid.appendChild(cell);
 });
-const rhythmLeads=["V1","II","V5"],rhythmPaths={};
-const rhythmHost=$("reference-rhythm-strips");
-rhythmLeads.forEach(lead=>{
- const cell=document.createElement("div");cell.className="rhythm-strip";
- const heading=document.createElement("strong");heading.textContent="Lead "+lead;cell.appendChild(heading);
- const svg=el("svg");svg.setAttribute("viewBox","0 0 960 88");svg.setAttribute("role","img");svg.setAttribute("aria-label","Imported full-width "+lead+" rhythm strip");
- const path=el("path");svg.appendChild(path);rhythmPaths[lead]=path;
- cell.appendChild(svg);rhythmHost.appendChild(cell);
-});
+const rhythmSelect=$("reference-rhythm-lead"),rhythmHost=$("reference-rhythm-strips");
+L.forEach(lead=>{const option=document.createElement("option");option.value=lead;option.textContent="Lead "+lead;rhythmSelect.appendChild(option)});
+rhythmSelect.value="II";
+const rhythmCell=document.createElement("div");rhythmCell.className="rhythm-strip";
+const rhythmHeading=document.createElement("strong");rhythmHeading.textContent="Lead II";rhythmCell.appendChild(rhythmHeading);
+const rhythmSvg=el("svg");rhythmSvg.setAttribute("viewBox","0 0 960 88");rhythmSvg.setAttribute("role","img");rhythmSvg.setAttribute("aria-label","Imported full-width lead II rhythm strip");
+const rhythmPath=el("path");rhythmSvg.appendChild(rhythmPath);rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
 let recording=null;
 function fail(message){$("reference-status").textContent="Cannot load recording: "+message;$("reference-status").dataset.state="error";$("reference-metadata").textContent="No clinical recording loaded.";}
 function validate(obj){
@@ -71,16 +69,18 @@ function render(){
   }
   paths[lead].setAttribute("d",d.join(" "));
  }
- const rhythmSamples=Math.min(Math.floor(10*recording.hz),recording.waveforms.II.length-index);
- for(const lead of rhythmLeads){
-   const arr=recording.waveforms[lead],d=[],stride=Math.max(1,Math.ceil(rhythmSamples/3000));
-   for(let i=0;i<rhythmSamples;i+=stride){
-     const x=i/Math.max(1,rhythmSamples-1)*960;
-     const y=Math.max(-1000,Math.min(1000,44-arr[index+i]*25));
-     d.push((d.length?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
-   }
-   rhythmPaths[lead].setAttribute("d",d.join(" "));
+ const label=rhythmSelect.value;
+ const arr=recording.waveforms[label];
+ const rhythmSamples=Math.min(Math.floor(10*recording.hz),arr.length-index);
+ const d=[],stride=Math.max(1,Math.ceil(rhythmSamples/3000));
+ for(let i=0;i<rhythmSamples;i+=stride){
+   const x=i/Math.max(1,rhythmSamples-1)*960;
+   const y=Math.max(-1000,Math.min(1000,44-arr[index+i]*25));
+   d.push((d.length?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
  }
+ rhythmPath.setAttribute("d",d.join(" "));
+ rhythmHeading.textContent="Lead "+label;
+ rhythmSvg.setAttribute("aria-label","Imported full-width lead "+label+" rhythm strip");
  $("reference-time").textContent=start.toFixed(2)+"–"+Math.min(recording.seconds,start+seconds).toFixed(2)+" s";
 }
 async function loadFile(file){
@@ -103,12 +103,13 @@ async function loadFile(file){
 }
 $("reference-file").addEventListener("change",e=>loadFile(e.target.files&&e.target.files[0]));
 $("reference-position").addEventListener("input",render);
+rhythmSelect.addEventListener("change",()=>{if(recording)render();else rhythmHeading.textContent="Lead "+rhythmSelect.value});
 $("reference-reset").addEventListener("click",()=>{
  recording=null;$("reference-file").value="";$("reference-position").value="0";
  $("reference-time").textContent="No recording";
  $("reference-status").textContent="No clinical recording loaded. Illustrative simulator remains available above.";
  $("reference-status").dataset.state="idle";$("reference-metadata").textContent="Use only de-identified, appropriately licensed waveform data.";
  Object.values(paths).forEach(path=>path.setAttribute("d",""));
- Object.values(rhythmPaths).forEach(path=>path.setAttribute("d",""));
+ rhythmPath.setAttribute("d","");
 });
 })();
