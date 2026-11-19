@@ -54,6 +54,7 @@ function marker(i,which,ratio){
 const disorganized=svg.querySelector("#ec-chaotic-atria"),
  flutterLoop=svg.querySelector("#ec-flutter-loop"),flutterMarker=svg.querySelector("#ec-flutter-marker");
 const foci=Array.from(disorganized.children);
+const ventricularWaveLength=ventWave.getTotalLength();
 const accessoryPath=svg.querySelector("#ec-accessory-path"),
  accessoryDot=svg.querySelector("#ec-accessory-dot"),
  blockAV=svg.querySelector("#ec-block-marker"),
@@ -105,6 +106,9 @@ function paint(phase){
   const size=stage==="ventricular-origin"?1+.55*t:stage==="ventricles"?1.5+.8*t:1;
   ventHalo.setAttribute("r",String(24*size));
   ventHalo.setAttribute("opacity",String(Math.max(.2,1-.28*t)));
+  const fraction=stage==="ventricular-origin"?Math.max(0,t*.45):stage==="ventricles"?.45+.55*t:1;
+  ventWave.setAttribute("stroke-dasharray",String(ventricularWaveLength));
+  ventWave.setAttribute("stroke-dashoffset",String(ventricularWaveLength*(1-fraction)));
  }
  const progressValues=new Array(11).fill(0);
  if(isSinus){
@@ -117,6 +121,11 @@ function paint(phase){
   // Regular P waves can coexist with an independent ventricular escape.
   if(sinusAtrial&&current?.atrialActive){
    progressValues[0]=progressValues[1]=Math.max(0,Math.min(1,current.atrialProgress||0));
+  }
+  if(mode==="wpw"&&stage==="accessory"){
+   // Normal AV/His conduction remains present alongside pre-excitation.
+   progressValues[0]=progressValues[1]=1;
+   progressValues[2]=Math.min(.8,t*.8);
   }
   if(stage==="blocked"){
    if(current?.blockSite==="av")progressValues[0]=progressValues[1]=1;
@@ -135,7 +144,7 @@ function paint(phase){
  progressValues.forEach((v,i)=>progress(i,v));
  markers.forEach(obj=>obj.setAttribute("visibility","hidden"));
  sa.setAttribute("fill",sinusAtrial&&(isSinus?["sa","atria"].includes(stage):current?.atrialActive)?"#ffd15f":"#df9a35");
- av.setAttribute("fill",stage==="av"||stage==="blocked"&&current?.blockSite==="av"?"#ffd15f":"#df9a35");
+ av.setAttribute("fill",stage==="av"||stage==="accessory"||stage==="blocked"&&current?.blockSite==="av"?"#ffd15f":"#df9a35");
  if(isSinus){
   if(stage==="sa")marker(0,0,0);
   else if(stage==="atria"){marker(0,0,t);marker(1,1,t);}
