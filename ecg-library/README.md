@@ -35,3 +35,17 @@ Citation: Wagner P, Strodthoff N, Bousseljot R-D, et al. PTB-XL, a large publicl
 ## Privacy and availability
 
 The library uses de-identified dataset recordings and serves the approved waveform files publicly from the site. The separate local-file importer reads files inside the browser and does not itself upload them. Do not put unpublished medical records or personally identifying information in the public repository.
+
+## GitHub workflow: fetch a genuine candidate without publishing it
+
+The repository now includes **Actions → Prepare PTB-XL ECG review candidate**. It is a manually triggered workflow (`workflow_dispatch`), and the default candidate is `ecg_id=3`. PTB-XL v1.0.3 metadata identifies ECG 3 with `NORM` and `SR` annotations; those labels alone do not certify a clinically perfect example.
+
+When run, the workflow:
+1. Retrieves current v1.0.3 metadata and the corresponding official 100 Hz WFDB waveform pair from PhysioNet.
+2. Verifies the record ID, expected paths, source labels, and twelve channel units and values.
+3. Converts the record into the Clinical ECG Lab JSON schema and uploads **a temporary private GitHub Actions artifact** named `ptbxl-clinical-review-candidate`.
+4. Does **not** commit, deploy, or publish a waveform automatically.
+
+A qualified ECG reviewer should inspect the actual tracing, compare it with the source annotation, ensure the waveform is suitable for education, and approve attribution and publication. Only then copy the reviewed `clinical-ecg.json` into `ecg-library/records/00003.json` and add a reviewed entry to `ecg-library/manifest.json` using `dataset: "PTB-XL v1.0.3"`, `sourceRecordId: "3"` and `file: "/ecg-library/records/00003.json"`.
+
+If the action cannot reach PhysioNet, its run will fail without publishing anything; retrying will be necessary after connectivity is available. The converter and checks cannot replace a clinician's waveform review.
