@@ -71,11 +71,12 @@
  window.MedicLabState={phase:0};
  function paint(){
   const phase=((time%1)+1)%1;window.MedicLabState.phase=phase;
-  let idx=phase<.27?0:phase<.35?1:phase<.37?2:phase<.46?3:4;
+  const stage=window.MedicActivation?window.MedicActivation.at(phase).stage.id:"sa";
+  let idx=stage==="sa"||stage==="atria"?0:stage==="av"?1:stage==="his"?2:stage==="bundles"||stage==="ventricles"?3:4;
   cursors.forEach(c=>{c.setAttribute("x1",String(phase*360));c.setAttribute("x2",String(phase*360))});if(window.MedicLabTools)window.MedicLabTools.update(phase);if(window.MedicActivationUI)window.MedicActivationUI.update(phase,bpm);
   nodes.forEach((n,i)=>$( "node-"+n).classList.toggle("active",idx===i||(idx===3&&i>=3)));
   paths.forEach((n,i)=>$("path-"+n).classList.toggle("active",i<idx));
-  $("stage-description").textContent=descriptions[idx];$("phase").textContent=idx===0?"P":idx===3?"QRS":idx===4?"T":"PR";
+  $("stage-description").textContent=window.MedicActivation?window.MedicActivation.at(phase).stage.description:descriptions[idx];$("phase").textContent=stage==="sa"||stage==="atria"?"P":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="plateau"?"ST":"PR";
  }
  function animate(now){if(previous&&playing)time+=Math.min((now-previous)/1000,.1)*bpm/60*speed;previous=now;paint();requestAnimationFrame(animate)}
  $("play-btn").onclick=()=>{playing=!playing;$("play-btn").textContent=playing?"Pause":"Play";$("play-btn").setAttribute("aria-pressed",String(playing))};
@@ -89,5 +90,5 @@
 <script src="/ecg-lab-activation-ui.js?v=5"></script>
 <script src="/ecg-lab-tools.js?v=3"></script>
 <script src="/ecg-lab-electrodes.js?v=4"></script>
-<script src="/ecg-lab-3d.js?v=3"></script>
+<script src="/ecg-lab-3d.js?v=5"></script>
 </body></html>
