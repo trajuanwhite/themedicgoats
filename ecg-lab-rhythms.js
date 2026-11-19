@@ -27,7 +27,7 @@ function schedule(mode,bpm){
  function addAtrium(t,conducted=true,pr=.17,site="av"){
   const beat={t,conducted,pr,site,index:atria.length};
   atria.push(beat);
-  if(conducted)vents.push({t:t+pr,source:mode==="wpw"?"accessory":"conducted",atrial:beat,wide:mode==="wpw"});
+  if(conducted)vents.push({t:t+pr+(mode==="wpw"?.05:0),source:mode==="wpw"?"accessory":"conducted",atrial:beat,wide:mode==="wpw"});
  }
  if(["sinus","av1","mobitz1","mobitz2","wpw"].includes(mode)){
   const pr1=mode==="av1"?.28:mode==="wpw"?.11:.17;
@@ -96,7 +96,7 @@ function sample(seconds,bpm,mode="sinus"){
     const phase=.382+d/(wide?1.17:.8);
     const v=base.sample(phase).leads[l];
     out[l]+=v-c.p*GAUSS(phase,.17,.04);
-    if(mode==="wpw")out[l]+=c.r*.22*GAUSS(d,-.065,.038);
+    if(mode==="wpw")out[l]+=c.r*.25*GAUSS(d,-.058,.028);
    }
   }
  }
