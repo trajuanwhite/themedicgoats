@@ -135,7 +135,14 @@
    const i=cycleStages.findIndex(item=>item.id===stage);
    if(i!==lastCycleIndex&&i>=0){$("cycle-step").value=String(i);$("cycle-step-label").textContent=cycleStages[i].label;lastCycleIndex=i;}
   }
-  cursors.forEach(c=>{c.setAttribute("x1",String(phase*360));c.setAttribute("x2",String(phase*360))});
+  const sweepSeconds=((time*60/bpm)%rhythmSeconds+rhythmSeconds)%rhythmSeconds;
+  const currentColumn=Math.min(3,Math.floor(sweepSeconds/2.5));
+  cursors.forEach((c,index)=>{
+   const visible=index%4===currentColumn;
+   const x=(sweepSeconds-currentColumn*2.5)/2.5*360;
+   c.setAttribute("x1",String(x));c.setAttribute("x2",String(x));
+   c.setAttribute("visibility",visible?"visible":"hidden");
+  });
   const rhythmX=(((time*60/bpm)%rhythmSeconds)+rhythmSeconds)%rhythmSeconds/rhythmSeconds*rhythmWidth;
   rhythmCursor.setAttribute("x1",String(rhythmX));rhythmCursor.setAttribute("x2",String(rhythmX));if(window.MedicLabTools)window.MedicLabTools.update(phase);if(window.MedicActivationUI&&rhythmMode.value==="sinus")window.MedicActivationUI.update(phase,bpm);
   $("stage-description").textContent=rhythmMode.value==="sinus"?(window.MedicActivation?.at(phase).stage.description||descriptions[0]):window.MedicRhythm.modes[rhythmMode.value].detail;
