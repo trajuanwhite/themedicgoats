@@ -15,7 +15,7 @@
 <path d="M235 343 C165 283 71 217 94 130 C109 72 172 57 235 108 C298 57 361 72 376 130 C399 217 305 283 235 343Z" fill="#e8b8ae" stroke="#bb9785" stroke-width="3"/>
 <path id="path-sa-av" class="path" d="M166 133 Q178 182 221 199"/><path id="path-av-his" class="path" d="M221 199 L239 245"/><path id="path-his-left" class="path" d="M239 245 Q257 265 296 288"/><path id="path-his-right" class="path" d="M239 245 Q208 274 183 287"/>
 <circle id="node-sa" class="node" cx="166" cy="133" r="13"/><circle id="node-av" class="node" cx="221" cy="199" r="12"/><circle id="node-his" class="node" cx="239" cy="245" r="10"/><circle id="node-left" class="node" cx="296" cy="288" r="11"/><circle id="node-right" class="node" cx="183" cy="287" r="11"/>
-<text x="108" y="108">SA node</text><text x="233" y="195">AV node</text><text x="251" y="249">His</text><text x="299" y="312">Left bundle</text><text x="100" y="310">Right bundle</text></svg></div></div>
+<text x="108" y="108">SA node</text><text x="233" y="195">AV node</text><text x="251" y="249">His</text><text x="299" y="312">Left bundle</text><text x="100" y="310">Right bundle</text><circle id="impulse-dot-a" cx="166" cy="133" r="7" fill="#fff0a5" stroke="#a65a21" stroke-width="2" pointer-events="none"/><circle id="impulse-dot-b" cx="239" cy="245" r="7" fill="#fff0a5" stroke="#a65a21" stroke-width="2" pointer-events="none" visibility="hidden"/></svg></div></div>
 <p class="lab-sub" id="stage-description" aria-live="off">SA node initiates atrial activation.</p>
 <div class="stat-row"><div class="stat"><strong id="phase">P</strong><span>ECG PHASE</span></div><div class="stat"><strong id="bpm-readout">75</strong><span>HEART RATE</span></div><div class="stat"><strong>12</strong><span>DISPLAYED LEADS</span></div></div>
 <div class="controls"><button id="play-btn" type="button" aria-pressed="true">Pause</button><button id="restart-btn" type="button">Restart</button></div>
@@ -113,6 +113,20 @@
   cursors.forEach(c=>{c.setAttribute("x1",String(phase*360));c.setAttribute("x2",String(phase*360))});
   const rhythmX=((time*60/bpm)%rhythmSeconds+rhythmSeconds)%rhythmSeconds/rhythmSeconds*rhythmWidth;
   rhythmCursor.setAttribute("x1",String(rhythmX));rhythmCursor.setAttribute("x2",String(rhythmX));if(window.MedicLabTools)window.MedicLabTools.update(phase);if(window.MedicActivationUI)window.MedicActivationUI.update(phase,bpm);
+  // The schematic fallback also uses moving dots when WebGL is unavailable.
+  const pos=(id,t,marker)=>{
+    const path=$(id),dot=$(marker);if(!path||!dot)return;
+    const point=path.getPointAtLength(path.getTotalLength()*Math.max(0,Math.min(1,t)));
+    dot.setAttribute("cx",point.x);dot.setAttribute("cy",point.y);dot.setAttribute("visibility","visible");
+  };
+  const a=window.MedicActivation?.at(phase),progress=a?.progress||0;
+  $("impulse-dot-a").setAttribute("visibility","hidden");$("impulse-dot-b").setAttribute("visibility","hidden");
+  if(stage==="sa")pos("path-sa-av",0,"impulse-dot-a");
+  else if(stage==="atria")pos("path-sa-av",progress,"impulse-dot-a");
+  else if(stage==="av")pos("path-sa-av",1,"impulse-dot-a");
+  else if(stage==="his")pos("path-av-his",progress,"impulse-dot-a");
+  else if(stage==="bundles"){pos("path-his-left",progress,"impulse-dot-a");pos("path-his-right",progress,"impulse-dot-b");}
+  else if(stage==="ventricles"){pos("path-his-left",1,"impulse-dot-a");pos("path-his-right",1,"impulse-dot-b");}
   nodes.forEach((n,i)=>$( "node-"+n).classList.toggle("active",idx===i||(idx===3&&i>=3)));
   paths.forEach((n,i)=>$("path-"+n).classList.toggle("active",i<idx));
   $("stage-description").textContent=window.MedicActivation?window.MedicActivation.at(phase).stage.description:descriptions[idx];$("phase").textContent=stage==="sa"||stage==="atria"?"P":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="plateau"?"ST":"PR";
@@ -144,5 +158,5 @@
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=1"></script>
 <script src="/ecg-lab-library.js?v=1"></script>
-<script src="/ecg-lab-3d.js?v=5"></script>
+<script src="/ecg-lab-3d.js?v=6"></script>
 </body></html>
