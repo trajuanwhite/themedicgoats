@@ -9,7 +9,7 @@
 <main class="lab">
 <div class="top"><div><div class="kicker">TRAINING / CARDIAC LAB</div><h1>ECG Lab</h1><p class="lab-sub">Explore electrical activation, ECG timing, and relationships between the 12 standard leads. The 3D heart and ECG are synchronized teaching illustrations; clinical simulation validation comes next.</p></div><span class="pill">FOUNDATION • V0.6</span></div>
 <div class="lab-grid">
-<section class="lab-panel"><h2>Cardiac conduction</h2><small id="heart-status">Tilted anatomical cutaway · loading 3D view</small>
+<section class="lab-panel"><h2>Cardiac conduction</h2><small id="heart-status">Illustrated cutaway heart · loading animation</small>
 <div id="heart-view" class="heart-container">
 <div id="heart-fallback" class="heart-fallback"><svg viewBox="0 0 470 390" role="img" aria-label="Schematic cardiac conduction diagram">
 <path d="M235 343 C165 283 71 217 94 130 C109 72 172 57 235 108 C298 57 361 72 376 130 C399 217 305 283 235 343Z" fill="#ed9f90" stroke="#ac4d57" stroke-width="3"/>
@@ -18,7 +18,7 @@
 <path id="path-sa-av" class="path" d="M166 133 Q178 182 221 199"/><path id="path-av-his" class="path" d="M221 199 L239 245"/><path id="path-his-left" class="path" d="M239 245 Q257 265 296 288"/><path id="path-his-right" class="path" d="M239 245 Q208 274 183 287"/>
 <circle id="node-sa" class="node" cx="166" cy="133" r="13"/><circle id="node-av" class="node" cx="221" cy="199" r="12"/><circle id="node-his" class="node" cx="239" cy="245" r="10"/><circle id="node-left" class="node" cx="296" cy="288" r="11"/><circle id="node-right" class="node" cx="183" cy="287" r="11"/>
 <text x="108" y="108">SA node</text><text x="233" y="195">AV node</text><text x="251" y="249">His</text><text x="299" y="312">Left bundle</text><text x="100" y="310">Right bundle</text><circle id="impulse-dot-a" cx="166" cy="133" r="7" fill="#fff0a5" stroke="#a65a21" stroke-width="2" pointer-events="none"/><circle id="impulse-dot-b" cx="239" cy="245" r="7" fill="#fff0a5" stroke="#a65a21" stroke-width="2" pointer-events="none" visibility="hidden"/></g></svg></div></div>
-<p class="heart-anatomy-note">Rotated anatomical cutaway • recessed atrial and ventricular cavities • thicker left-ventricular muscle • approximate anatomy for teaching</p>
+<p class="heart-anatomy-note">Original reference-style cutaway • tilted heart with visible chambers, great vessels and a traveling impulse • illustrative anatomy</p>
 <div class="heart-mode-control"><label for="heart-display-mode"><strong>Heart visualization</strong></label><select id="heart-display-mode" aria-label="Choose electrical, mechanical or combined heart visualization"><option value="both" selected>Electrical + Mechanical</option><option value="electrical">Electrical only</option><option value="mechanical">Mechanical only</option></select></div>
 <p class="lab-sub" id="mechanical-stage" aria-live="off">Chambers relaxed • waiting for atrial contraction</p>
 <p class="lab-sub" id="stage-description" aria-live="off">SA node initiates atrial activation.</p>
@@ -178,5 +178,5 @@
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=1"></script>
 <script src="/ecg-lab-library.js?v=1"></script>
-<script src="/ecg-lab-3d.js?v=9"></script>
+<script src="/ecg-lab-3d.js?v=10"></script>
 </body></html>
