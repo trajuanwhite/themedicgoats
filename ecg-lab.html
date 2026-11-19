@@ -19,7 +19,7 @@
 <p class="lab-sub" id="stage-description" aria-live="off">SA node initiates atrial activation.</p>
 <div class="stat-row"><div class="stat"><strong id="phase">P</strong><span>ECG PHASE</span></div><div class="stat"><strong id="bpm-readout">75</strong><span>HEART RATE</span></div><div class="stat"><strong>12</strong><span>DISPLAYED LEADS</span></div></div>
 <div class="controls"><button id="play-btn" type="button" aria-pressed="true">Pause</button><button id="restart-btn" type="button">Restart</button></div>
-<div class="controls"><label for="rate">Rate <output id="rate-value">75 bpm</output></label><input id="rate" type="range" min="45" max="130" step="5" value="75"><label for="speed">Speed</label><select id="speed"><option value=".25">0.25×</option><option value=".5">0.5×</option><option selected value="1">1×</option><option value="2">2×</option></select></div>
+<div class="controls"><label for="rate">Rate <output id="rate-value">75 bpm</output></label><input id="rate" type="range" min="45" max="130" step="5" value="75"><label for="speed">Speed</label><select id="speed"><option selected value=".25">0.25× (Teaching)</option><option value=".5">0.5×</option><option value="1">1× (Real time)</option><option value="2">2×</option></select></div>
 </section>
 <section class="lab-panel"><h2>12-lead ECG view</h2><small>Illustrative vector-derived waveforms · synchronized time cursor · not diagnostic ECGs</small><div id="lead-grid" class="lead-grid" aria-label="Twelve synchronized illustrative ECG leads"></div>
 <div class="note"><strong>Model limitations:</strong> This is a simplified educational vector-dipole model, not a patient ECG or validated heart–torso forward model. It mathematically derives I, II, III, aVR, aVL, aVF and V1–V6 from shared virtual electrode potentials. It does not accurately predict clinical abnormalities, amplitude calibration, or individual anatomy. <strong>Not for diagnosis, treatment, or clinical training assessment.</strong></div>
@@ -66,7 +66,7 @@
  });
  const nodes=["sa","av","his","left","right"],paths=["sa-av","av-his","his-left","his-right"];
  const descriptions=["SA node initiates atrial activation.","AV node briefly delays the electrical impulse.","The His bundle conducts toward the ventricles.","Ventricular activation corresponds to the QRS complex.","Ventricular recovery is represented by the T wave."];
- let bpm=75,playing=true,speed=1,time=0,previous=0;
+ let bpm=75,playing=true,speed=.25,time=0,previous=0;
  window.MedicLabAPI={seek(phase){time=Math.max(0,Math.min(.999,phase));playing=false;$("play-btn").textContent="Play";$("play-btn").setAttribute("aria-pressed","false");paint()},getBpm(){return bpm},getPhase(){return ((time%1)+1)%1}};
  window.MedicLabState={phase:0};
  function paint(){
