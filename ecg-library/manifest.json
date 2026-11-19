@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0",
+  "dataset": "PTB-XL",
+  "datasetVersion": "1.0.3",
+  "sourceUrl": "https://physionet.org/content/ptb-xl/1.0.3/",
+  "license": "CC BY 4.0",
+  "attribution": "Wagner P et al. PTB-XL, a large publicly available electrocardiography dataset. Scientific Data (2020). https://doi.org/10.1038/s41597-020-0495-6",
+  "records": []
+}
