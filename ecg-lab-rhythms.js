@@ -78,7 +78,7 @@ function sample(seconds,bpm,mode="sinus"){
  if(mode==="afib"||mode==="flutter"){
   const f=mode==="afib"
    ? .035*Math.sin(2*Math.PI*6.1*seconds+.4*Math.sin(seconds*7))+.021*Math.sin(2*Math.PI*8.7*seconds+.6*Math.sin(seconds*2.7))
-   : .07*(2*((seconds*Math.max(180,Math.min(360,bpm*2))/60)%1+1)%2-1); // periodic stylized flutter wave
+   : .07*(2*(((seconds*Math.max(180,Math.min(360,bpm*2))/60)%1+1)%1)-1); // periodic stylized flutter wave
   const amp={I:.55,II:1,aVR:-.65,aVL:-.14,aVF:.9,V1:.9,V2:.7,V3:.55,V4:.38,V5:.32,V6:.3};
   for(const l of leads)out[l]+=f*(amp[l]??.5);
  }
