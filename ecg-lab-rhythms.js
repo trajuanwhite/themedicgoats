@@ -26,11 +26,13 @@ function eventTimes(mode,bpm){
  return Array.from({length:150},(_,i)=>-2+i*period);
 }
 const leads=base.labels;
+const beatCache=new Map();
+function cachedEvents(mode,bpm){const key=mode+":"+bpm;if(!beatCache.has(key))beatCache.set(key,eventTimes(mode,bpm));return beatCache.get(key);}
 const pCoeff=Object.fromEntries(leads.map(l=>[l,base.sample(.17).leads[l]-base.sample(.275).leads[l]]));
 function sample(seconds,bpm,mode="sinus"){
  if(mode==="sinus")return base.sample(seconds*bpm/60).leads;
  const out=Object.fromEntries(leads.map(l=>[l,0]));
- const events=eventTimes(mode,bpm);
+ const events=cachedEvents(mode,bpm);
  const beatDuration=.80;
  for(const beat of events){
   const delta=seconds-beat;
@@ -60,7 +62,7 @@ function state(seconds,bpm,mode="sinus"){
   const a=root.MedicActivation?.at(phase);
   return {mode,phase,stage:a?.stage.id||"sa",progress:a?.progress||0,atrium:"sinus",seconds};
  }
- const events=eventTimes(mode,bpm);
+ const events=cachedEvents(mode,bpm);
  let nearest=-Infinity;
  for(const t of events){if(t<=seconds+.25)nearest=t;else break;}
  const elapsed=seconds-nearest;
