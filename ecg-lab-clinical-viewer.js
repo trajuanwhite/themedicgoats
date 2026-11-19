@@ -27,6 +27,7 @@ const rhythmHeading=document.createElement("strong");rhythmHeading.textContent="
 const rhythmSvg=el("svg");rhythmSvg.setAttribute("viewBox","0 0 960 88");rhythmSvg.setAttribute("role","img");rhythmSvg.setAttribute("aria-label","Imported full-width lead II rhythm strip");
 const rhythmPath=el("path");rhythmSvg.appendChild(rhythmPath);rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
 let recording=null;
+window.MedicECGReference={getRecording:()=>recording};
 function fail(message){$("reference-status").textContent="Cannot load recording: "+message;$("reference-status").dataset.state="error";$("reference-metadata").textContent="No clinical recording loaded.";}
 function validate(obj){
  if(!obj||typeof obj!=="object"||obj.schemaVersion!=="1.0"||obj.kind!=="clinical-recording")throw Error("Expected version 1.0 clinical-recording JSON.");
@@ -82,6 +83,7 @@ function render(){
  rhythmHeading.textContent="Lead "+label;
  rhythmSvg.setAttribute("aria-label","Imported full-width lead "+label+" rhythm strip");
  $("reference-time").textContent=start.toFixed(2)+"–"+Math.min(recording.seconds,start+seconds).toFixed(2)+" s";
+ if(window.MedicECGPrint)window.MedicECGPrint.render(recording);
 }
 async function loadFile(file){
  recording=null;
@@ -105,7 +107,7 @@ $("reference-file").addEventListener("change",e=>loadFile(e.target.files&&e.targ
 $("reference-position").addEventListener("input",render);
 rhythmSelect.addEventListener("change",()=>{if(recording)render();else rhythmHeading.textContent="Lead "+rhythmSelect.value});
 $("reference-reset").addEventListener("click",()=>{
- recording=null;$("reference-file").value="";$("reference-position").value="0";
+ recording=null;$("ecg-print-area").replaceChildren();$("paper-summary").textContent="Load a clinical recording to enable paper preview";$("reference-file").value="";$("reference-position").value="0";
  $("reference-time").textContent="No recording";
  $("reference-status").textContent="No clinical recording loaded. Illustrative simulator remains available above.";
  $("reference-status").dataset.state="idle";$("reference-metadata").textContent="Use only de-identified, appropriately licensed waveform data.";
