@@ -81,10 +81,10 @@ const muscle={
  vtLV:svg.querySelector("#dep-vt-lv"),
  wpw:svg.querySelector("#dep-wpw-wave")
 };
-const tissueDisplay=document.getElementById("tissue-depolarization");
+// Depolarization wave remains enabled; the user-facing toggle was removed.
 const clamp=x=>Math.max(0,Math.min(1,x));
 function tissueWave(current,mode,stage,progress,isSinus){
- const show=tissueDisplay?.value!=="off";
+ const show=true;
  const t=clamp(progress),atrial=mode==="sinus"?stage==="atria":Boolean(current?.atrialActive);
  const a=mode==="sinus"?t:clamp(current?.atrialProgress||0);
  const organized=["sinus","av1","mobitz1","mobitz2","av3","wpw"].includes(mode);
