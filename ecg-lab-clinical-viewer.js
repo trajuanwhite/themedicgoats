@@ -10,7 +10,8 @@ const svgNS="http://www.w3.org/2000/svg";
 const el=t=>document.createElementNS(svgNS,t);
 const grid=$("reference-leads");
 const paths={};
-L.forEach(lead=>{
+const printOrder=["I","aVR","V1","V4","II","aVL","V2","V5","III","aVF","V3","V6"];
+printOrder.forEach(lead=>{
  const cell=document.createElement("div");cell.className="reference-cell";
  const heading=document.createElement("strong");heading.textContent="Lead "+lead;cell.appendChild(heading);
  const svg=el("svg");svg.setAttribute("viewBox","0 0 420 116");svg.setAttribute("role","img");svg.setAttribute("aria-label","Loaded lead "+lead+" waveform");
