@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/training",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/games",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/training/ecg-lab",
+      "destination": "/ecg-lab.html"
+    },
+    {
       "source": "/blog/:slug",
       "destination": "/api/blog?slug=:slug"
     },
@@ -242,6 +254,15 @@
     },
     {
       "source": "/training",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/games",
       "headers": [
         {
           "key": "Cache-Control",
