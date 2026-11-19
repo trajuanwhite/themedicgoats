@@ -92,6 +92,15 @@
   }
   tube([[.25,.85,.05],[.27,1.35,.02],[.45,1.6,-.03],[.73,1.52,-.08]],.19,arteryMat);
   tube([[-.44,.88,.15],[-.65,1.36,.15],[-.75,1.56,.1]],.17,veinMat);
+  // Great vessels, pulmonary outflow and superficial coronary branches
+  // distinguish this illustration from the former single-heart silhouette.
+  const pulmonaryMat=new THREE.MeshStandardMaterial({color:0x7188a7,roughness:.49,metalness:0});
+  const coronaryMat=new THREE.MeshStandardMaterial({color:0xdf997e,roughness:.6});
+  tube([[.05,.62,-.04],[.02,1.05,-.01],[-.12,1.36,-.07],[-.36,1.48,-.09]],.135,pulmonaryMat);
+  tube([[-.61,.53,-.03],[-.98,.79,-.12],[-1.11,1.05,-.15]],.092,veinMat);
+  tube([[.57,.54,-.10],[.92,.74,-.18],[1.05,.99,-.2]],.086,veinMat);
+  tube([[.12,.47,.72],[.22,.13,.88],[.37,-.22,.76],[.45,-.68,.55]],.018,coronaryMat);
+  tube([[.12,.48,.73],[-.20,.25,.84],[-.55,-.13,.77],[-.60,-.46,.56]],.017,coronaryMat);
   const tractMat=()=>new THREE.MeshBasicMaterial({color:0xbca18e,transparent:true,opacity:.95});
   const tracts=[
     tube([[-.52,.71,.67],[-.40,.35,.83],[-.22,.11,.92]],.018,tractMat()),
