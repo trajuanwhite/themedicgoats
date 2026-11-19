@@ -21,7 +21,7 @@ function render(record){
  major.append(attr(el("rect"),{width:"20",height:"20",fill:"url(#mg-grid-minor)"}));major.append(attr(el("path"),{d:"M20 0 H0 V20",fill:"none",stroke:"#dcaeb9","stroke-width":"0.9"}));defs.append(major);svg.append(defs);
  svg.append(attr(el("rect"),{x:"0",y:"0",width:"1000",height:"590",fill:"#fffafa"}));
  svg.append(attr(el("rect"),{x:"0",y:"28",width:"1000",height:"535",fill:"url(#mg-grid-major)"}));
- label(svg,10,17,"THE MEDIC GOATS · ECG REFERENCE VIEWER");
+ label(svg,10,17,record.synthetic?"THE MEDIC GOATS · SYNTHETIC ECG DEMONSTRATION":"THE MEDIC GOATS · ECG REFERENCE VIEWER");
  label(svg,740,17,speed+" mm/s   "+gain+" mm/mV   "+record.hz+" Hz");
  const start=Number($("reference-position").value),segmentDuration=62.5/speed;
  for(let row=0;row<3;row++)for(let col=0;col<4;col++){
@@ -35,7 +35,7 @@ function render(record){
  const w=.2*speed*4,h=gain*4;
  svg.append(attr(el("path"),{d:"M 12 548 V "+(548-h)+" H "+(12+w)+" V 548 H "+(22+w),fill:"none",stroke:"#241e1d","stroke-width":"1.5"}));
  label(svg,12+w+25,544,"1 mV · "+speed+" mm/s");
- label(svg,10,576,record.source.dataset+" / "+record.source.recordId+" · "+start.toFixed(2)+" s · Reference only · Not diagnostic");
+ label(svg,10,576,record.source.dataset+" / "+record.source.recordId+" · "+start.toFixed(2)+" s · "+(record.synthetic?"SYNTHETIC; NOT PATIENT DATA":"REFERENCE ONLY")+" · Not diagnostic");
  root.append(svg);
  $("paper-summary").textContent=speed+" mm/s · "+gain+" mm/mV · "+segmentDuration.toFixed(2)+" sec/column · "+(250/speed).toFixed(1)+" sec rhythm strip";
 }
