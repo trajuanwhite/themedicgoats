@@ -20,7 +20,9 @@
  const cycles=3,W=960;
  const clamp=x=>Math.max(0,Math.min(1,x));
  let markers=[.3,.46],activeMarker=0;
- function valueFor(x){return model.sample((x*cycles)%1).leads[select.value]}
+ function mode(){return document.getElementById("rhythm-mode")?.value||"sinus";}
+ function windowSeconds(){return mode()==="sinus"?cycles*60/window.MedicLabAPI.getBpm():10;}
+ function valueFor(x){return window.MedicRhythm.sample(x*windowSeconds(),window.MedicLabAPI.getBpm(),mode())[select.value]}
  function draw(){
    const lines=[];
    for(let i=0;i<=W;i++){
@@ -29,9 +31,9 @@
      lines.push((i===0?"M":"L")+i+" "+Math.max(2,Math.min(188,y)).toFixed(2));
    }
    path.setAttribute("d",lines.join(" "));
-   $("lead-formula").textContent=labels[select.value]+"  •  WCT = (RA + LA + LL)/3";
+   $("lead-formula").textContent=labels[select.value]+"  •  WCT = (RA + LA + LL)/3  •  "+(mode()==="sinus"?"Three illustrative sinus beats":"10-second "+mode().toUpperCase()+" demonstration");
    [c1,c2].forEach((c,i)=>{c.setAttribute("x1",String(markers[i]*W));c.setAttribute("x2",String(markers[i]*W))});
-   const seconds=markers.map(p=>p*cycles*60/window.MedicLabAPI.getBpm());
+   const seconds=markers.map(p=>p*windowSeconds());
    $("caliper-result").textContent="Δt = "+Math.abs(seconds[1]-seconds[0]).toFixed(3)+" s (illustrative timing)";
  }
  select.addEventListener("change",draw);
@@ -59,8 +61,9 @@
  svg.addEventListener("pointermove",move);
  window.MedicLabTools={
    update(phase){
-     // Three repeated example beats, current moment shown on middle beat.
-     const x=((1+phase)/cycles)*W;cursor.setAttribute("x1",String(x));cursor.setAttribute("x2",String(x));
+     const elapsed=(window.MedicLabState?.rhythm?.seconds||0);
+     const x=(mode()==="sinus"?(1+phase)/cycles:((elapsed%10)+10)%10/10)*W;
+     cursor.setAttribute("x1",String(x));cursor.setAttribute("x2",String(x));
    },
    redraw:draw
  };
@@ -68,5 +71,10 @@
  $("jump-qrs").onclick=()=>window.MedicLabAPI.seek(.382);
  $("jump-t").onclick=()=>window.MedicLabAPI.seek(.66);
  window.addEventListener("medic-bpm-change",draw);
+ document.getElementById("rhythm-mode")?.addEventListener("change",()=>{
+  const sinus=mode()==="sinus";
+  ["jump-p","jump-qrs","jump-t"].forEach(id=>{$(id).disabled=!sinus;$(id).title=sinus?"Jump to example phase":"Phase jump available for sinus rhythm only";});
+  draw();
+ });
  draw();
 })();
