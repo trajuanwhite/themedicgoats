@@ -34,5 +34,16 @@
     }
   }
  };
- window.MedicActivationUI.update(api.getPhase(),api.getBpm());
+ function syncMode(){
+  const sinus=document.getElementById("rhythm-mode")?.value==="sinus";
+  panel.classList.toggle("activation-sinus-only",!sinus);
+  scrub.disabled=!sinus;
+  buttons.forEach(x=>x.btn.disabled=!sinus);
+  if(!sinus){
+   $("activation-description").textContent="This nine-stage timeline illustrates sinus-origin conduction only. The heart drawing and ECG above now follow the selected arrhythmia instead.";
+   $("activation-time").textContent="Rhythm-controlled";
+  }else window.MedicActivationUI.update(api.getPhase(),api.getBpm());
+ }
+ document.getElementById("rhythm-mode")?.addEventListener("change",syncMode);
+ syncMode();
 })();
