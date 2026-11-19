@@ -85,23 +85,24 @@ function render(){
  $("reference-time").textContent=start.toFixed(2)+"–"+Math.min(recording.seconds,start+seconds).toFixed(2)+" s";
  if(window.MedicECGPrint)window.MedicECGPrint.render(recording);
 }
+function applyRecording(raw,origin){
+ const result=validate(raw);
+ recording=result;
+ const max=Math.max(0,recording.seconds-Math.min(2,recording.seconds));
+ $("reference-position").max=String(max);$("reference-position").value="0";
+ $("reference-status").dataset.state="ready";
+ $("reference-status").textContent=origin+" • "+(result.validated?"Source marks record reviewed; independently verify before teaching.":"Source not marked reviewed — verify before teaching.");
+ $("reference-metadata").textContent=result.source.dataset+" • Record "+result.source.recordId+" • "+recording.hz+" Hz • "+recording.seconds+" s • mV • License: "+result.source.license+" • Citation: "+result.source.citation;
+ render();
+}
+window.MedicECGReference.loadObject=(raw,origin="Library recording")=>applyRecording(raw,origin);
 async function loadFile(file){
- recording=null;
  if(!file)return;
  if(file.size>8*1024*1024){fail("File is larger than 8 MB.");return;}
  if(!/\.json$/i.test(file.name)){fail("Select a .json file.");return;}
  $("reference-status").textContent="Reading local file…";$("reference-status").dataset.state="loading";
- try{
-  const raw=JSON.parse(await file.text());
-  const result=validate(raw);
-  recording=result;
-  const max=Math.max(0,recording.seconds-Math.min(2,recording.seconds));
-  $("reference-position").max=String(max);$("reference-position").value="0";
-  $("reference-status").dataset.state="ready";
-  $("reference-status").textContent="Loaded locally • "+(result.validated?"Source marks record reviewed; independently verify before teaching.":"Source not marked reviewed — verify before teaching.");
-  $("reference-metadata").textContent=result.source.dataset+" • Record "+result.source.recordId+" • "+recording.hz+" Hz • "+recording.seconds+" s • mV • License: "+result.source.license+" • Citation: "+result.source.citation;
-  render();
- }catch(e){fail(e&&e.message?e.message:"Invalid recording file.");}
+ try{applyRecording(JSON.parse(await file.text()),"Loaded locally")}
+ catch(e){fail(e&&e.message?e.message:"Invalid recording file.")}
 }
 $("reference-file").addEventListener("change",e=>loadFile(e.target.files&&e.target.files[0]));
 $("reference-position").addEventListener("input",render);
