@@ -1,6 +1,9 @@
 name: Prepare PTB-XL ECG review candidate
 
 on:
+  push:
+    paths:
+      - .github/workflows/prepare-ptbxl-review.yml
   workflow_dispatch:
     inputs:
       ecg_id:
@@ -28,7 +31,7 @@ jobs:
       - name: Download official record and verify metadata
         shell: bash
         env:
-          ECG_ID: ${{ inputs.ecg_id }}
+          ECG_ID: ${{ inputs.ecg_id || '3' }}
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -51,7 +54,9 @@ jobs:
           codes=ast.literal_eval(record["scp_codes"])
           if not isinstance(codes,dict) or "NORM" not in codes or "SR" not in codes:
               raise SystemExit("This workflow only prepares a source-labeled NORM + SR example")
-          if record["electrodes_problems"].strip() or record["pacemaker"].strip():
+          def is_flagged(value):
+              return str(value or "").strip().lower() not in ("", "nan", "none", "false", "0", "no")
+          if is_flagged(record.get("electrodes_problems")) or is_flagged(record.get("pacemaker")):
               raise SystemExit("Selected record has a flagged electrode or pacing field; choose another")
           stem=record["filename_lr"]
           if not re.fullmatch(r"records100/[0-9]{5}/[0-9]{5}_lr",stem):
@@ -71,7 +76,7 @@ jobs:
       - name: Convert to ECG Lab 12-lead schema
         shell: bash
         env:
-          ECG_ID: ${{ inputs.ecg_id }}
+          ECG_ID: ${{ inputs.ecg_id || '3' }}
         run: |
           set -euo pipefail
           STEM="$(find review-candidate/records100 -name '*_lr.hea' -print -quit)"
