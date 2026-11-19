@@ -30,7 +30,7 @@ let recording=null;
 window.MedicECGReference={getRecording:()=>recording};
 function fail(message){$("reference-status").textContent="Cannot load recording: "+message;$("reference-status").dataset.state="error";$("reference-metadata").textContent="No clinical recording loaded.";}
 function validate(obj){
- if(!obj||typeof obj!=="object"||obj.schemaVersion!=="1.0"||obj.kind!=="clinical-recording")throw Error("Expected version 1.0 clinical-recording JSON.");
+ if(!obj||typeof obj!=="object"||obj.schemaVersion!=="1.0"||!["clinical-recording","synthetic-demo"].includes(obj.kind))throw Error("Expected version 1.0 clinical recording or explicitly labeled synthetic demo.");
  const meta=obj.recording||{},source=obj.source||{};
  const hz=meta.samplingHz,seconds=meta.durationSeconds;
  if(!Number.isInteger(hz)||hz<100||hz>1000)throw Error("Sampling rate must be an integer between 100 and 1,000 Hz.");
@@ -49,7 +49,7 @@ function validate(obj){
    if(!arr.every(v=>typeof v==="number"&&Number.isFinite(v)&&Math.abs(v)<=30))throw Error("Lead "+label+" contains invalid or implausibly extreme mV values.");
    waveforms[label]=arr;
  }
- return {source, hz,seconds,waveforms,validated:source.validatedForTeaching===true};
+ return {source, hz,seconds,waveforms,validated:source.validatedForTeaching===true,synthetic:obj.kind==="synthetic-demo"};
 }
 function render(){
  if(!recording)return;
@@ -91,7 +91,7 @@ function applyRecording(raw,origin){
  const max=Math.max(0,recording.seconds-Math.min(2,recording.seconds));
  $("reference-position").max=String(max);$("reference-position").value="0";
  $("reference-status").dataset.state="ready";
- $("reference-status").textContent=origin+" • "+(result.validated?"Source marks record reviewed; independently verify before teaching.":"Source not marked reviewed — verify before teaching.");
+ $("reference-status").textContent=(result.synthetic?"SYNTHETIC EXAMPLE — NOT A PATIENT ECG • ":"")+origin+" • "+(result.synthetic?"Illustrative waveform; not diagnostic or clinical validation.":result.validated?"Source marks record reviewed; independently verify before teaching.":"Source not marked reviewed — verify before teaching.");
  $("reference-metadata").textContent=result.source.dataset+" • Record "+result.source.recordId+" • "+recording.hz+" Hz • "+recording.seconds+" s • mV • License: "+result.source.license+" • Citation: "+result.source.citation;
  render();
 }
