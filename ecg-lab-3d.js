@@ -54,7 +54,6 @@ function marker(i,which,ratio){
 const disorganized=svg.querySelector("#ec-chaotic-atria"),
  flutterLoop=svg.querySelector("#ec-flutter-loop"),flutterMarker=svg.querySelector("#ec-flutter-marker");
 const foci=Array.from(disorganized.children);
-const ventricularWaveLength=ventWave.getTotalLength();
 const accessoryPath=svg.querySelector("#ec-accessory-path"),
  accessoryDot=svg.querySelector("#ec-accessory-dot"),
  blockAV=svg.querySelector("#ec-block-marker"),
@@ -62,6 +61,7 @@ const accessoryPath=svg.querySelector("#ec-accessory-path"),
  ventOrigin=svg.querySelector("#ec-ventricular-origin"),
  ventHalo=svg.querySelector("#ec-ventricular-halo"),
  ventWave=svg.querySelector("#ec-ventricular-wave");
+const ventricularWaveLength=ventWave.getTotalLength();
 function visible(node,show){node.setAttribute("visibility",show?"visible":"hidden");}
 function paint(phase){
  const current=window.MedicLabState?.rhythm;
