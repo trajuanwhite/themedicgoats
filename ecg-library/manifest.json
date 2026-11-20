@@ -15,6 +15,14 @@
       "reviewStatus": "reviewed"
     },
     {
+      "id": "ptbxl-00002",
+      "title": "Sinus bradycardia",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2",
+      "file": "/ecg-library/records/00002.json",
+      "reviewStatus": "reviewed"
+    },
+    {
       "id": "ptbxl-00003",
       "title": "Normal sinus rhythm",
       "dataset": "PTB-XL v1.0.3",
