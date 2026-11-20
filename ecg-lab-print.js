@@ -23,7 +23,8 @@ function render(record){
  svg.append(attr(el("rect"),{x:"0",y:"28",width:"1000",height:"535",fill:"url(#mg-grid-major)"}));
  label(svg,10,17,record.synthetic?"THE MEDIC GOATS · SYNTHETIC ECG DEMONSTRATION":"THE MEDIC GOATS · ECG REFERENCE VIEWER");
  label(svg,740,17,speed+" mm/s   "+gain+" mm/mV   "+record.hz+" Hz");
- const start=Number($("reference-position").value),segmentDuration=62.5/speed;
+ const segmentDuration=62.5/speed;
+ const start=Math.min(Number($("reference-position").value),Math.max(0,record.seconds-4*segmentDuration));
  for(let row=0;row<3;row++)for(let col=0;col<4;col++){
   const lead=order[row*4+col],x=250*col,y=104+116*row;
   label(svg,x+8,y-62,lead);

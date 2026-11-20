@@ -14,7 +14,8 @@
   .library-selector{display:flex;flex-direction:column;align-items:stretch}
   .library-selector select,.library-selector button{width:100%;min-width:0}
   .reference-actions{align-items:stretch;flex-direction:column}
-  .reference-actions input[type=file],.reference-actions button{width:100%;min-width:0;box-sizing:border-box}
+  .reference-actions button{width:100%;min-width:0;box-sizing:border-box}
+  .reference-scroll input{min-width:0;width:100%;flex-basis:100%}
   .ecg-layout-scroll{width:100%;max-width:100%}
 }
 </style></head><body>
@@ -107,14 +108,13 @@
   </div>
  </div>
 </div></section>
-<section class="lab-panel reference-panel" id="reference-ecg"><h2>Clinical ECG comparison</h2><p class="lab-sub">Load a de-identified, licensed 12-lead waveform recording in the version 1.0 JSON format. Review the original signals in a separate viewer, rather than pretending the synthetic heart animation generated that patient's ECG.</p>
-<div class="library-selector demo-library"><label for="demo-record"><strong>Synthetic 12-lead examples</strong></label><select id="demo-record" aria-label="Choose twelve-lead example"></select><button id="demo-open" type="button">Load example</button><p id="demo-status" aria-live="polite">Three built-in examples: 60, 75, and 110 bpm.</p></div>
-<div class="library-selector"><label for="library-record"><strong>Clinical ECG library</strong></label><select id="library-record" disabled><option value="">Choose a reviewed 12-lead example</option></select><button id="library-open" type="button" disabled>Open example</button><p id="library-status" aria-live="polite">Checking published ECG examples…</p></div>
-<div class="reference-actions"><label for="reference-file"><strong>Open local ECG JSON:</strong></label><input id="reference-file" type="file" accept=".json,application/json"><button id="reference-reset" type="button">Clear recording</button></div>
-<p id="reference-status" class="reference-status" data-state="idle" role="status">No clinical recording loaded. Simulator remains available above.</p><p id="reference-metadata" class="reference-meta">Use only de-identified, appropriately licensed waveform data.</p>
-<div class="reference-scroll"><label for="reference-position">Recording position</label><input id="reference-position" type="range" min="0" max="0" step=".01" value="0"><output id="reference-time">No recording</output></div>
+<section class="lab-panel reference-panel" id="reference-ecg"><h2>12-lead ECG Simulator</h2>
+<div class="library-selector"><label for="library-record"><strong>Clinical ECG library</strong></label><select id="library-record" disabled><option value="">Choose a recording</option></select><p id="library-status" role="status">Loading recordings…</p></div>
+<p id="reference-metadata" class="reference-meta"></p>
+<div class="reference-actions"><button id="reference-play" type="button" disabled>Play</button><button id="reference-restart" type="button" disabled>Restart</button></div>
+<div class="reference-scroll"><label for="reference-position">Playback position</label><input id="reference-position" type="range" min="0" max="0" step="any" value="0" disabled><output id="reference-time" aria-live="off">0.0 s</output></div>
 <div class="ecg-layout-scroll" role="region" aria-label="Clinical ECG 3 by 4 lead layout; scroll sideways on small screens" tabindex="0"><div id="reference-leads" class="reference-grid" aria-label="Separate viewer for loaded clinical ECG waveforms"></div></div>
-<div class="rhythm-section"><div class="rhythm-selector"><h3>Full-width clinical rhythm strip</h3><label for="reference-rhythm-lead">Rhythm lead <select id="reference-rhythm-lead" aria-label="Choose imported ECG rhythm strip lead"></select></label></div><p>Up to ten seconds from the selected recording position • original supplied samples</p><div class="rhythm-scroll" role="region" aria-label="Selected clinical ECG rhythm strip" tabindex="0"><div id="reference-rhythm-strips"></div></div></div><div class="paper-controls"><div class="paper-controls-row"><label for="paper-speed">Paper speed <select id="paper-speed"><option value="25" selected>25 mm/s</option><option value="50">50 mm/s</option></select></label><label for="paper-gain">Gain <select id="paper-gain"><option value="5">5 mm/mV</option><option value="10" selected>10 mm/mV</option><option value="20">20 mm/mV</option></select></label><button type="button" id="paper-print">Print ECG reference</button></div><p id="paper-summary">Load a clinical recording to enable paper preview</p><p class="focus-meta">Paper-size scaling applies to the printed 250 mm wide ECG layout. On-screen resizing is not physically calibrated.</p></div><div class="paper-preview" aria-label="Preview of calibrated reference paper ECG"><div id="ecg-print-area"></div></div><div class="reference-disclaimer"><strong>Reference viewer only:</strong> This viewer displays supplied samples in millivolts with a fixed vertical scale, using a two-second time window where available. The comparison panels above are not physically calibrated. The separate paper view can use physical millimeter scaling when printed at 100% without fit-to-page adjustments. Uploaded data remains in your browser and is not sent to The Medic Goats servers by this feature. File metadata is self-reported, not externally verified. No clinical waveform is bundled yet. Never upload identifiable patient records.</div></section>
+<div class="rhythm-section"><div class="rhythm-selector"><h3>Full-width clinical rhythm strip</h3><label for="reference-rhythm-lead">Rhythm lead <select id="reference-rhythm-lead" aria-label="Choose imported ECG rhythm strip lead"></select></label></div><p>Original waveform with playback cursor</p><div class="rhythm-scroll" role="region" aria-label="Selected clinical ECG rhythm strip" tabindex="0"><div id="reference-rhythm-strips"></div></div></div><div class="paper-controls"><div class="paper-controls-row"><label for="paper-speed">Paper speed <select id="paper-speed"><option value="25" selected>25 mm/s</option><option value="50">50 mm/s</option></select></label><label for="paper-gain">Gain <select id="paper-gain"><option value="5">5 mm/mV</option><option value="10" selected>10 mm/mV</option><option value="20">20 mm/mV</option></select></label><button type="button" id="paper-print">Print ECG reference</button></div><p id="paper-summary">Load a clinical recording to enable paper preview</p><p class="focus-meta">Paper-size scaling applies to the printed 250 mm wide ECG layout. On-screen resizing is not physically calibrated.</p></div><div class="paper-preview" aria-label="Preview of calibrated reference paper ECG"><div id="ecg-print-area"></div></div></section>
 <section class="lab-panel" style="grid-column:1/-1"><h2>What we're building next</h2><div class="roadmap"><article><h3>Validated clinical library</h3><p>Compare simulation output with de-identified, quality-reviewed clinical ECG recordings.</p></article><article><h3>Physiological forward model</h3><p>Replace simple dipole approximations with a validated activation and body-surface potential model.</p></article><article><h3>Higher-fidelity anatomy</h3><p>Use properly sourced anatomical geometry with measured activation timing.</p></article></div></section></div>
 </main><footer><div class="medic-footer-info"><strong>THE MEDIC GOATS</strong><span>Teaching While Learning • Educational practice only</span></div></footer>
 <script src="/ecg-lab-engine.js?v=2"></script>
@@ -295,11 +295,10 @@
 <script src="/ecg-lab-tools.js?v=4"></script>
 <script src="/ecg-lab-electrodes.js?v=6"></script>
 <script src="/ecg-lab-axis.js?v=4"></script>
-<script src="/ecg-lab-print.js?v=2"></script>
-<script src="/ecg-lab-clinical-viewer.js?v=12"></script>
-<script src="/ecg-lab-demos.js?v=1"></script>
+<script src="/ecg-lab-print.js?v=3"></script>
+<script src="/ecg-lab-clinical-viewer.js?v=13"></script>
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
-<script src="/ecg-lab-library.js?v=1"></script>
+<script src="/ecg-lab-library.js?v=2"></script>
 <script src="/ecg-lab-3d.js?v=28"></script>
 </body></html>

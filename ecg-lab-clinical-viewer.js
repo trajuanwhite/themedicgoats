@@ -1,6 +1,3 @@
-/* Medic Goats ECG Lab: local-only clinical ECG recording preview.
-   This viewer NEVER uploads recordings and NEVER claims clinical validation.
-   Files must contain de-identified, licensed samples in mV. */
 (function(){
 "use strict";
 const L=["I","II","III","aVR","aVL","aVF","V1","V2","V3","V4","V5","V6"];
@@ -25,10 +22,14 @@ rhythmSelect.value="II";
 const rhythmCell=document.createElement("div");rhythmCell.className="rhythm-strip";
 const rhythmHeading=document.createElement("strong");rhythmHeading.textContent="Lead II";rhythmCell.appendChild(rhythmHeading);
 const rhythmSvg=el("svg");rhythmSvg.setAttribute("viewBox","0 0 960 88");rhythmSvg.setAttribute("role","img");rhythmSvg.setAttribute("aria-label","Imported full-width lead II rhythm strip");
-const rhythmPath=el("path");rhythmSvg.appendChild(rhythmPath);rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
+const rhythmPath=el("path");
+const cursor=el("line");
+cursor.setAttribute("y1","0");cursor.setAttribute("y2","88");
+cursor.setAttribute("visibility","hidden");
+rhythmSvg.append(rhythmPath,cursor);
+rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
 let recording=null;
 window.MedicECGReference={getRecording:()=>recording};
-function fail(message){$("reference-status").textContent="Cannot load recording: "+message;$("reference-status").dataset.state="error";$("reference-metadata").textContent="No clinical recording loaded.";}
 function validate(obj){
  if(!obj||typeof obj!=="object"||obj.schemaVersion!=="1.0"||!["clinical-recording","synthetic-demo"].includes(obj.kind))throw Error("Expected version 1.0 clinical recording or explicitly labeled synthetic demo.");
  const meta=obj.recording||{},source=obj.source||{};
@@ -51,68 +52,99 @@ function validate(obj){
  }
  return {source, hz,seconds,waveforms,validated:source.validatedForTeaching===true,synthetic:obj.kind==="synthetic-demo"};
 }
-function render(){
+const position=$("reference-position"), play=$("reference-play"), restart=$("reference-restart");
+let frame=0, startedAt=0, lastWindow=-1;
+function renderPosition(updatePrint=false){
  if(!recording)return;
- const start=Number($("reference-position").value);
+ const elapsed=Number(position.value);
  const seconds=Math.min(2,recording.seconds);
  const samples=Math.floor(seconds*recording.hz);
- const index=Math.round(start*recording.hz);
- const W=420;
- for(const lead of L){
-  const arr=recording.waveforms[lead];
-  const d=[];
-  const limit=Math.min(samples,arr.length-index);
-  const stride=Math.max(1,Math.ceil(limit/2000));
-  for(let i=0;i<limit;i+=stride){
-   const x=i/Math.max(1,samples-1)*W;
-   const y=Math.max(-1000,Math.min(1000,58-arr[index+i]*25));
-   d.push((d.length?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
+ const interval=Math.min(Math.floor(elapsed/seconds)*seconds,recording.seconds-seconds);
+ const index=Math.round(interval*recording.hz);
+ if(index!==lastWindow){
+  for(const lead of L){
+   const arr=recording.waveforms[lead];
+   const points=[];
+   for(let i=0;i<samples;i++){
+    const x=i/Math.max(1,samples-1)*420;
+    const y=58-arr[index+i]*25;
+    points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
+   }
+   paths[lead].setAttribute("d",points.join(" "));
   }
-  paths[lead].setAttribute("d",d.join(" "));
+  lastWindow=index;
  }
+ const x=String(elapsed/recording.seconds*960);
+ cursor.setAttribute("x1",x);cursor.setAttribute("x2",x);
+ $("reference-time").textContent=elapsed.toFixed(1)+" / "+recording.seconds.toFixed(1)+" s";
+ if(updatePrint)window.MedicECGPrint?.render(recording);
+}
+function renderRhythm(){
  const label=rhythmSelect.value;
- const arr=recording.waveforms[label];
- const rhythmSamples=Math.min(Math.floor(10*recording.hz),arr.length-index);
- const d=[],stride=Math.max(1,Math.ceil(rhythmSamples/3000));
- for(let i=0;i<rhythmSamples;i+=stride){
-   const x=i/Math.max(1,rhythmSamples-1)*960;
-   const y=Math.max(-1000,Math.min(1000,44-arr[index+i]*25));
-   d.push((d.length?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
- }
- rhythmPath.setAttribute("d",d.join(" "));
  rhythmHeading.textContent="Lead "+label;
- rhythmSvg.setAttribute("aria-label","Imported full-width lead "+label+" rhythm strip");
- $("reference-time").textContent=start.toFixed(2)+"–"+Math.min(recording.seconds,start+seconds).toFixed(2)+" s";
- if(window.MedicECGPrint)window.MedicECGPrint.render(recording);
+ if(!recording)return;
+ const arr=recording.waveforms[label];
+ const points=[],stride=Math.max(1,Math.ceil(arr.length/3000));
+ for(let i=0;i<arr.length;i+=stride){
+  const x=i/Math.max(1,arr.length-1)*960;
+  const y=44-arr[i]*25;
+  points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
+ }
+ rhythmPath.setAttribute("d",points.join(" "));
+ rhythmSvg.setAttribute("aria-label","Lead "+label+" recording with playback cursor");
 }
-function applyRecording(raw,origin){
+function pause(){
+ cancelAnimationFrame(frame);
+ frame=0;
+ play.textContent="Play";
+}
+function tick(now){
+ const elapsed=Math.min(recording.seconds,(now-startedAt)/1000);
+ position.value=String(elapsed);
+ if(elapsed>=recording.seconds){
+  pause();
+  renderPosition(true);
+  return;
+ }
+ renderPosition();
+ frame=requestAnimationFrame(tick);
+}
+function applyRecording(raw){
  const result=validate(raw);
+ pause();
  recording=result;
- const max=Math.max(0,recording.seconds-Math.min(2,recording.seconds));
- $("reference-position").max=String(max);$("reference-position").value="0";
- $("reference-status").dataset.state="ready";
- $("reference-status").textContent=(result.synthetic?"SYNTHETIC EXAMPLE — NOT A PATIENT ECG • ":"")+origin+" • "+(result.synthetic?"Illustrative waveform; not diagnostic or clinical validation.":result.validated?"Source marks record reviewed; independently verify before teaching.":"Source not marked reviewed — verify before teaching.");
- $("reference-metadata").textContent=result.source.dataset+" • Record "+result.source.recordId+" • "+recording.hz+" Hz • "+recording.seconds+" s • mV • License: "+result.source.license+" • Citation: "+result.source.citation;
- render();
+ lastWindow=-1;
+ position.max=String(recording.seconds);
+ position.value="0";
+ position.disabled=play.disabled=restart.disabled=false;
+ cursor.removeAttribute("visibility");
+ $("reference-metadata").textContent=result.source.dataset+" • Record "+result.source.recordId+" • "+recording.hz+" Hz • "+recording.seconds+" s • "+result.source.license+" • "+result.source.citation;
+ renderRhythm();
+ renderPosition(true);
 }
-window.MedicECGReference.loadObject=(raw,origin="Library recording")=>applyRecording(raw,origin);
-async function loadFile(file){
- if(!file)return;
- if(file.size>8*1024*1024){fail("File is larger than 8 MB.");return;}
- if(!/\.json$/i.test(file.name)){fail("Select a .json file.");return;}
- $("reference-status").textContent="Reading local file…";$("reference-status").dataset.state="loading";
- try{applyRecording(JSON.parse(await file.text()),"Loaded locally")}
- catch(e){fail(e&&e.message?e.message:"Invalid recording file.")}
-}
-$("reference-file").addEventListener("change",e=>loadFile(e.target.files&&e.target.files[0]));
-$("reference-position").addEventListener("input",render);
-rhythmSelect.addEventListener("change",()=>{if(recording)render();else rhythmHeading.textContent="Lead "+rhythmSelect.value});
-$("reference-reset").addEventListener("click",()=>{
- recording=null;$("ecg-print-area").replaceChildren();$("paper-summary").textContent="Load a clinical recording to enable paper preview";$("reference-file").value="";$("reference-position").value="0";
- $("reference-time").textContent="No recording";
- $("reference-status").textContent="No clinical recording loaded. Illustrative simulator remains available above.";
- $("reference-status").dataset.state="idle";$("reference-metadata").textContent="Use only de-identified, appropriately licensed waveform data.";
- Object.values(paths).forEach(path=>path.setAttribute("d",""));
- rhythmPath.setAttribute("d","");
+window.MedicECGReference.loadObject=applyRecording;
+play.addEventListener("click",()=>{
+ if(frame){
+  pause();
+  renderPosition(true);
+  return;
+ }
+ if(Number(position.value)>=recording.seconds)position.value="0";
+ startedAt=performance.now()-Number(position.value)*1000;
+ play.textContent="Pause";
+ frame=requestAnimationFrame(tick);
+});
+restart.addEventListener("click",()=>{
+ position.value="0";
+ if(frame)startedAt=performance.now();
+ renderPosition(true);
+});
+position.addEventListener("input",()=>{
+ if(frame)startedAt=performance.now()-Number(position.value)*1000;
+ renderPosition(true);
+});
+rhythmSelect.addEventListener("change",()=>{
+ renderRhythm();
+ if(recording)window.MedicECGPrint?.render(recording);
 });
 })();
