@@ -117,11 +117,5 @@ function selectElectrode(name){
  $("electrode-detail").textContent=p.desc;
 }
 select.onchange=()=>selectLead(select.value);
-$("verify-leads").onclick=()=>{
- const tests=Array.from({length:101},(_,i)=>window.MedicECG.checkIdentities(i/100));
- const passed=tests.every(Boolean);
- const result=$("lead-test-result");result.textContent=passed?"PASS — Einthoven's law and augmented-lead sum held across 101 sample points.":"CHECK FAILED — Limb-lead identities did not hold.";
- result.dataset.passed=String(passed);
-};
 selectLead("II");
 })();
