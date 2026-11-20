@@ -180,7 +180,7 @@
  const miniTrace=$("heart-mini-trace"),miniCursor=$("heart-mini-cursor"),miniDot=$("heart-mini-dot"),miniReveal=$("heart-mini-reveal-rect");
  // Keep the heart's existing cycle clock. Compress the quiet portions visually
  // so the P, QRS, and T are properly proportioned without speeding up the heart.
- const miniTimeline=[[0,24],[135,76],[308,117],[390,154],[478,177],[655,233],[800,300]];
+ const miniTimeline=[[0,45],[80,59],[160,88],[308,126],[390,150],[478,174],[655,220],[800,300]];
  function miniPosition(ms){
   for(let i=1;i<miniTimeline.length;i++){
    const [endMs,endX]=miniTimeline[i];
@@ -197,14 +197,16 @@
   return height*(t<=p?Math.sin(Math.PI*.5*t/p)**2:Math.sin(Math.PI*.5*(1-t)/(1-p))**2);
  }
  function miniSinusSignal(ms){
-  // SA/atrial activation: compact P; PR remains isoelectric during AV delay.
-  const p=miniBump(ms,0,135,73,.30);
-  // The ventricular activation stage produces a narrow, complete QRS.
-  const q=miniBump(ms,308,332,322,-.18);
-  const r=miniBump(ms,332,366,351,1.15);
-  const s=miniBump(ms,366,390,378,-.28);
-  // Plateau/ST remains flat; ventricular recovery produces a shorter T.
-  const t=miniBump(ms,478,655,560,.47);
+  // Lead-II teaching morphology: rounded P, sharp qRs, rounded T.
+  // All event times remain on the heart's existing 800-ms conduction clock.
+  // P starts with SA firing and finishes during atrial depolarization.
+  const p=miniBump(ms,0,160,90,.34);
+  // AV/His delay is flat. Compact QRS appears only with ventricular activation.
+  const q=miniBump(ms,308,333,324,-.14);
+  const r=miniBump(ms,333,361,350,1.28);
+  const s=miniBump(ms,361,390,375,-.32);
+  // Flat ST; repolarization develops a modest, narrower T wave.
+  const t=miniBump(ms,508,650,570,.43);
   return p+q+r+s+t;
  }
  function miniAmplitude(ms){
