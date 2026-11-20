@@ -5,5 +5,22 @@
   "sourceUrl": "https://physionet.org/content/ptb-xl/1.0.3/",
   "license": "CC BY 4.0",
   "attribution": "Wagner P et al. PTB-XL, a large publicly available electrocardiography dataset. Scientific Data (2020). https://doi.org/10.1038/s41597-020-0495-6",
-  "records": []
+  "records": [
+    {
+      "id": "ptbxl-00001",
+      "title": "Sinus rhythm with low voltage in the limb leads",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "1",
+      "file": "/ecg-library/records/00001.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-00003",
+      "title": "Normal sinus rhythm",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "3",
+      "file": "/ecg-library/records/00003.json",
+      "reviewStatus": "reviewed"
+    }
+  ]
 }
