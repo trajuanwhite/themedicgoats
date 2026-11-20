@@ -29,6 +29,18 @@ const arrow=document.getElementById("qrs-axis-arrow");
 const output=document.getElementById("qrs-axis-value");
 const result=document.getElementById("qrs-axis-result");
 const polarities=document.getElementById("qrs-axis-polarities");
+const exampleSelect=document.getElementById("qrs-axis-example");
+const exampleDescription=document.getElementById("qrs-axis-example-description");
+const examples={
+ sinus:{angle:60,description:"Normal sinus rhythm example: +60° is a common adult mean QRS axis. Sinus rhythm itself does not require a particular QRS axis."},
+ lafb:{angle:-60,description:"Left anterior fascicular block can shift the QRS axis superiorly and leftward (often about −45° to −90°). Diagnose with QRS morphology and the rest of the ECG—not the axis alone."},
+ lpfb:{angle:120,description:"Left posterior fascicular block can produce right axis deviation (example +120°). It is uncommon; first exclude right ventricular hypertrophy and other causes of rightward axis."},
+ rvh:{angle:110,description:"Right ventricular hypertrophy or chronic right-heart strain may shift the electrical forces to the right (example +110°). Axis alone does not establish RVH."},
+ bifascicular:{angle:-60,description:"Right bundle branch block with left anterior fascicular block may produce marked left axis deviation (example −60°). The QRS shape and width are also needed to identify this pattern."},
+ vt:{angle:-135,description:"A ventricular tachycardia may have an extreme or 'northwest' axis (example −135°) when activation starts outside the normal conduction pathway. Many VT rhythms have other axes; this is not required for VT."},
+ custom:{angle:null,description:"Move the slider or use the axis presets to explore how mean QRS direction changes projected polarity. Axis is not enough to diagnose a rhythm or condition."}
+};
+if(!exampleSelect||!exampleDescription)return;
 function category(angle){
  if(angle>=-30&&angle<=90)return "Normal adult QRS axis";
  if(angle>-90&&angle< -30)return "Left axis deviation (LAD)";
@@ -56,9 +68,25 @@ function draw(){
   item.append(lead,sign);polarities.appendChild(item);
  }
 }
-angleInput.addEventListener("input",draw);
-document.querySelectorAll(".axis-presets button[data-axis]").forEach(button=>{
- button.addEventListener("click",()=>{angleInput.value=button.dataset.axis;draw()});
+function chooseExample(key){
+ const example=examples[key]||examples.custom;
+ if(example.angle!==null)angleInput.value=String(example.angle);
+ exampleDescription.textContent=example.description;
+ draw();
+}
+exampleSelect.addEventListener("change",()=>chooseExample(exampleSelect.value));
+angleInput.addEventListener("input",()=>{
+ exampleSelect.value="custom";
+ exampleDescription.textContent=examples.custom.description;
+ draw();
 });
-draw();
+document.querySelectorAll(".axis-presets button[data-axis]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  exampleSelect.value="custom";
+  exampleDescription.textContent=examples.custom.description;
+  angleInput.value=button.dataset.axis;
+  draw();
+ });
+});
+chooseExample(exampleSelect.value);
 })();
