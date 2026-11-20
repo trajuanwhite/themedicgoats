@@ -64,7 +64,7 @@ function validate(obj){
 }
 const position=$("reference-position"), play=$("reference-play"), restart=$("reference-restart");
 let frame=0, startedAt=0, lastWindow=-1;
-function renderPosition(updatePrint=false){
+function renderPosition(){
  if(!recording)return;
  const elapsed=Number(position.value);
  const seconds=Math.min(2,stripSeconds);
@@ -87,7 +87,6 @@ function renderPosition(updatePrint=false){
  const x=String(elapsed/stripSeconds*960);
  cursor.setAttribute("x1",x);cursor.setAttribute("x2",x);
  $("reference-time").textContent=elapsed.toFixed(1)+" / "+stripSeconds.toFixed(1)+" s";
- if(updatePrint)window.MedicECGPrint?.render(recording);
 }
 function renderRhythm(){
  const label=rhythmSelect.value;
@@ -114,7 +113,7 @@ function tick(now){
  position.value=String(elapsed);
  if(elapsed>=stripSeconds){
   pause();
-  renderPosition(true);
+  renderPosition();
   return;
  }
  renderPosition();
@@ -133,13 +132,13 @@ function applyRecording(raw){
  position.disabled=play.disabled=restart.disabled=false;
  cursor.removeAttribute("visibility");
  renderRhythm();
- renderPosition(true);
+ renderPosition();
 }
 window.MedicECGReference.loadObject=applyRecording;
 play.addEventListener("click",()=>{
  if(frame){
   pause();
-  renderPosition(true);
+  renderPosition();
   return;
  }
  if(Number(position.value)>=stripSeconds)position.value="0";
@@ -150,18 +149,17 @@ play.addEventListener("click",()=>{
 restart.addEventListener("click",()=>{
  position.value="0";
  if(frame)startedAt=performance.now();
- renderPosition(true);
+ renderPosition();
 });
 position.addEventListener("input",()=>{
  if(frame)startedAt=performance.now()-Number(position.value)*1000;
- renderPosition(true);
+ renderPosition();
 });
 function updateRhythmLead(){
  for(const lead of L){
   leadButtons[lead].setAttribute("aria-pressed",String(lead===rhythmSelect.value));
  }
  renderRhythm();
- if(recording)window.MedicECGPrint?.render(recording);
 }
 rhythmSelect.addEventListener("change",updateRhythmLead);
 })();
