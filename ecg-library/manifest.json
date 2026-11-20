@@ -29,6 +29,14 @@
       "sourceRecordId": "3",
       "file": "/ecg-library/records/00003.json",
       "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-00004",
+      "title": "Normal sinus rhythm with baseline wander",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "4",
+      "file": "/ecg-library/records/00004.json",
+      "reviewStatus": "reviewed"
     }
   ]
 }
