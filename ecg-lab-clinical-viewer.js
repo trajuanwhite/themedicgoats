@@ -62,7 +62,7 @@ function validate(obj){
  }
  return {source, hz,seconds,waveforms,validated:source.validatedForTeaching===true,synthetic:obj.kind==="synthetic-demo"};
 }
-const position=$("reference-position"), play=$("reference-play"), restart=$("reference-restart");
+const position=$("reference-position"), play=$("reference-play");
 let frame=0, startedAt=0, lastWindow=-1;
 function renderPosition(){
  if(!recording)return;
@@ -129,7 +129,7 @@ function applyRecording(raw){
  lastWindow=-1;
  position.max=String(stripSeconds);
  position.value="0";
- position.disabled=play.disabled=restart.disabled=false;
+ position.disabled=play.disabled=false;
  cursor.removeAttribute("visibility");
  renderRhythm();
  renderPosition();
@@ -145,11 +145,6 @@ play.addEventListener("click",()=>{
  startedAt=performance.now()-Number(position.value)*1000;
  play.textContent="Pause";
  frame=requestAnimationFrame(tick);
-});
-restart.addEventListener("click",()=>{
- position.value="0";
- if(frame)startedAt=performance.now();
- renderPosition();
 });
 position.addEventListener("input",()=>{
  if(frame)startedAt=performance.now()-Number(position.value)*1000;
