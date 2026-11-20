@@ -105,10 +105,10 @@
  rhythmSelect.onchange=redrawRhythm;
 
  const descriptions=["SA node initiates atrial activation.","AV node briefly delays the electrical impulse.","The His bundle conducts toward the ventricles.","Ventricular activation corresponds to the QRS complex.","Ventricular recovery is represented by the T wave."];
- let bpm=75,playing=true,speed=.02*Math.pow(200,.13),time=0,previous=0;
+ let bpm=75,playing=true,speed=.02*Math.pow(200,.13),time=0,previous=0,phaseStepAnimation=null;
  const rhythmMode=$("rhythm-mode");
  rhythmMode.onchange=()=>{
-  time=0;lastCycleIndex=-1;
+  time=0;phaseStepAnimation=null;lastCycleIndex=-1;
   bpm=window.MedicRhythm.modes[rhythmMode.value].rate;
   $("rate").min=rhythmMode.value==="av3"?"25":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"100":rhythmMode.value==="flutter"?"90":"45";
   $("rate").max=rhythmMode.value==="av3"?"70":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"230":"180";
@@ -145,16 +145,38 @@
   $("stage-description").textContent=selectedMode==="sinus"?(window.MedicActivation?.at(phase).stage.description||descriptions[0]):window.MedicRhythm.modes[selectedMode].detail+note;
   $("phase").textContent=rhythmMode.value!=="sinus"?(stage==="fibrillation"?"VF":stage==="blocked"?"BLOCK":stage==="accessory"?"DELTA":stage==="ventricular-origin"?"VT":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="av"?"AV":rhythm.atrialActive?"P":"—"):(stage==="sa"||stage==="atria"?"P":stage==="ventricles"||stage==="bundles"?"QRS":stage==="recovery"?"T":stage==="plateau"?"ST":"PR");
  }
- function animate(now){if(previous&&playing)time+=Math.min((now-previous)/1000,.1)*bpm/60*speed;previous=now;paint();requestAnimationFrame(animate)}
- $("play-btn").onclick=()=>{playing=!playing;$("play-btn").textContent=playing?"Pause":"Play";$("play-btn").setAttribute("aria-pressed",String(playing))};
+ function animate(now){
+  if(phaseStepAnimation){
+   const animation=phaseStepAnimation;
+   const progress=Math.min(1,(now-animation.started)/animation.duration);
+   const eased=progress*progress*(3-2*progress);
+   time=animation.from+(animation.to-animation.from)*eased;
+   if(progress>=1)phaseStepAnimation=null;
+  }else if(previous&&playing){
+   time+=Math.min((now-previous)/1000,.1)*bpm/60*speed;
+  }
+  previous=now;
+  paint();
+  requestAnimationFrame(animate);
+ }
+ $("play-btn").onclick=()=>{phaseStepAnimation=null;playing=!playing;$("play-btn").textContent=playing?"Pause":"Play";$("play-btn").setAttribute("aria-pressed",String(playing))};
  
  $("phase-step").onclick=()=>{
-   const stages=window.MedicActivation?.stages;
-   if(!stages?.length)return;
-   const current=window.MedicActivation.at(((time%1)+1)%1).stage;
-   const index=stages.findIndex(item=>item.id===current.id);
-   const next=stages[(index+1)%stages.length];
-   window.MedicLabAPI.seek(Math.min(.999,(next.start+Math.min(1,(next.end-next.start)/2))/window.MedicActivation.cycleMs));
+   const activation=window.MedicActivation;
+   if(!activation?.stages?.length||rhythmMode.value!=="sinus")return;
+   const current=activation.at(((time%1)+1)%1).stage;
+   const index=activation.stages.findIndex(item=>item.id===current.id);
+   const next=activation.stages[(index+1)%activation.stages.length];
+   const from=next.start/activation.cycleMs;
+   const to=(next.end-0.5)/activation.cycleMs;
+   playing=false;
+   $("play-btn").textContent="Play";
+   $("play-btn").setAttribute("aria-pressed","false");
+   // Travel across the entire selected stage so the orange depolarization
+   // markers and wavefront move visibly instead of landing on a frozen frame.
+   phaseStepAnimation={from,to,started:performance.now(),duration:1400};
+   time=from;
+   paint();
  };
  $("rate").oninput=e=>{bpm=+e.target.value;$("rate-value").textContent=bpm+" bpm";$("bpm-readout").textContent=bpm;redrawLeads();redrawRhythm();window.dispatchEvent(new Event("medic-bpm-change"))};
  if(![0,.2,.5,.9].every(t=>model.checkIdentities(t)))console.error("Limb-lead identity test failed");
