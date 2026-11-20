@@ -10,7 +10,7 @@
 <div class="top"><div><div class="kicker">TRAINING / CARDIAC LAB</div><h1>ECG Lab</h1><p class="lab-sub">Explore electrical activation, ECG timing, and relationships between the 12 standard leads.</p></div><span class="pill">FOUNDATION • V0.6</span></div>
 <div class="lab-grid">
 <section class="lab-panel"><div class="conduction-header"><h2>Cardiac conduction</h2><div class="rhythm-picker"><label for="rhythm-mode">Electrical rhythm</label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="pvt">Polymorphic ventricular tachycardia</option><option value="vf">Ventricular fibrillation (VFib)</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select></div></div><small id="heart-status" hidden></small>
-<div id="heart-view" class="heart-container"><p id="rhythm-explanation" class="heart-rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><div class="heart-mini-ecg" role="img" aria-label="Lead II waveform synchronized with cardiac conduction"><svg viewBox="0 0 300 52" preserveAspectRatio="none" aria-hidden="true"><line class="mini-baseline" x1="0" y1="30" x2="300" y2="30"></line><defs><clipPath id="heart-mini-reveal"><rect id="heart-mini-reveal-rect" x="0" y="0" width="0" height="52"></rect></clipPath></defs><path id="heart-mini-trace" class="mini-trace" clip-path="url(#heart-mini-reveal)"></path><line id="heart-mini-cursor" class="mini-cursor" x1="0" y1="2" x2="0" y2="50"></line><circle id="heart-mini-dot" class="mini-dot" cx="0" cy="30" r="3.5"></circle></svg></div><div id="heart-fallback" class="heart-fallback"><p role="status">Loading the electrical conduction drawing…</p></div></div>
+<div id="heart-view" class="heart-container"><p id="rhythm-explanation" class="heart-rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><div class="heart-mini-ecg" role="img" aria-label="Lead II waveform synchronized with cardiac conduction"><svg viewBox="0 0 300 52" preserveAspectRatio="none" aria-hidden="true"><line class="mini-baseline" x1="0" y1="33" x2="300" y2="33"></line><defs><clipPath id="heart-mini-reveal"><rect id="heart-mini-reveal-rect" x="0" y="0" width="0" height="52"></rect></clipPath></defs><path id="heart-mini-trace" class="mini-trace" clip-path="url(#heart-mini-reveal)"></path><line id="heart-mini-cursor" class="mini-cursor" x1="0" y1="2" x2="0" y2="50"></line><circle id="heart-mini-dot" class="mini-dot" cx="0" cy="33" r="3.5"></circle></svg></div><div id="heart-fallback" class="heart-fallback"><p role="status">Loading the electrical conduction drawing…</p></div></div>
 
 <div class="heart-mode-control"><button id="play-btn" type="button" aria-pressed="true">Pause</button><select id="heart-labels" aria-label="Show or hide conduction labels"><option value="show" selected>Show labels</option><option value="hide">Hide labels</option></select></div>
 
@@ -178,60 +178,30 @@
  window.MedicLabAPI={seek(phase){time=Math.max(0,Math.min(.999,phase));playing=false;$("play-btn").textContent="Play";$("play-btn").setAttribute("aria-pressed","false");paint()},getBpm(){return bpm},getPhase(){return ((time%1)+1)%1}};
  window.MedicLabState={phase:0};
  const miniTrace=$("heart-mini-trace"),miniCursor=$("heart-mini-cursor"),miniDot=$("heart-mini-dot"),miniReveal=$("heart-mini-reveal-rect");
- // Keep the heart's existing cycle clock. Compress the quiet portions visually
- // so the P, QRS, and T are properly proportioned without speeding up the heart.
- const miniTimeline=[[0,45],[80,59],[160,88],[308,126],[390,150],[478,174],[655,220],[800,300]];
- function miniPosition(ms){
-  for(let i=1;i<miniTimeline.length;i++){
-   const [endMs,endX]=miniTimeline[i];
-   if(ms<=endMs){
-    const [startMs,startX]=miniTimeline[i-1];
-    return startX+(endX-startX)*(ms-startMs)/(endMs-startMs);
-   }
-  }
-  return 300;
- }
- function miniBump(ms,start,end,peak,height){
-  if(ms<=start||ms>=end)return 0;
-  const t=(ms-start)/(end-start),p=(peak-start)/(end-start);
-  return height*(t<=p?Math.sin(Math.PI*.5*t/p)**2:Math.sin(Math.PI*.5*(1-t)/(1-p))**2);
- }
- function miniSinusSignal(ms){
-  // Lead-II teaching morphology: rounded P, sharp qRs, rounded T.
-  // All event times remain on the heart's existing 800-ms conduction clock.
-  // P starts with SA firing and finishes during atrial depolarization.
-  const p=miniBump(ms,0,160,90,.34);
-  // AV/His delay is flat. Compact QRS appears only with ventricular activation.
-  const q=miniBump(ms,308,333,324,-.14);
-  const r=miniBump(ms,333,361,350,1.28);
-  const s=miniBump(ms,361,390,375,-.32);
-  // Flat ST; repolarization develops a modest, narrower T wave.
-  const t=miniBump(ms,508,650,570,.43);
-  return p+q+r+s+t;
- }
- function miniAmplitude(ms){
-  return rhythmMode.value==="sinus"
-   ?miniSinusSignal(ms)
-   :(window.MedicRhythm.sample(ms/800*60/bpm,bpm,rhythmMode.value).II||0);
- }
- function miniY(ms){
-  return Math.max(4,Math.min(48,30-miniAmplitude(ms)*19));
+ // Reuse the SAME Lead II signal used by the 12-lead and rhythm-strip engine.
+ // No separate synthetic P/T drawing or nonlinear x-axis: that distorted
+ // the morphology and made the small strip unlike the reference strip.
+ const MINI_WIDTH=300,MINI_BASELINE=33,MINI_GAIN=22;
+ function miniY(phase){
+  const sec=phase*60/bpm;
+  const signal=window.MedicRhythm.sample(sec,bpm,rhythmMode.value).II||0;
+  return Math.max(4,Math.min(49,MINI_BASELINE-signal*MINI_GAIN));
  }
  function redrawMiniECG(){
-  const points=["M0 30","L24 30"];
-  // Draw time-aligned events but compress empty intervals on the x axis.
-  for(let ms=0;ms<=800;ms+=2){
-   points.push("L"+miniPosition(ms).toFixed(2)+" "+miniY(ms).toFixed(2));
+  const points=[];
+  for(let x=0;x<=MINI_WIDTH;x++){
+   const phase=x/MINI_WIDTH;
+   points.push((x?"L":"M")+x+" "+miniY(phase).toFixed(2));
   }
   miniTrace.setAttribute("d",points.join(" "));
  }
  function paint(){
   const phase=((time%1)+1)%1;
   const rhythm=window.MedicRhythm.state(time*60/bpm,bpm,rhythmMode.value);
-  const ms=phase*800,miniX=miniPosition(ms);
+  const miniX=phase*MINI_WIDTH;
   miniReveal.setAttribute("width",miniX.toFixed(2));
   miniCursor.setAttribute("x1",miniX.toFixed(2));miniCursor.setAttribute("x2",miniX.toFixed(2));
-  miniDot.setAttribute("cx",miniX.toFixed(2));miniDot.setAttribute("cy",miniY(ms).toFixed(2));
+  miniDot.setAttribute("cx",miniX.toFixed(2));miniDot.setAttribute("cy",miniY(phase).toFixed(2));
   window.MedicLabState.phase=phase;
   window.MedicLabState.rhythm=rhythm;
   const stage=rhythm.stage;
