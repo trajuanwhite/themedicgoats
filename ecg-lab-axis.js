@@ -17,6 +17,23 @@ function point(deg,r){
  const rad=deg*Math.PI/180;
  return [cx+r*Math.cos(rad),cy+r*Math.sin(rad)];
 }
+// The hexaxial plane is split into the four conventional adult axis regions.
+// Colored arcs follow the same orientation as the lead axes and degree labels.
+const regions=[
+ {key:"normal",from:-30,to:90,color:"#398574"},
+ {key:"right",from:90,to:180,color:"#ba7049"},
+ {key:"extreme",from:-180,to:-90,color:"#7968a5"},
+ {key:"left",from:-90,to:-30,color:"#b48a32"}
+];
+const regionArcs=new Map();
+regions.forEach(region=>{
+ const [x1,y1]=point(region.from,104);
+ const [x2,y2]=point(region.to,104);
+ const span=region.to-region.from;
+ const d="M "+x1.toFixed(2)+" "+y1.toFixed(2)+" A 104 104 0 "+(span>180?1:0)+" 1 "+x2.toFixed(2)+" "+y2.toFixed(2);
+ const band=make("path",{d,fill:"none",stroke:region.color,"stroke-width":9,opacity:.53,"stroke-linecap":"butt"},group);
+ regionArcs.set(region.key,band);
+});
 for(const [name,deg] of leads){
  const [x1,y1]=point(deg,12),[x2,y2]=point(deg,70);
  make("line",{x1:x1.toFixed(1),y1:y1.toFixed(1),x2:x2.toFixed(1),y2:y2.toFixed(1),stroke:"#c1aa91","stroke-width":1.5},group);
@@ -55,12 +72,18 @@ const examples={
  custom:{angle:null,description:"Move the slider or use the axis presets to explore how mean QRS direction changes projected polarity. Axis is not enough to diagnose a rhythm or condition."}
 };
 if(!exampleSelect||!exampleDescription)return;
-function category(angle){
- if(angle>=-30&&angle<=90)return "Normal adult QRS axis";
- if(angle>-90&&angle< -30)return "Left axis deviation (LAD)";
- if(angle>90&&angle<=180)return "Right axis deviation (RAD)";
- return "Extreme axis deviation";
+function categoryKey(angle){
+ if(angle>=-30&&angle<=90)return "normal";
+ if(angle>-90&&angle< -30)return "left";
+ if(angle>90&&angle<=180)return "right";
+ return "extreme";
 }
+const categoryLabels={
+ normal:"Normal adult QRS axis",
+ left:"Left axis deviation (LAD)",
+ right:"Right axis deviation (RAD)",
+ extreme:"Extreme axis deviation"
+};
 function polarity(angle,leadAngle){
  const projection=Math.cos((angle-leadAngle)*Math.PI/180);
  return Math.abs(projection)<0.035?"Nearly isoelectric":projection>0?"Positive (+)":"Negative (−)";
@@ -73,7 +96,15 @@ function draw(){
  const bx=x-12*ux,by=y-12*uy;
  arrow.setAttribute("d",`M ${(bx-7*uy).toFixed(1)} ${(by+7*ux).toFixed(1)} L ${x.toFixed(1)} ${y.toFixed(1)} L ${(bx+7*uy).toFixed(1)} ${(by-7*ux).toFixed(1)}`);
  output.textContent=(angle>0?"+":"")+angle+"°";
- result.textContent=category(angle);
+ const activeRegion=categoryKey(angle);
+ result.textContent=categoryLabels[activeRegion];
+ regionArcs.forEach((band,key)=>{
+  band.setAttribute("opacity",key===activeRegion?"1":".42");
+  band.setAttribute("stroke-width",key===activeRegion?"12":"9");
+ });
+ document.querySelectorAll("#qrs-axis-ranges .axis-range-item").forEach(item=>{
+  item.classList.toggle("active",item.dataset.range===activeRegion);
+ });
  polarities.replaceChildren();
  for(const [name,leadAngle] of [["I",0],["aVF",90],["II",60]]){
   const item=document.createElement("div");item.className="axis-polarity";
