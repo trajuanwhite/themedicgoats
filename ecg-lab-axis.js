@@ -18,11 +18,25 @@ function point(deg,r){
  return [cx+r*Math.cos(rad),cy+r*Math.sin(rad)];
 }
 for(const [name,deg] of leads){
- const [x1,y1]=point(deg,12),[x2,y2]=point(deg,99);
+ const [x1,y1]=point(deg,12),[x2,y2]=point(deg,70);
  make("line",{x1:x1.toFixed(1),y1:y1.toFixed(1),x2:x2.toFixed(1),y2:y2.toFixed(1),stroke:"#c1aa91","stroke-width":1.5},group);
  const [tx,ty]=point(deg,126);
  const label=make("text",{x:tx.toFixed(1),y:(ty+5).toFixed(1),"text-anchor":"middle","font-size":12,"font-weight":750,fill:"#604b3a"},group);
  label.textContent=name;
+}
+// Mark every 30 degrees along the circumference of the hexaxial diagram.
+// Positive angles point clockwise/downward, negative angles counterclockwise/upward.
+for(let deg=-150;deg<=180;deg+=30){
+ const [tickX1,tickY1]=point(deg,105),[tickX2,tickY2]=point(deg,111);
+ make("line",{x1:tickX1.toFixed(1),y1:tickY1.toFixed(1),x2:tickX2.toFixed(1),y2:tickY2.toFixed(1),stroke:"#8f765f","stroke-width":1.5},group);
+ const [tx,ty]=point(deg,92);
+ const label=make("text",{
+  x:tx.toFixed(1),y:(ty+3.5).toFixed(1),
+  "text-anchor":"middle","font-size":11,"font-weight":750,
+  fill:"#684b36",stroke:"#fbf5eb","stroke-width":2.4,
+  "paint-order":"stroke"
+ },group);
+ label.textContent=deg===180?"±180°":(deg>0?"+":"")+deg+"°";
 }
 const vector=document.getElementById("qrs-axis-vector");
 const arrow=document.getElementById("qrs-axis-arrow");
@@ -53,7 +67,7 @@ function polarity(angle,leadAngle){
 }
 function draw(){
  const angle=Number(angleInput.value);
- const [x,y]=point(angle,91);
+ const [x,y]=point(angle,77);
  vector.setAttribute("x2",x.toFixed(1));vector.setAttribute("y2",y.toFixed(1));
  const rad=angle*Math.PI/180,ux=Math.cos(rad),uy=Math.sin(rad);
  const bx=x-12*ux,by=y-12*uy;
