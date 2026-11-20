@@ -15,7 +15,7 @@ host.appendChild(frame);
 if(fallback)fallback.hidden=true;
 const svg=frame.querySelector("svg");
 svg.style.cssText="width:100%;height:100%;max-width:520px;display:block";
-if(status)status.textContent="2D textbook conduction drawing • follow the orange electrical impulse";
+if(status){status.textContent="";status.hidden=true;}
 const ids=["ec-path-atrial-right","ec-path-atrial-left","ec-path-av-his","ec-path-right-bundle","ec-path-left-bundle",
 "ec-path-purk-r1","ec-path-purk-r2","ec-path-purk-r3","ec-path-purk-l1","ec-path-purk-l2","ec-path-purk-l3"];
 
