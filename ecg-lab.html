@@ -178,45 +178,58 @@
  window.MedicLabAPI={seek(phase){time=Math.max(0,Math.min(.999,phase));playing=false;$("play-btn").textContent="Play";$("play-btn").setAttribute("aria-pressed","false");paint()},getBpm(){return bpm},getPhase(){return ((time%1)+1)%1}};
  window.MedicLabState={phase:0};
  const miniTrace=$("heart-mini-trace"),miniCursor=$("heart-mini-cursor"),miniDot=$("heart-mini-dot"),miniReveal=$("heart-mini-reveal-rect");
- let miniValues=[];
- // Sinus waveform is driven by the same 800 ms activation stages used by the heart.
- // Each deflection begins only when its corresponding tissue activates.
- function miniSinusSignal(phase){
-  const ms=phase*800;
-  const bump=(start,end,peak,height)=>{
-   if(ms<=start||ms>=end)return 0;
-   const t=(ms-start)/(end-start),p=(peak-start)/(end-start);
-   // Compact-support, smooth bump with its maximum at the selected peak.
-   return height*(t<=p?Math.sin(Math.PI*.5*t/p)**2:Math.sin(Math.PI*.5*(1-t)/(1-p))**2);
-  };
-  // SA firing initiates atrial depolarization (P). AV delay creates PR baseline.
-  const p=bump(0,218,140,.30);
-  // Bundle/ventricular activation creates the Q, R, and S deflections.
-  const q=bump(308,333,322,-.18);
-  const r=bump(333,365,351,1.15);
-  const s=bump(365,390,378,-.28);
-  // ST baseline, then ventricular repolarization produces the T wave.
-  const t=bump(478,720,595,.47);
+ // Keep the heart's existing cycle clock. Compress the quiet portions visually
+ // so the P, QRS, and T are properly proportioned without speeding up the heart.
+ const miniTimeline=[[0,24],[135,76],[308,117],[390,154],[478,177],[655,233],[800,300]];
+ function miniPosition(ms){
+  for(let i=1;i<miniTimeline.length;i++){
+   const [endMs,endX]=miniTimeline[i];
+   if(ms<=endMs){
+    const [startMs,startX]=miniTimeline[i-1];
+    return startX+(endX-startX)*(ms-startMs)/(endMs-startMs);
+   }
+  }
+  return 300;
+ }
+ function miniBump(ms,start,end,peak,height){
+  if(ms<=start||ms>=end)return 0;
+  const t=(ms-start)/(end-start),p=(peak-start)/(end-start);
+  return height*(t<=p?Math.sin(Math.PI*.5*t/p)**2:Math.sin(Math.PI*.5*(1-t)/(1-p))**2);
+ }
+ function miniSinusSignal(ms){
+  // SA/atrial activation: compact P; PR remains isoelectric during AV delay.
+  const p=miniBump(ms,0,135,73,.30);
+  // The ventricular activation stage produces a narrow, complete QRS.
+  const q=miniBump(ms,308,332,322,-.18);
+  const r=miniBump(ms,332,366,351,1.15);
+  const s=miniBump(ms,366,390,378,-.28);
+  // Plateau/ST remains flat; ventricular recovery produces a shorter T.
+  const t=miniBump(ms,478,655,560,.47);
   return p+q+r+s+t;
  }
+ function miniAmplitude(ms){
+  return rhythmMode.value==="sinus"
+   ?miniSinusSignal(ms)
+   :(window.MedicRhythm.sample(ms/800*60/bpm,bpm,rhythmMode.value).II||0);
+ }
+ function miniY(ms){
+  return Math.max(4,Math.min(48,30-miniAmplitude(ms)*19));
+ }
  function redrawMiniECG(){
-  const period=60/bpm,mode=rhythmMode.value,points=[];
-  miniValues=[];
-  for(let i=0;i<=300;i++){
-   const phase=i/300;
-   const signal=mode==="sinus"?miniSinusSignal(phase):(window.MedicRhythm.sample(phase*period,bpm,mode).II||0);
-   const y=Math.max(4,Math.min(48,30-signal*19));
-   miniValues.push(y);points.push((i?"L":"M")+i+" "+y.toFixed(2));
+  const points=["M0 30","L24 30"];
+  // Draw time-aligned events but compress empty intervals on the x axis.
+  for(let ms=0;ms<=800;ms+=2){
+   points.push("L"+miniPosition(ms).toFixed(2)+" "+miniY(ms).toFixed(2));
   }
   miniTrace.setAttribute("d",points.join(" "));
  }
  function paint(){
   const phase=((time%1)+1)%1;
   const rhythm=window.MedicRhythm.state(time*60/bpm,bpm,rhythmMode.value);
-  const miniX=Math.min(300,Math.max(0,phase*300));
+  const ms=phase*800,miniX=miniPosition(ms);
   miniReveal.setAttribute("width",miniX.toFixed(2));
   miniCursor.setAttribute("x1",miniX.toFixed(2));miniCursor.setAttribute("x2",miniX.toFixed(2));
-  miniDot.setAttribute("cx",miniX.toFixed(2));miniDot.setAttribute("cy",String(miniValues[Math.min(300,Math.round(miniX))]??30));
+  miniDot.setAttribute("cx",miniX.toFixed(2));miniDot.setAttribute("cy",miniY(ms).toFixed(2));
   window.MedicLabState.phase=phase;
   window.MedicLabState.rhythm=rhythm;
   const stage=rhythm.stage;
