@@ -7,7 +7,7 @@
  let records=[];
  let loadedId="";
  const panel=document.getElementById("ecg-measurements");
- const measurements=fetch("/ecg-library/ptb-xl-plus-12sl.json").then(response=>{
+ const measurements=fetch("/ecg-library/ptb-xl-plus-12sl.json?v=2").then(response=>{
   if(!response.ok)throw Error("Measurements unavailable");
   return response.json();
  }).catch(()=>null);
@@ -23,7 +23,7 @@
    ["ecg-qrs-axis","qrsAxis","°"],
    ["ecg-qt","qt"," ms"],
    ["ecg-qtc-bazett","qtcBazett"," ms"],
-   ["ecg-qtc-fridericia","qtcFridericia"," ms"]
+   ["ecg-pr","pr"," ms"]
   ]){
    const value=values[key];
    const sign=key==="qrsAxis"&&value>0?"+":"";
