@@ -31,10 +31,7 @@ const rhythmCell=document.createElement("div");rhythmCell.className="rhythm-stri
 const rhythmHeading=document.createElement("strong");rhythmHeading.textContent="Lead II";rhythmCell.appendChild(rhythmHeading);
 const rhythmSvg=el("svg");rhythmSvg.setAttribute("viewBox","0 0 960 88");rhythmSvg.setAttribute("role","img");rhythmSvg.setAttribute("aria-label","Imported full-width lead II rhythm strip");
 const rhythmPath=el("path");
-const cursor=el("line");
-cursor.setAttribute("y1","0");cursor.setAttribute("y2","88");
-cursor.setAttribute("visibility","hidden");
-rhythmSvg.append(rhythmPath,cursor);
+rhythmSvg.appendChild(rhythmPath);
 rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
 let recording=null;
 let stripSeconds=0;
@@ -61,27 +58,19 @@ function validate(obj){
  }
  return {source, hz,seconds,waveforms,validated:source.validatedForTeaching===true,synthetic:obj.kind==="synthetic-demo"};
 }
-let frame=0, startedAt=0, lastWindow=-1;
-function renderPosition(elapsed){
+function renderLeadGrid(){
  const seconds=Math.min(2,stripSeconds);
  const samples=Math.floor(seconds*recording.hz);
- const interval=Math.min(Math.floor(elapsed/seconds)*seconds,stripSeconds-seconds);
- const index=Math.round(interval*recording.hz);
- if(index!==lastWindow){
-  for(const lead of L){
-   const arr=recording.waveforms[lead];
-   const points=[];
-   for(let i=0;i<samples;i++){
-    const x=i/recording.hz/seconds*420;
-    const y=58-arr[index+i]*25;
-    points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
-   }
-   paths[lead].setAttribute("d",points.join(" "));
+ for(const lead of L){
+  const arr=recording.waveforms[lead];
+  const points=[];
+  for(let i=0;i<samples;i++){
+   const x=i/recording.hz/seconds*420;
+   const y=58-arr[i]*25;
+   points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
   }
-  lastWindow=index;
+  paths[lead].setAttribute("d",points.join(" "));
  }
- const x=String(elapsed/stripSeconds*960);
- cursor.setAttribute("x1",x);cursor.setAttribute("x2",x);
 }
 function renderRhythm(){
  const label=rhythmLead;
@@ -96,26 +85,16 @@ function renderRhythm(){
   points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
  }
  rhythmPath.setAttribute("d",points.join(" "));
- rhythmSvg.setAttribute("aria-label","Lead "+label+" recording with playback cursor");
-}
-function tick(now){
- const elapsed=Math.max(0,(now-startedAt)/1000)%stripSeconds;
- renderPosition(elapsed);
- frame=requestAnimationFrame(tick);
+ rhythmSvg.setAttribute("aria-label","Lead "+label+" recording");
 }
 function applyRecording(raw){
  const result=validate(raw);
- cancelAnimationFrame(frame);
  recording=result;
  stripSeconds=Math.min(6,recording.seconds);
  for(const svg of Object.values(leadSvgs))window.MedicECGPaperGrid(svg,420,Math.min(2,stripSeconds));
  window.MedicECGPaperGrid(rhythmSvg,960,stripSeconds);
- lastWindow=-1;
- cursor.removeAttribute("visibility");
  renderRhythm();
- renderPosition(0);
- startedAt=performance.now();
- frame=requestAnimationFrame(tick);
+ renderLeadGrid();
 }
 window.MedicECGReference.loadObject=applyRecording;
 function updateRhythmLead(){
