@@ -1,0 +1,68 @@
+{
+  "1": {
+    "qrsAxis": 14.0,
+    "qt": 404.0,
+    "qtcBazett": 416.0,
+    "qtcFridericia": 412.0
+  },
+  "2": {
+    "qrsAxis": 68.0,
+    "qt": 412.0,
+    "qtcBazett": 364.0,
+    "qtcFridericia": 379.0
+  },
+  "3": {
+    "qrsAxis": 21.0,
+    "qt": 430.0,
+    "qtcBazett": 443.0,
+    "qtcFridericia": 439.0
+  },
+  "4": {
+    "qrsAxis": 90.0,
+    "qt": 368.0,
+    "qtcBazett": 410.0,
+    "qtcFridericia": 396.0
+  },
+  "8": {
+    "qrsAxis": -8.0,
+    "qt": 372.0,
+    "qtcBazett": 412.0,
+    "qtcFridericia": 399.0
+  },
+  "1000": {
+    "qrsAxis": -9.0,
+    "qt": 404.0,
+    "qtcBazett": 416.0,
+    "qtcFridericia": 412.0
+  },
+  "1001": {
+    "qrsAxis": 47.0,
+    "qt": 392.0,
+    "qtcBazett": 407.0,
+    "qtcFridericia": 402.0
+  },
+  "1002": {
+    "qrsAxis": -30.0,
+    "qt": 396.0,
+    "qtcBazett": 405.0,
+    "qtcFridericia": 402.0
+  },
+  "1003": {
+    "qrsAxis": 54.0,
+    "qt": 376.0,
+    "qtcBazett": 449.0,
+    "qtcFridericia": 424.0
+  },
+  "1004": {
+    "qrsAxis": 46.0,
+    "qt": 388.0,
+    "qtcBazett": 442.0,
+    "qtcFridericia": 423.0
+  },
+  "1005": {
+    "qrsAxis": -63.0,
+    "qt": 398.0,
+    "qtcBazett": 413.0,
+    "qtcFridericia": 408.0
+  }
+}

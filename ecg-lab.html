@@ -11,6 +11,10 @@
 #reference-leads button:focus-visible{outline:2px solid #3175a5;outline-offset:-2px}
 .lead-cell svg,.reference-cell svg,.rhythm-strip svg,.focus-ecg{background-image:none}
 .lead-cell svg,.rhythm-strip svg{height:auto}
+ .ecg-measurements{margin-top:14px;padding:12px 14px;border:1px solid #decdbb;border-radius:12px;background:#faf5ef}
+.ecg-measurements dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:10px;margin:0 0 8px}
+.ecg-measurements dt{font-size:13px;color:#655244}
+.ecg-measurements dd{margin:3px 0 0;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
 .conduction-stage{display:grid;margin-block:1em}
 .conduction-stage>.lab-sub{grid-area:1/1;margin:0;overflow-wrap:anywhere}
 .conduction-stage>[aria-hidden="true"]{visibility:hidden;pointer-events:none}
@@ -119,6 +123,15 @@
 </div></section>
 <section class="lab-panel reference-panel" id="reference-ecg"><h2>12-lead ECG Simulator</h2><p class="lab-sub">25 mm/s grid · Small box = 0.04 s · Large box = 0.20 s</p>
 <div class="library-selector"><label for="library-record"><strong>Clinical ECG library</strong></label><select id="library-record" disabled><option value="">Choose a recording</option></select><p id="library-status" role="status">Loading recordings…</p></div>
+<div class="ecg-measurements" id="ecg-measurements" aria-label="Automated ECG measurements" hidden>
+ <dl>
+  <div><dt>QRS axis</dt><dd id="ecg-qrs-axis"></dd></div>
+  <div><dt>QT</dt><dd id="ecg-qt"></dd></div>
+  <div><dt>QTc (Bazett)</dt><dd id="ecg-qtc-bazett"></dd></div>
+  <div><dt>QTc (Fridericia)</dt><dd id="ecg-qtc-fridericia"></dd></div>
+ </dl>
+ <small>Automated 12SL measurements from the full recording. <a href="https://physionet.org/content/ptb-xl-plus/1.0.1/features/">Source</a></small>
+</div>
 <div class="reference-actions"><button id="reference-play" type="button" disabled>Play</button><button id="reference-restart" type="button" disabled>Restart</button></div>
 <div class="reference-scroll"><label for="reference-position">Playback position</label><input id="reference-position" type="range" min="0" max="0" step="any" value="0" disabled><output id="reference-time" aria-live="off">0.0 s</output></div>
 <div class="ecg-layout-scroll" role="region" aria-label="Clinical ECG 3 by 4 lead layout; scroll sideways on small screens" tabindex="0"><div id="reference-leads" class="reference-grid" aria-label="Separate viewer for loaded clinical ECG waveforms"></div></div>
@@ -336,6 +349,6 @@
 <script src="/ecg-lab-clinical-viewer.js?v=17"></script>
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
-<script src="/ecg-lab-library.js?v=2"></script>
+<script src="/ecg-lab-library.js?v=3"></script>
 <script src="/ecg-lab-3d.js?v=28"></script>
 </body></html>

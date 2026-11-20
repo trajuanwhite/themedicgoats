@@ -6,6 +6,31 @@
  const safePath=p=>typeof p==="string"&&/^\/ecg-library\/records\/[a-zA-Z0-9_-]+\.json$/.test(p);
  let records=[];
  let loadedId="";
+ const panel=document.getElementById("ecg-measurements");
+ const measurements=fetch("/ecg-library/ptb-xl-plus-12sl.json").then(response=>{
+  if(!response.ok)throw Error("Measurements unavailable");
+  return response.json();
+ }).catch(()=>null);
+ async function showMeasurements(record){
+  if(!panel)return;
+  panel.hidden=true;
+  if(record.dataset!=="PTB-XL v1.0.3")return;
+  const data=await measurements;
+  if(loadedId!==record.id)return;
+  const values=data?.[record.sourceRecordId];
+  if(!values)return;
+  for(const [id,key,unit] of [
+   ["ecg-qrs-axis","qrsAxis","°"],
+   ["ecg-qt","qt"," ms"],
+   ["ecg-qtc-bazett","qtcBazett"," ms"],
+   ["ecg-qtc-fridericia","qtcFridericia"," ms"]
+  ]){
+   const value=values[key];
+   const sign=key==="qrsAxis"&&value>0?"+":"";
+   document.getElementById(id).textContent=Number.isFinite(value)?sign+value+unit:"Unavailable";
+  }
+  panel.hidden=false;
+ }
  try{
   const response=await fetch("/ecg-library/manifest.json?v=1",{cache:"no-store"});
   if(!response.ok)throw Error("Library index unavailable");
@@ -34,6 +59,7 @@
    if(raw.source?.recordId!==record.sourceRecordId||raw.source?.dataset!==record.dataset)throw Error("Recording does not match the library");
    window.MedicECGReference.loadObject(raw);
    loadedId=record.id;
+   void showMeasurements(record);
    status.textContent=record.title;
   }catch(e){
    select.value=loadedId;
