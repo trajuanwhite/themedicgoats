@@ -27,44 +27,87 @@ const facts={
   4:{name:"Phase 4 — Pacemaker potential",description:"SA/AV nodal cells spontaneously drift toward threshold. The funny current (If), falling outward potassium current, and calcium currents contribute to slow diastolic depolarization.",ions:["Na⁺ contributes via If","Ca²⁺ contributes near threshold","K⁺ outward current falls"]}
  }
 };
+// Stage-to-cell mapping is a conceptual synchronization, not a claim that the
+// entire heart has a single membrane potential at each ECG/conduction stage.
+// Ventricular AP: rest -> 0 -> 1 -> 2 -> 3 -> rest.
+// Nodal AP: phase 4 -> 0 -> 3 -> phase 4, using the SA node as timing reference.
+const boundaries={
+ ventricular:[
+  {start:0,end:308,index:4},
+  {start:308,end:379,index:0},
+  {start:379,end:390,index:1},
+  {start:390,end:478,index:2},
+  {start:478,end:720,index:3},
+  {start:720,end:800,index:4}
+ ],
+ nodal:[
+  {start:0,end:80,index:0},
+  {start:80,end:218,index:3},
+  {start:218,end:800,index:4}
+ ]
+};
+const sampleMs={
+ ventricular:{0:332,1:385,2:425,3:545,4:755},
+ nodal:{4:755,0:35,3:145}
+};
+let visiblePhase=null,visibleType=null;
+const controls=new Map();
+function seekPhase(index){
+ const ms=sampleMs[select.value][index];
+ if(ms===undefined)return;
+ window.MedicLabAPI?.seek(ms/window.MedicActivation.cycleMs);
+ update();
+}
 function buildControls(){
- const type=select.value;
- const order=phaseOrder[type];
- if(!order.includes(selectedPhase))selectedPhase=order[0];
+ controls.clear();
  phaseControls.replaceChildren();
- order.forEach(index=>{
+ phaseOrder[select.value].forEach(index=>{
   const button=document.createElement("button");
   button.type="button";
   button.textContent="Phase "+index;
-  button.classList.toggle("active",selectedPhase===index);
-  button.setAttribute("aria-pressed",String(selectedPhase===index));
-  button.addEventListener("click",()=>{selectedPhase=index;buildControls();draw()});
+  button.addEventListener("click",()=>seekPhase(index));
   phaseControls.appendChild(button);
+  controls.set(index,button);
  });
- draw();
+ visiblePhase=null;
+ visibleType=null;
+ update();
 }
-function draw(){
- const type=select.value;
- const curve=curves[type],data=facts[type][selectedPhase];
- path.setAttribute("d",curve.points.map((p,i)=>(i?"L":"M")+p[0]+" "+p[1]).join(" "));
- phaseName.textContent=data.name;
- stageName.textContent=type==="ventricular"?"Ventricular muscle cell":"SA / AV nodal cell";
- summary.textContent=data.description;
- ions.replaceChildren(...data.ions.map((message,i)=>{
-  const item=document.createElement("div");item.className="ap-ion";
-  const head=document.createElement("strong");head.textContent=["Na⁺","Ca²⁺","K⁺"][i];
-  const detail=document.createElement("span");detail.textContent=message;
-  item.append(head,detail);return item;
- }));
- context.textContent=type==="nodal"?
-  "Nodal pacemaker cells follow phase 4 → 0 → 3 → 4; phases 1 and 2 are not distinct. This cellular sequence is separate from the conduction stages above.":
-  "Ventricular muscle cells follow phase 0 → 1 → 2 → 3 → 4, then repeat with the next beat. This cellular sequence is separate from the conduction stages above.";
- const pos=curve.positions[selectedPhase];
- marker.setAttribute("cx",pos[0]);marker.setAttribute("cy",pos[1]);
+function update(){
+ if(!select.isConnected)return;
+ const type=select.value,curve=curves[type];
+ const phase=window.MedicLabAPI?.getPhase?.()??0;
+ const activation=window.MedicActivation;
+ const ms=activation?.at(phase)?.ms??0;
+ const piece=boundaries[type].find(part=>ms>=part.start&&ms<part.end)||boundaries[type][0];
+ const index=piece.index;
+ if(visibleType!==type||visiblePhase!==index){
+  const data=facts[type][index];
+  path.setAttribute("d",curve.points.map((p,i)=>(i?"L":"M")+p[0]+" "+p[1]).join(" "));
+  phaseName.textContent=data.name;
+  stageName.textContent=type==="ventricular"?"Ventricular muscle cell":"SA nodal pacemaker (timing reference)";
+  summary.textContent=data.description;
+  ions.replaceChildren(...data.ions.map((message,i)=>{
+   const item=document.createElement("div");item.className="ap-ion";
+   const head=document.createElement("strong");head.textContent=["Na⁺","Ca²⁺","K⁺"][i];
+   const detail=document.createElement("span");detail.textContent=message;
+   item.append(head,detail);return item;
+  }));
+  context.textContent=type==="nodal"?
+   "Phase 4 → 0 → 3 → 4. This illustration tracks the SA node as its timing reference; AV nodal cells activate at a different time. Phase alignment with the conduction timeline is approximate.":
+   "Phase 0 → 1 → 2 → 3 → 4. This illustration uses the ventricular activation timing as its reference. Cell membrane voltage and the surface ECG are different signals.";
+  controls.forEach((button,k)=>{
+   button.classList.toggle("active",k===index);
+   button.setAttribute("aria-pressed",String(k===index));
+  });
+  visiblePhase=index;visibleType=type;
+ }
+ const pos=curve.positions[index];
+ marker.setAttribute("cx",String(pos[0]));
+ marker.setAttribute("cy",String(pos[1]));
 }
-select.addEventListener("change",()=>{
- selectedPhase=phaseOrder[select.value][0];
- buildControls();
-});
+select.addEventListener("change",buildControls);
+function loop(){if(!select.isConnected)return;update();requestAnimationFrame(loop)}
 buildControls();
+loop();
 })();
