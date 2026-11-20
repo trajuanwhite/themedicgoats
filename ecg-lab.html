@@ -19,8 +19,6 @@
 <div class="rhythm-mode"><label for="rhythm-mode"><strong>Electrical rhythm</strong></label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="pvt">Polymorphic ventricular tachycardia</option><option value="vf">Ventricular fibrillation (VFib)</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select><p id="rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><small>Illustrative teaching patterns only—not patient ECGs or validated 12-lead morphologies. In VFib there is no organized ventricular rate; the displayed activity is a conceptual simulation.</small></div>
 <div class="controls"><button id="play-btn" type="button" aria-pressed="true">Pause</button><button id="restart-btn" type="button">Restart</button></div>
 <div class="controls"><label for="rate"><span id="rate-label">Rate</span> <output id="rate-value">75 bpm</output></label><input id="rate" type="range" min="45" max="180" step="1" value="75"></div>
-<div class="lab-slider-group"><div class="lab-slider-heading"><label for="speed">Playback speed</label><output id="speed-value" for="speed">0.04× · Teaching</output></div><input id="speed" type="range" min="0" max="100" step="1" value="13" aria-label="Playback speed, extremely slow to fast"><div class="lab-slider-endpoints"><span>Very slow · 0.02×</span><span>Real time · 1×</span><span>Fast · 4×</span></div></div>
-<div class="lab-slider-group"><div class="lab-slider-heading"><label for="cycle-step">Jump to part of the cardiac cycle</label><output id="cycle-step-label" for="cycle-step">SA node</output></div><input id="cycle-step" type="range" min="0" max="8" step="1" value="0" aria-label="Jump between nine stages of the cardiac cycle"><div class="lab-slider-endpoints"><span>SA node</span><span>Ventricular activation</span><span>Electrical rest</span></div><small>Sliding to a stage pauses playback so you can examine it. Press Play to continue.</small></div>
 </section>
 <section class="lab-panel"><h2>12-lead ECG view</h2><small>Standard 3 × 4 lead order · illustrative vector-derived waveforms · not diagnostic ECGs</small><div class="ecg-layout-scroll" role="region" aria-label="Standard three-row four-column ECG layout; scroll sideways on small screens" tabindex="0"><div id="lead-grid" class="lead-grid" aria-label="Twelve synchronized illustrative ECG leads"></div></div><p class="focus-meta">Standard 3 × 4 arrangement matching the clinical 12-lead printout. On narrow screens, swipe sideways to see every column.</p><div class="rhythm-section"><div class="rhythm-selector"><h3>Continuous rhythm strip</h3><label for="rhythm-lead">Rhythm lead <select id="rhythm-lead" aria-label="Choose rhythm strip lead"></select></label></div><p>Ten-second illustrative display • synchronized to simulator playback (not calibrated patient data)</p><div class="rhythm-scroll" role="region" aria-label="Selected continuous rhythm strip" tabindex="0"><div id="rhythm-strips"></div></div></div>
 <div class="note"><strong>Model limitations:</strong> This is a simplified educational vector-dipole model, not a patient ECG or validated heart–torso forward model. It mathematically derives I, II, III, aVR, aVL, aVF and V1–V6 from shared virtual electrode potentials. It does not accurately predict clinical abnormalities, amplitude calibration, or individual anatomy. <strong>Not for diagnosis, treatment, or clinical training assessment.</strong></div>
@@ -120,13 +118,10 @@
   $("rate-value").textContent=rhythmMode.value==="vf"?"Not measurable":bpm+" bpm";
   $("bpm-readout").textContent=rhythmMode.value==="vf"?"—":bpm;
   $("rhythm-explanation").textContent=window.MedicRhythm.modes[rhythmMode.value].detail;
-  $("cycle-step").disabled=rhythmMode.value!=="sinus";
-  $("cycle-step").setAttribute("aria-label",rhythmMode.value==="sinus"?"Jump between nine stages of the cardiac cycle":"Cycle-step navigation is available in sinus rhythm only");
-  $("cycle-step-label").textContent=rhythmMode.value==="sinus"?"SA node":"Rhythm-controlled";
   $("stage-description").textContent=$("rhythm-explanation").textContent;
   redrawLeads();redrawRhythm();paint();
  };
- const cycleStages=window.MedicActivation?window.MedicActivation.stages:[];let lastCycleIndex=-1;
+ let lastCycleIndex=-1;
  window.MedicLabAPI={seek(phase){time=Math.max(0,Math.min(.999,phase));playing=false;$("play-btn").textContent="Play";$("play-btn").setAttribute("aria-pressed","false");paint()},getBpm(){return bpm},getPhase(){return ((time%1)+1)%1}};
  window.MedicLabState={phase:0};
  function paint(){
@@ -135,11 +130,7 @@
   window.MedicLabState.phase=phase;
   window.MedicLabState.rhythm=rhythm;
   const stage=rhythm.stage;
-  if(rhythmMode.value==="sinus"&&cycleStages.length){
-   const i=cycleStages.findIndex(item=>item.id===stage);
-   if(i!==lastCycleIndex&&i>=0){$("cycle-step").value=String(i);$("cycle-step-label").textContent=cycleStages[i].label;lastCycleIndex=i;}
-  }
-  const sweepSeconds=((time*60/bpm)%rhythmSeconds+rhythmSeconds)%rhythmSeconds;
+   const sweepSeconds=((time*60/bpm)%rhythmSeconds+rhythmSeconds)%rhythmSeconds;
   const currentColumn=Math.min(3,Math.floor(sweepSeconds/2.5));
   cursors.forEach((c,index)=>{
    const visible=index%4===currentColumn;
@@ -158,16 +149,6 @@
  $("play-btn").onclick=()=>{playing=!playing;$("play-btn").textContent=playing?"Pause":"Play";$("play-btn").setAttribute("aria-pressed",String(playing))};
  $("restart-btn").onclick=()=>{time=0;paint()};
  $("rate").oninput=e=>{bpm=+e.target.value;$("rate-value").textContent=bpm+" bpm";$("bpm-readout").textContent=bpm;redrawLeads();redrawRhythm();window.dispatchEvent(new Event("medic-bpm-change"))};
- // Logarithmic-like response gives ample room for very slow teaching playback.
- const sliderToSpeed=position=>0.02*Math.pow(200,Number(position)/100);
- $("speed").oninput=e=>{
-   speed=sliderToSpeed(e.target.value);
-   $("speed-value").textContent=speed.toFixed(2)+"×"+(speed>=.95&&speed<=1.05?" · Real time":speed<=.30?" · Teaching":"");
- };
- $("cycle-step").oninput=e=>{
-   const item=cycleStages[Number(e.target.value)];
-   if(item){window.MedicLabAPI.seek(Math.min(.999,(item.start+1)/window.MedicActivation.cycleMs));}
- };
  if(![0,.2,.5,.9].every(t=>model.checkIdentities(t)))console.error("Limb-lead identity test failed");
  redrawLeads();redrawRhythm();paint();requestAnimationFrame(animate);
 })();
