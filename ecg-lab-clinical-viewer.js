@@ -7,6 +7,7 @@ const svgNS="http://www.w3.org/2000/svg";
 const el=t=>document.createElementNS(svgNS,t);
 const grid=$("reference-leads");
 const paths={},leadButtons={},leadSvgs={};
+let rhythmLead="II";
 const printOrder=["I","aVR","V1","V4","II","aVL","V2","V5","III","aVF","V3","V6"];
 printOrder.forEach(lead=>{
  const cell=document.createElement("button");cell.className="reference-cell";
@@ -14,7 +15,7 @@ printOrder.forEach(lead=>{
  cell.setAttribute("aria-label","Show lead "+lead+" in the full-width rhythm strip");
  cell.setAttribute("aria-pressed",String(lead==="II"));
  cell.addEventListener("click",()=>{
-  rhythmSelect.value=lead;
+  rhythmLead=lead;
   updateRhythmLead();
  });
  leadButtons[lead]=cell;
@@ -25,9 +26,7 @@ printOrder.forEach(lead=>{
  leadSvgs[lead]=svg;
  paths[lead]=path;cell.appendChild(svg);grid.appendChild(cell);
 });
-const rhythmSelect=$("reference-rhythm-lead"),rhythmHost=$("reference-rhythm-strips");
-L.forEach(lead=>{const option=document.createElement("option");option.value=lead;option.textContent="Lead "+lead;rhythmSelect.appendChild(option)});
-rhythmSelect.value="II";
+const rhythmHost=$("reference-rhythm-strips");
 const rhythmCell=document.createElement("div");rhythmCell.className="rhythm-strip";
 const rhythmHeading=document.createElement("strong");rhythmHeading.textContent="Lead II";rhythmCell.appendChild(rhythmHeading);
 const rhythmSvg=el("svg");rhythmSvg.setAttribute("viewBox","0 0 960 88");rhythmSvg.setAttribute("role","img");rhythmSvg.setAttribute("aria-label","Imported full-width lead II rhythm strip");
@@ -89,7 +88,7 @@ function renderPosition(){
  $("reference-time").textContent=elapsed.toFixed(1)+" / "+stripSeconds.toFixed(1)+" s";
 }
 function renderRhythm(){
- const label=rhythmSelect.value;
+ const label=rhythmLead;
  rhythmHeading.textContent="Lead "+label;
  if(!recording)return;
  const arr=recording.waveforms[label];
@@ -152,9 +151,8 @@ position.addEventListener("input",()=>{
 });
 function updateRhythmLead(){
  for(const lead of L){
-  leadButtons[lead].setAttribute("aria-pressed",String(lead===rhythmSelect.value));
+  leadButtons[lead].setAttribute("aria-pressed",String(lead===rhythmLead));
  }
  renderRhythm();
 }
-rhythmSelect.addEventListener("change",updateRhythmLead);
 })();
