@@ -15,6 +15,7 @@
 .ecg-measurements dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:10px;margin:0 0 8px}
 .ecg-measurements dt{font-size:13px;color:#655244}
 .ecg-measurements dd{margin:3px 0 0;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+#heart-view .blocked-bundle{stroke:#b4232c;stroke-dasharray:5 4}
 .conduction-stage{display:grid;margin-block:1em}
 .conduction-stage>.lab-sub{grid-area:1/1;margin:0;overflow-wrap:anywhere}
 .conduction-stage>[aria-hidden="true"]{visibility:hidden;pointer-events:none}
@@ -36,7 +37,7 @@
 <main class="lab">
 <div class="top"><div><div class="kicker">TRAINING / CARDIAC LAB</div><h1>ECG Lab</h1><p class="lab-sub">Explore electrical activation, ECG timing, and relationships between the 12 standard leads.</p></div><span class="pill">FOUNDATION • V0.6</span></div>
 <div class="lab-grid">
-<section class="lab-panel"><div class="conduction-header"><h2>Cardiac conduction</h2><div class="rhythm-picker"><label for="rhythm-mode">Electrical rhythm</label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="pvt">Polymorphic ventricular tachycardia</option><option value="vf">Ventricular fibrillation (VFib)</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select></div></div><small id="heart-status" hidden></small>
+<section class="lab-panel"><div class="conduction-header"><h2>Cardiac conduction</h2><div class="rhythm-picker"><label for="rhythm-mode">Electrical rhythm</label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Bundle branch blocks"><option value="rbbb">Right bundle branch block (RBBB)</option><option value="lbbb">Left bundle branch block (LBBB)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="pvt">Polymorphic ventricular tachycardia</option><option value="vf">Ventricular fibrillation (VFib)</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select></div></div><small id="heart-status" hidden></small>
 <div id="heart-view" class="heart-container"><p id="rhythm-explanation" class="heart-rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><div class="heart-mini-ecg" role="img" aria-label="Lead II waveform synchronized with cardiac conduction"><svg viewBox="0 0 300 52" preserveAspectRatio="none" aria-hidden="true"><line class="mini-baseline" x1="0" y1="31" x2="300" y2="31"></line><defs><clipPath id="heart-mini-reveal"><rect id="heart-mini-reveal-rect" x="0" y="0" width="0" height="52"></rect></clipPath></defs><path id="heart-mini-trace" class="mini-trace" clip-path="url(#heart-mini-reveal)"></path><line id="heart-mini-cursor" class="mini-cursor" x1="0" y1="2" x2="0" y2="50"></line><circle id="heart-mini-dot" class="mini-dot" cx="0" cy="31" r="3.5"></circle></svg></div><div id="heart-fallback" class="heart-fallback"><p role="status">Loading the electrical conduction drawing…</p></div></div>
 
 <div class="heart-mode-control"><button id="play-btn" type="button" aria-pressed="true">Pause</button><select id="heart-labels" aria-label="Show or hide conduction labels"><option value="show" selected>Show labels</option><option value="hide">Hide labels</option></select></div>
@@ -139,7 +140,7 @@
 <script src="/ecg-lab-paper-grid.js?v=1"></script>
 <script src="/ecg-lab-engine.js?v=2"></script>
 <script src="/ecg-lab-activation.js?v=5"></script>
-<script src="/ecg-lab-rhythms.js?v=4"></script>
+<script src="/ecg-lab-rhythms.js?v=5"></script>
 <script>
 (function(){
  "use strict";
@@ -347,5 +348,5 @@
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
 <script src="/ecg-lab-library.js?v=4"></script>
-<script src="/ecg-lab-3d.js?v=28"></script>
+<script src="/ecg-lab-3d.js?v=29"></script>
 </body></html>

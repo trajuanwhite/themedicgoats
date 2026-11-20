@@ -13,6 +13,8 @@ const modes={
  av1:{label:"First-degree AV block",rate:70,detail:"Every sinus P wave conducts to the ventricles, but the PR interval is prolonged (illustrated at 280 ms)."},
  mobitz1:{label:"Second-degree AV block — Mobitz I",rate:85,detail:"Progressively longer PR intervals followed by a nonconducted P wave (Wenckebach), then the cycle repeats."},
  mobitz2:{label:"Second-degree AV block — Mobitz II",rate:80,detail:"Intermittent nonconducted P waves with a constant PR interval for conducted beats. Block is depicted below the AV node."},
+ rbbb:{label:"Right bundle branch block (RBBB)",rate:75,detail:"The left bundle conducts first. Activation spreads through ventricular muscle to the right ventricle, widening the QRS. Compare the terminal R′ in V1 with the broad S in I and V6."},
+ lbbb:{label:"Left bundle branch block (LBBB)",rate:75,detail:"The right bundle conducts first. Activation spreads through ventricular muscle to the left ventricle, widening the QRS. Compare the deep S in V1 with the broad, notched R in I and V6."},
  av3:{label:"Third-degree AV block (complete)",rate:38,detail:"Sinus P waves continue independently of a slower ventricular escape rhythm: no atrial impulses conduct to the ventricles."},
  vt:{label:"Monomorphic ventricular tachycardia (VT)",rate:165,detail:"Rapid wide-complex ventricular activation originates in ventricular myocardium, not the SA node. Simplified monomorphic VT, not a diagnostic tracing."},
  pvt:{label:"Polymorphic ventricular tachycardia (VT)",rate:190,detail:"Rapid ventricular beats change in QRS shape and axis from beat to beat. This is illustrative polymorphic VT, not specifically torsades de pointes."},
@@ -23,6 +25,12 @@ const ids=Object.keys(modes),leads=base.labels,GAUSS=(x,c,w)=>Math.exp(-.5*Math.
 const afIntervals=[.72,.48,.97,.57,.84,.45,1.12,.62,.76,.51,.94,.69,.43,.88,.56,1.07,.64,.53,.92,.47];
 const coeff=Object.fromEntries(leads.map(l=>[l,{p:base.sample(.17).leads[l]-base.sample(.275).leads[l],r:base.sample(.382).leads[l],t:base.sample(.66).leads[l]}]));
 const cache=new Map();
+const branchBlocks={
+ rbbb:{side:"right",early:[.65,.72,.26,.22,.42,.64,.81,.76],late:[-.48,-.20,.94,.70,.36,.06,-.29,-.48]},
+ lbbb:{side:"left",early:[.70,.38,-.80,-.70,-.58,.42,.67,.78],late:[.80,.43,-.82,-.74,-.60,.52,.77,.88]}
+};
+const independentLeads=["I","II","V1","V2","V3","V4","V5","V6"];
+const bbbPR=.17,bbbQrs=.15;
 function schedule(mode,bpm){
  const key=mode+"|"+bpm;if(cache.has(key))return cache.get(key);
  const atria=[],vents=[],interval=60/Math.max(30,bpm);
@@ -31,10 +39,10 @@ function schedule(mode,bpm){
   atria.push(beat);
   if(conducted)vents.push({t:t+pr+(mode==="wpw"?.05:0),source:mode==="wpw"?"accessory":"conducted",atrial:beat,wide:mode==="wpw"});
  }
- if(["sinus","av1","mobitz1","mobitz2","wpw"].includes(mode)){
+ if(branchBlocks[mode]||["sinus","av1","mobitz1","mobitz2","wpw"].includes(mode)){
   const pr1=mode==="av1"?.28:mode==="wpw"?.11:.17;
   for(let i=0;i<100;i++){
-   const t=-2+i*interval;if(t>52)break;
+   const t=branchBlocks[mode]?(i-2)*interval:-2+i*interval;if(t>52)break;
    if(mode==="mobitz1"){const order=i%4;addAtrium(t,order!==3,[.19,.25,.31,.31][order],"av");}
    else if(mode==="mobitz2"){addAtrium(t,i%4!==2,.18,"infranodal");}
    else addAtrium(t,true,pr1);
@@ -73,6 +81,22 @@ function limb(out){
 }
 function sample(seconds,bpm,mode="sinus"){
  if(mode==="sinus")return base.sample(seconds*bpm/60).leads;
+ const block=branchBlocks[mode];
+ if(block){
+  const interval=60/bpm;
+  const t=((seconds%interval)+interval)%interval;
+  const q=t-bbbPR;
+  const out={};
+  independentLeads.forEach((lead,i)=>{
+   const p=coeff[lead].p*GAUSS(t,.055,.022);
+   const early=block.early[i]*GAUSS(q,.038,.019);
+   const late=block.late[i]*GAUSS(q,.107,.023);
+   const septal=mode==="rbbb"&&i>=2&&i<=4?-.34*GAUSS(q,.063,.014):0;
+   const recovery=-block.late[i]*.34*GAUSS(q,.26,.049);
+   out[lead]=p+early+late+septal+recovery;
+  });
+  return limb(out);
+ }
  const out=Object.fromEntries(leads.map(l=>[l,0]));
  if(mode==="vf"){
   // Continuous, irregular, nonperiodic-looking fibrillatory activity.
@@ -141,6 +165,15 @@ function state(seconds,bpm,mode="sinus"){
  if(mode==="sinus"){
   const a=root.MedicActivation?.at(phase);
   return {mode,phase,stage:a?.stage.id||"sa",progress:a?.progress||0,atrium:"sinus",seconds,atrialActive:["sa","atria"].includes(a?.stage.id)};
+ }
+ const block=branchBlocks[mode];
+ if(block){
+  const t=phase*60/bpm;
+  const phases=[["sa",0,.012],["atria",.012,.105],["av",.105,.135],["his",.135,.153],
+   ["bundles",.153,bbbPR],["ventricles",bbbPR,bbbPR+bbbQrs],["recovery",bbbPR+bbbQrs,.52]];
+  const [stage,start,end]=phases.find(([,from,to])=>t>=from&&t<to)||["rest",0,1];
+  return {mode,phase,seconds,stage,progress:stage==="rest"?0:(t-start)/(end-start),origin:"sinus",
+   atrialActive:t<.105,atrialProgress:Math.max(0,(t-.012)/.093),blockedBranch:block.side};
  }
  const seq=schedule(mode,bpm);
  let atrial=null,vent=null;

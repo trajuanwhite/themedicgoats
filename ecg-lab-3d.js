@@ -80,7 +80,7 @@ function tissueWave(current,mode,stage,progress,isSinus){
  const show=true;
  const t=clamp(progress),atrial=mode==="sinus"?stage==="atria":Boolean(current?.atrialActive);
  const a=mode==="sinus"?t:clamp(current?.atrialProgress||0);
- const organized=["sinus","av1","mobitz1","mobitz2","av3","wpw"].includes(mode);
+ const organized=["sinus","av1","mobitz1","mobitz2","av3","wpw","rbbb","lbbb"].includes(mode);
  const atrialShow=show&&organized&&atrial;
  const radius=16+230*a;
  visible(muscle.atrium,atrialShow);
@@ -90,21 +90,24 @@ function tissueWave(current,mode,stage,progress,isSinus){
  // Depolarization is not a repeat of the bundle-branch animation:
  // initial septal muscle activation crosses from LV side toward RV side.
  const normal=show&&!["vt","pvt","vf","av3"].includes(mode)&&stage==="ventricles";
+ const blocked=current?.blockedBranch;
  const septal=normal&&t<.26;
  visible(muscle.septum,septal);
  if(septal){
-  const x=263-20*clamp(t/.26);
-  muscle.septum.setAttribute("d","M265 299 Q"+x.toFixed(1)+" 305 "+(x-5).toFixed(1)+" 310");
+  const direction=blocked==="left"?1:-1;
+  const x=263+direction*20*clamp(t/.26);
+  muscle.septum.setAttribute("d","M265 299 Q"+x.toFixed(1)+" 305 "+(x+direction*5).toFixed(1)+" 310");
  }
- // Approximate apex-first free-wall activation, moving upward from endocardium.
- const wall=normal?clamp((t-.19)/.81):0;
- const top=421-179*wall;
- for(const el of [muscle.rvFill,muscle.lvFill]){
-  el.setAttribute("y",String(top));
-  el.setAttribute("height",String(421-top));
-  visible(el,wall>0);
- }
- for(const [front,edgeX,endX] of [[muscle.rvFront,130,260],[muscle.lvFront,264,383]]){
+ // The blocked ventricle activates later through ventricular muscle.
+ for(const [side,fill,front,edgeX,endX] of [
+  ["right",muscle.rvFill,muscle.rvFront,130,260],["left",muscle.lvFill,muscle.lvFront,264,383]
+ ]){
+  const onset=blocked===side?.49:blocked?.06:.19;
+  const wall=normal?clamp((t-onset)/(1-onset)):0;
+  const top=421-179*wall;
+  fill.setAttribute("y",String(top));
+  fill.setAttribute("height",String(421-top));
+  visible(fill,wall>0);
   visible(front,wall>.04&&wall<.97);
   const y=top+3;
   front.setAttribute("d","M"+edgeX+" "+y.toFixed(1)+" Q"+((edgeX+endX)/2)+" "+(y-20).toFixed(1)+" "+endX+" "+(y+4).toFixed(1));
@@ -129,7 +132,11 @@ function paint(phase){
  const stage=typeof timing?.stage==="object"?timing.stage.id:(timing?.stage||"sa");
  const t=timing?.progress||0,seconds=current?.seconds||0;
  const isSinus=mode==="sinus";
- const sinusAtrial=["sinus","av1","mobitz1","mobitz2","av3","wpw"].includes(mode);
+ const blocked=current?.blockedBranch;
+ const rightBlocked=blocked==="right",leftBlocked=blocked==="left";
+ paths[3].classList.toggle("blocked-bundle",rightBlocked);
+ paths[4].classList.toggle("blocked-bundle",leftBlocked);
+ const sinusAtrial=["sinus","av1","mobitz1","mobitz2","av3","wpw","rbbb","lbbb"].includes(mode);
  const isVentricular=["vt","pvt","vf","av3"].includes(mode);
  const unorganizedVF=mode==="vf";
  tissueWave(current,mode,stage,t,isSinus);
@@ -219,12 +226,12 @@ function paint(phase){
   }else if(!isVentricular){
    if(stage==="av")progressValues[0]=progressValues[1]=sinusAtrial?1:0;
    if(stage==="his")progressValues[2]=t;
-   if(stage==="bundles"){progressValues[2]=1;progressValues[3]=progressValues[4]=t;}
+   if(stage==="bundles"){progressValues[2]=1;progressValues[3]=rightBlocked?0:t;progressValues[4]=leftBlocked?0:t;}
    if(stage==="ventricles"){
     progressValues[2]=1;
-    progressValues[3]=progressValues[4]=1;
-    for(let i=5;i<mediumEnd;i++)progressValues[i]=Math.min(1,t*1.6);
-    for(let i=fineStart;i<ids.length;i++)progressValues[i]=Math.max(0,Math.min(1,(t-.22)/.78));
+    progressValues[3]=rightBlocked?0:1;progressValues[4]=leftBlocked?0:1;
+    for(let i=5;i<mediumEnd;i++)progressValues[i]=(i<8?rightBlocked:leftBlocked)?0:Math.min(1,t*1.6);
+    for(let i=fineStart;i<ids.length;i++)progressValues[i]=(i<14?rightBlocked:leftBlocked)?0:clamp((t-.22)/.78);
    }
   }
  }
@@ -241,9 +248,10 @@ function paint(phase){
  }
  if(!isVentricular&&stage==="av"&&!(mode==="afib"||mode==="flutter"))marker(0,0,1);
  if(!isVentricular&&stage==="his")marker(2,0,t);
- else if(!isVentricular&&stage==="bundles"){marker(3,0,t);marker(4,1,t);}
+ else if(!isVentricular&&stage==="bundles"){if(!rightBlocked)marker(3,0,t);if(!leftBlocked)marker(4,1,t);}
  else if(!isVentricular&&stage==="ventricles"){
-  marker(5,0,t);marker(7,1,t);marker(8,2,t);marker(10,3,t);
+  if(!rightBlocked){marker(5,0,t);marker(7,1,t);}
+  if(!leftBlocked){marker(8,2,t);marker(10,3,t);}
  }
 }
 let handle;
