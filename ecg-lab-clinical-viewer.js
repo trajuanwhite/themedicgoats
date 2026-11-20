@@ -6,10 +6,18 @@ const host=$("reference-ecg");if(!host)return;
 const svgNS="http://www.w3.org/2000/svg";
 const el=t=>document.createElementNS(svgNS,t);
 const grid=$("reference-leads");
-const paths={};
+const paths={},leadButtons={};
 const printOrder=["I","aVR","V1","V4","II","aVL","V2","V5","III","aVF","V3","V6"];
 printOrder.forEach(lead=>{
- const cell=document.createElement("div");cell.className="reference-cell";
+ const cell=document.createElement("button");cell.className="reference-cell";
+ cell.type="button";
+ cell.setAttribute("aria-label","Show lead "+lead+" in the full-width rhythm strip");
+ cell.setAttribute("aria-pressed",String(lead==="II"));
+ cell.addEventListener("click",()=>{
+  rhythmSelect.value=lead;
+  updateRhythmLead();
+ });
+ leadButtons[lead]=cell;
  const heading=document.createElement("strong");heading.textContent="Lead "+lead;cell.appendChild(heading);
  const svg=el("svg");svg.setAttribute("viewBox","0 0 420 116");svg.setAttribute("role","img");svg.setAttribute("aria-label","Loaded lead "+lead+" waveform");
  const baseline=el("line");baseline.setAttribute("x1","0");baseline.setAttribute("x2","420");baseline.setAttribute("y1","58");baseline.setAttribute("y2","58");baseline.setAttribute("stroke","#dfbcb9");baseline.setAttribute("stroke-width","1");svg.appendChild(baseline);
@@ -142,8 +150,12 @@ position.addEventListener("input",()=>{
  if(frame)startedAt=performance.now()-Number(position.value)*1000;
  renderPosition(true);
 });
-rhythmSelect.addEventListener("change",()=>{
+function updateRhythmLead(){
+ for(const lead of L){
+  leadButtons[lead].setAttribute("aria-pressed",String(lead===rhythmSelect.value));
+ }
  renderRhythm();
  if(recording)window.MedicECGPrint?.render(recording);
-});
+}
+rhythmSelect.addEventListener("change",updateRhythmLead);
 })();
