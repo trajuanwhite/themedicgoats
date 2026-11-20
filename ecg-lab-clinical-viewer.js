@@ -61,11 +61,8 @@ function validate(obj){
  }
  return {source, hz,seconds,waveforms,validated:source.validatedForTeaching===true,synthetic:obj.kind==="synthetic-demo"};
 }
-const position=$("reference-position"), play=$("reference-play");
 let frame=0, startedAt=0, lastWindow=-1;
-function renderPosition(){
- if(!recording)return;
- const elapsed=Number(position.value);
+function renderPosition(elapsed){
  const seconds=Math.min(2,stripSeconds);
  const samples=Math.floor(seconds*recording.hz);
  const interval=Math.min(Math.floor(elapsed/seconds)*seconds,stripSeconds-seconds);
@@ -85,7 +82,6 @@ function renderPosition(){
  }
  const x=String(elapsed/stripSeconds*960);
  cursor.setAttribute("x1",x);cursor.setAttribute("x2",x);
- $("reference-time").textContent=elapsed.toFixed(1)+" / "+stripSeconds.toFixed(1)+" s";
 }
 function renderRhythm(){
  const label=rhythmLead;
@@ -102,53 +98,26 @@ function renderRhythm(){
  rhythmPath.setAttribute("d",points.join(" "));
  rhythmSvg.setAttribute("aria-label","Lead "+label+" recording with playback cursor");
 }
-function pause(){
- cancelAnimationFrame(frame);
- frame=0;
- play.textContent="Play";
-}
 function tick(now){
- const elapsed=Math.min(stripSeconds,(now-startedAt)/1000);
- position.value=String(elapsed);
- if(elapsed>=stripSeconds){
-  pause();
-  renderPosition();
-  return;
- }
- renderPosition();
+ const elapsed=Math.max(0,(now-startedAt)/1000)%stripSeconds;
+ renderPosition(elapsed);
  frame=requestAnimationFrame(tick);
 }
 function applyRecording(raw){
  const result=validate(raw);
- pause();
+ cancelAnimationFrame(frame);
  recording=result;
  stripSeconds=Math.min(6,recording.seconds);
  for(const svg of Object.values(leadSvgs))window.MedicECGPaperGrid(svg,420,Math.min(2,stripSeconds));
  window.MedicECGPaperGrid(rhythmSvg,960,stripSeconds);
  lastWindow=-1;
- position.max=String(stripSeconds);
- position.value="0";
- position.disabled=play.disabled=false;
  cursor.removeAttribute("visibility");
  renderRhythm();
- renderPosition();
+ renderPosition(0);
+ startedAt=performance.now();
+ frame=requestAnimationFrame(tick);
 }
 window.MedicECGReference.loadObject=applyRecording;
-play.addEventListener("click",()=>{
- if(frame){
-  pause();
-  renderPosition();
-  return;
- }
- if(Number(position.value)>=stripSeconds)position.value="0";
- startedAt=performance.now()-Number(position.value)*1000;
- play.textContent="Pause";
- frame=requestAnimationFrame(tick);
-});
-position.addEventListener("input",()=>{
- if(frame)startedAt=performance.now()-Number(position.value)*1000;
- renderPosition();
-});
 function updateRhythmLead(){
  for(const lead of L){
   leadButtons[lead].setAttribute("aria-pressed",String(lead===rhythmLead));
