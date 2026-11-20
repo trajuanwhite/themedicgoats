@@ -118,7 +118,6 @@ function applyRecording(raw){
  position.value="0";
  position.disabled=play.disabled=restart.disabled=false;
  cursor.removeAttribute("visibility");
- $("reference-metadata").textContent=result.source.dataset+" • Record "+result.source.recordId+" • "+recording.hz+" Hz • "+recording.seconds+" s • "+result.source.license+" • "+result.source.citation;
  renderRhythm();
  renderPosition(true);
 }
