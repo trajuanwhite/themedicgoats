@@ -24,6 +24,7 @@
  function windowSeconds(){return mode()==="sinus"?cycles*60/window.MedicLabAPI.getBpm():10;}
  function valueFor(x){return window.MedicRhythm.sample(x*windowSeconds(),window.MedicLabAPI.getBpm(),mode())[select.value]}
  function draw(){
+   window.MedicECGPaperGrid(svg,W,windowSeconds());
    const lines=[];
    for(let i=0;i<=W;i++){
      const v=valueFor(i/W);

@@ -6,7 +6,7 @@ const host=$("reference-ecg");if(!host)return;
 const svgNS="http://www.w3.org/2000/svg";
 const el=t=>document.createElementNS(svgNS,t);
 const grid=$("reference-leads");
-const paths={},leadButtons={};
+const paths={},leadButtons={},leadSvgs={};
 const printOrder=["I","aVR","V1","V4","II","aVL","V2","V5","III","aVF","V3","V6"];
 printOrder.forEach(lead=>{
  const cell=document.createElement("button");cell.className="reference-cell";
@@ -22,6 +22,7 @@ printOrder.forEach(lead=>{
  const svg=el("svg");svg.setAttribute("viewBox","0 0 420 116");svg.setAttribute("role","img");svg.setAttribute("aria-label","Loaded lead "+lead+" waveform");
  const baseline=el("line");baseline.setAttribute("x1","0");baseline.setAttribute("x2","420");baseline.setAttribute("y1","58");baseline.setAttribute("y2","58");baseline.setAttribute("stroke","#dfbcb9");baseline.setAttribute("stroke-width","1");svg.appendChild(baseline);
  const path=el("path");path.setAttribute("fill","none");path.setAttribute("stroke","#6b3630");path.setAttribute("stroke-width","1.6");path.setAttribute("stroke-linejoin","round");svg.appendChild(path);
+ leadSvgs[lead]=svg;
  paths[lead]=path;cell.appendChild(svg);grid.appendChild(cell);
 });
 const rhythmSelect=$("reference-rhythm-lead"),rhythmHost=$("reference-rhythm-strips");
@@ -74,7 +75,7 @@ function renderPosition(updatePrint=false){
    const arr=recording.waveforms[lead];
    const points=[];
    for(let i=0;i<samples;i++){
-    const x=i/Math.max(1,samples-1)*420;
+    const x=i/recording.hz/seconds*420;
     const y=58-arr[index+i]*25;
     points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
    }
@@ -94,7 +95,7 @@ function renderRhythm(){
  const arr=recording.waveforms[label];
  const points=[],stride=Math.max(1,Math.ceil(arr.length/3000));
  for(let i=0;i<arr.length;i+=stride){
-  const x=i/Math.max(1,arr.length-1)*960;
+  const x=i/recording.hz/recording.seconds*960;
   const y=44-arr[i]*25;
   points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
  }
@@ -121,6 +122,8 @@ function applyRecording(raw){
  const result=validate(raw);
  pause();
  recording=result;
+ for(const svg of Object.values(leadSvgs))window.MedicECGPaperGrid(svg,420,Math.min(2,recording.seconds));
+ window.MedicECGPaperGrid(rhythmSvg,960,recording.seconds);
  lastWindow=-1;
  position.max=String(recording.seconds);
  position.value="0";

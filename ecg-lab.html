@@ -9,6 +9,8 @@
 #reference-leads button{padding:0;font:inherit;text-align:left;cursor:pointer}
 #reference-leads button[aria-pressed="true"]{border-color:#875b39;box-shadow:inset 0 0 0 1px #875b39}
 #reference-leads button:focus-visible{outline:2px solid #3175a5;outline-offset:-2px}
+.lead-cell svg,.reference-cell svg,.rhythm-strip svg,.focus-ecg{background-image:none}
+.lead-cell svg,.rhythm-strip svg{height:auto}
 .conduction-stage{display:grid;margin-block:1em}
 .conduction-stage>.lab-sub{grid-area:1/1;margin:0;overflow-wrap:anywhere}
 .conduction-stage>[aria-hidden="true"]{visibility:hidden;pointer-events:none}
@@ -40,7 +42,7 @@
 
 <div class="controls"><label for="rate"><span id="rate-label">Rate</span> <output id="rate-value">75 bpm</output></label><input id="rate" type="range" min="45" max="180" step="1" value="75"></div>
 </section>
-<section class="lab-panel"><h2>12-lead ECG view</h2><small>Standard 3 × 4 lead order</small><div class="ecg-layout-scroll" role="region" aria-label="Standard three-row four-column ECG layout; scroll sideways on small screens" tabindex="0"><div id="lead-grid" class="lead-grid" aria-label="Twelve synchronized ECG leads"></div></div><p class="focus-meta">Standard 3 × 4 arrangement matching the clinical 12-lead printout. On narrow screens, swipe sideways to see every column.</p><div class="rhythm-section"><div class="rhythm-selector"><h3>Continuous rhythm strip</h3><label for="rhythm-lead">Rhythm lead <select id="rhythm-lead" aria-label="Choose rhythm strip lead"></select></label></div><p>Ten-second rhythm display • synchronized to playback</p><div class="rhythm-scroll" role="region" aria-label="Selected continuous rhythm strip" tabindex="0"><div id="rhythm-strips"></div></div></div>
+<section class="lab-panel"><h2>12-lead ECG view</h2><small>Standard 3 × 4 lead order · 25 mm/s</small><div class="ecg-layout-scroll" role="region" aria-label="Standard three-row four-column ECG layout; scroll sideways on small screens" tabindex="0"><div id="lead-grid" class="lead-grid" aria-label="Twelve synchronized ECG leads"></div></div><p class="focus-meta">Standard 3 × 4 arrangement matching the clinical 12-lead printout. On narrow screens, swipe sideways to see every column.</p><div class="rhythm-section"><div class="rhythm-selector"><h3>Continuous rhythm strip</h3><label for="rhythm-lead">Rhythm lead <select id="rhythm-lead" aria-label="Choose rhythm strip lead"></select></label></div><p>Ten-second rhythm display • synchronized to playback</p><div class="rhythm-scroll" role="region" aria-label="Selected continuous rhythm strip" tabindex="0"><div id="rhythm-strips"></div></div></div>
 
 </section>
 <section class="lab-panel territory-panel" id="territory-guide"><h2>12-lead territory study</h2><p class="lab-sub">Highlight lead groups across the simulated and reference 3 × 4 ECG displays. Learn the viewing territories without treating this schematic as an artery diagnosis.</p><div class="territory-controls"><label for="territory-select"><strong>Show territory</strong></label><select id="territory-select" aria-label="Select ECG anatomical lead group"></select><output id="territory-current" aria-live="polite"></output></div><p id="territory-explain" class="territory-explain"></p><small>Lead-territory groupings are teaching conventions; injury patterns, reciprocal changes, coronary dominance, conduction abnormalities and the patient context affect interpretation.</small></section>
@@ -115,14 +117,15 @@
   </div>
  </div>
 </div></section>
-<section class="lab-panel reference-panel" id="reference-ecg"><h2>12-lead ECG Simulator</h2>
+<section class="lab-panel reference-panel" id="reference-ecg"><h2>12-lead ECG Simulator</h2><p class="lab-sub">25 mm/s grid · Small box = 0.04 s · Large box = 0.20 s</p>
 <div class="library-selector"><label for="library-record"><strong>Clinical ECG library</strong></label><select id="library-record" disabled><option value="">Choose a recording</option></select><p id="library-status" role="status">Loading recordings…</p></div>
 <div class="reference-actions"><button id="reference-play" type="button" disabled>Play</button><button id="reference-restart" type="button" disabled>Restart</button></div>
 <div class="reference-scroll"><label for="reference-position">Playback position</label><input id="reference-position" type="range" min="0" max="0" step="any" value="0" disabled><output id="reference-time" aria-live="off">0.0 s</output></div>
 <div class="ecg-layout-scroll" role="region" aria-label="Clinical ECG 3 by 4 lead layout; scroll sideways on small screens" tabindex="0"><div id="reference-leads" class="reference-grid" aria-label="Separate viewer for loaded clinical ECG waveforms"></div></div>
-<div class="rhythm-section"><div class="rhythm-selector"><h3>Full-width clinical rhythm strip</h3><label for="reference-rhythm-lead">Rhythm lead <select id="reference-rhythm-lead" aria-label="Choose imported ECG rhythm strip lead"></select></label></div><p>Original waveform with playback cursor</p><div class="rhythm-scroll" role="region" aria-label="Selected clinical ECG rhythm strip" tabindex="0"><div id="reference-rhythm-strips"></div></div></div><div class="paper-controls"><div class="paper-controls-row"><label for="paper-speed">Paper speed <select id="paper-speed"><option value="25" selected>25 mm/s</option><option value="50">50 mm/s</option></select></label><label for="paper-gain">Gain <select id="paper-gain"><option value="5">5 mm/mV</option><option value="10" selected>10 mm/mV</option><option value="20">20 mm/mV</option></select></label><button type="button" id="paper-print">Print ECG reference</button></div><p id="paper-summary">Load a clinical recording to enable paper preview</p><p class="focus-meta">Paper-size scaling applies to the printed 250 mm wide ECG layout. On-screen resizing is not physically calibrated.</p></div><div class="paper-preview" aria-label="Preview of calibrated reference paper ECG"><div id="ecg-print-area"></div></div></section>
+<div class="rhythm-section"><div class="rhythm-selector"><h3>Full-width clinical rhythm strip</h3><label for="reference-rhythm-lead">Rhythm lead <select id="reference-rhythm-lead" aria-label="Choose imported ECG rhythm strip lead"></select></label></div><p>Original waveform with playback cursor</p><div class="rhythm-scroll" role="region" aria-label="Selected clinical ECG rhythm strip" tabindex="0"><div id="reference-rhythm-strips"></div></div></div><div class="paper-controls"><div class="paper-controls-row"><strong>25 mm/s</strong><label for="paper-gain">Gain <select id="paper-gain"><option value="5">5 mm/mV</option><option value="10" selected>10 mm/mV</option><option value="20">20 mm/mV</option></select></label><button type="button" id="paper-print">Print ECG reference</button></div><p id="paper-summary">Load a clinical recording to enable paper preview</p><p class="focus-meta">On-screen box timing stays accurate as the display resizes. Print at 100% for physical paper dimensions.</p></div><div class="paper-preview" aria-label="Preview of calibrated reference paper ECG"><div id="ecg-print-area"></div></div></section>
 <section class="lab-panel" style="grid-column:1/-1"><h2>What we're building next</h2><div class="roadmap"><article><h3>Validated clinical library</h3><p>Compare simulation output with de-identified, quality-reviewed clinical ECG recordings.</p></article><article><h3>Physiological forward model</h3><p>Replace simple dipole approximations with a validated activation and body-surface potential model.</p></article><article><h3>Higher-fidelity anatomy</h3><p>Use properly sourced anatomical geometry with measured activation timing.</p></article></div></section></div>
 </main><footer><div class="medic-footer-info"><strong>THE MEDIC GOATS</strong><span>Teaching While Learning • Educational practice only</span><span>ECG recordings: <a href="https://physionet.org/content/ptb-xl/1.0.3/">PTB‑XL v1.0.3, Wagner et al.</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span></div></footer>
+<script src="/ecg-lab-paper-grid.js?v=1"></script>
 <script src="/ecg-lab-engine.js?v=2"></script>
 <script src="/ecg-lab-activation.js?v=5"></script>
 <script src="/ecg-lab-rhythms.js?v=4"></script>
@@ -138,6 +141,7 @@
   const cell=document.createElement("div");cell.className="lead-cell";
   const heading=document.createElement("header");heading.textContent="Lead "+label;cell.appendChild(heading);
   const svg=elt("svg");svg.setAttribute("viewBox","0 0 360 87");svg.setAttribute("role","img");svg.setAttribute("aria-label","Lead "+label+" waveform");
+  window.MedicECGPaperGrid(svg,360,2.5);
   const path=elt("path");svg.appendChild(path);leadPaths.push({label,path});
   const cursor=elt("line");cursor.setAttribute("y1","0");cursor.setAttribute("y2","87");svg.appendChild(cursor);cursors.push(cursor);
   cell.appendChild(svg);grid.appendChild(cell);
@@ -149,6 +153,7 @@
  const rhythmCell=document.createElement("div");rhythmCell.className="rhythm-strip";
  const rhythmHeading=document.createElement("strong");rhythmHeading.textContent="Lead II";rhythmCell.appendChild(rhythmHeading);
  const rhythmSvg=elt("svg");rhythmSvg.setAttribute("viewBox","0 0 960 88");rhythmSvg.setAttribute("role","img");rhythmSvg.setAttribute("aria-label","Continuous lead II rhythm strip");
+ window.MedicECGPaperGrid(rhythmSvg,rhythmWidth,rhythmSeconds);
  const rhythmTrace=elt("path");rhythmSvg.appendChild(rhythmTrace);
  const rhythmCursor=elt("line");rhythmCursor.setAttribute("y1","0");rhythmCursor.setAttribute("y2","88");rhythmSvg.appendChild(rhythmCursor);
  rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
@@ -251,6 +256,7 @@
   return Math.max(4,Math.min(48,MINI_BASELINE-signal*20));
  }
  function redrawMiniECG(){
+  window.MedicECGPaperGrid(miniTrace.ownerSVGElement,MINI_WIDTH,60/bpm);
   const points=[];
   for(let x=0;x<=MINI_WIDTH;x++){
    points.push((x?"L":"M")+x+" "+miniY(x/MINI_WIDTH).toFixed(2));
@@ -323,11 +329,11 @@
 </script>
 <script src="/ecg-lab-activation-ui.js?v=6"></script>
 <script src="/ecg-lab-action-potentials.js?v=3"></script>
-<script src="/ecg-lab-tools.js?v=4"></script>
+<script src="/ecg-lab-tools.js?v=5"></script>
 <script src="/ecg-lab-electrodes.js?v=6"></script>
 <script src="/ecg-lab-axis.js?v=4"></script>
-<script src="/ecg-lab-print.js?v=3"></script>
-<script src="/ecg-lab-clinical-viewer.js?v=15"></script>
+<script src="/ecg-lab-print.js?v=4"></script>
+<script src="/ecg-lab-clinical-viewer.js?v=16"></script>
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
 <script src="/ecg-lab-library.js?v=2"></script>

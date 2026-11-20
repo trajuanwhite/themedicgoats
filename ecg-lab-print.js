@@ -13,7 +13,7 @@ function trace(svg,record,lead,x,y,start,duration,width,speed,gain){
  svg.append(attr(el("path"),{d,fill:"none",stroke:"#241e1d","stroke-width":"1.5","stroke-linecap":"round"}));
 }
 function render(record){
- root.replaceChildren();const speed=Number($("paper-speed").value),gain=Number($("paper-gain").value);
+ root.replaceChildren();const speed=25,gain=Number($("paper-gain").value);
  const svg=attr(el("svg"),{viewBox:"0 0 1000 590",width:"250mm",height:"147.5mm",role:"img","aria-label":"Physically scaled ECG reference printout"});
  const defs=el("defs"),minor=attr(el("pattern"),{id:"mg-grid-minor",width:"4",height:"4",patternUnits:"userSpaceOnUse"});
  minor.append(attr(el("path"),{d:"M4 0 H0 V4",fill:"none",stroke:"#efd5da","stroke-width":"0.6"}));defs.append(minor);
@@ -41,6 +41,6 @@ function render(record){
  $("paper-summary").textContent=speed+" mm/s · "+gain+" mm/mV · "+segmentDuration.toFixed(2)+" sec/column · "+(250/speed).toFixed(1)+" sec rhythm strip";
 }
 window.MedicECGPrint={render};
-for(const id of ["paper-speed","paper-gain"])$(id).addEventListener("change",()=>{const r=window.MedicECGReference?.getRecording();if(r)render(r)});
+$("paper-gain").addEventListener("change",()=>{const r=window.MedicECGReference?.getRecording();if(r)render(r)});
 $("paper-print").addEventListener("click",()=>{const r=window.MedicECGReference?.getRecording();if(!r)return;render(r);window.print()});
 })();
