@@ -48,34 +48,47 @@ const axisGuide=el("line");
 for(const [key,value] of Object.entries({x1:159,y1:302,x2:255,y2:302,stroke:"#d7c1a9","stroke-width":1.1,"stroke-dasharray":"3 4"}))axisGuide.setAttribute(key,value);
 const verticalGuide=el("line");
 for(const [key,value] of Object.entries({x1:207,y1:254,x2:207,y2:350,stroke:"#d7c1a9","stroke-width":1.1,"stroke-dasharray":"3 4"}))verticalGuide.setAttribute(key,value);
-const arrowShaft=el("line");
-arrowShaft.setAttribute("stroke","#9d572e");
-arrowShaft.setAttribute("stroke-width","4.3");
-arrowShaft.setAttribute("stroke-linecap","round");
-const arrowHead=el("path");
-arrowHead.setAttribute("fill","none");
-arrowHead.setAttribute("stroke","#9d572e");
-arrowHead.setAttribute("stroke-width","4.3");
-arrowHead.setAttribute("stroke-linejoin","round");
-arrowHead.setAttribute("stroke-linecap","round");
-const origin=el("circle");origin.setAttribute("cx",207);origin.setAttribute("cy",302);origin.setAttribute("r",4);origin.setAttribute("fill","#9d572e");
+// Two parallel, opposing arrows distinguish positive polarity from the direction
+// a lead views the heart from. The blue arrow travels from the positive electrode
+// toward the heart; the orange arrow points toward increasing positive voltage.
+function makeArrow(color,width){
+ const shaft=el("line");
+ shaft.setAttribute("stroke",color);shaft.setAttribute("stroke-width",String(width));shaft.setAttribute("stroke-linecap","round");
+ const head=el("path");
+ head.setAttribute("fill","none");head.setAttribute("stroke",color);
+ head.setAttribute("stroke-width",String(width));head.setAttribute("stroke-linejoin","round");head.setAttribute("stroke-linecap","round");
+ return {shaft,head};
+}
+const positiveArrow=makeArrow("#a45e30",3.8);
+const viewingArrow=makeArrow("#237eae",3.8);
+const origin=el("circle");origin.setAttribute("cx",207);origin.setAttribute("cy",302);origin.setAttribute("r",3);origin.setAttribute("fill","#725746");
 const axisCaption=el("text");axisCaption.setAttribute("x",207);axisCaption.setAttribute("y",247);axisCaption.setAttribute("text-anchor","middle");axisCaption.setAttribute("font-size","11");axisCaption.setAttribute("font-weight","750");axisCaption.setAttribute("fill","#785039");
-axesLayer.append(axesRing,axisGuide,verticalGuide,arrowShaft,arrowHead,origin,axisCaption);
+axesLayer.append(axesRing,axisGuide,verticalGuide,positiveArrow.shaft,positiveArrow.head,viewingArrow.shaft,viewingArrow.head,origin,axisCaption);
 svg.append(axesLayer);
+const legend=document.createElement("div");
+legend.className="lead-direction-legend";
+legend.style.cssText="display:flex;flex-wrap:wrap;gap:8px 16px;padding:8px 13px;background:#fffaf4;color:#624a37;font-size:12px;line-height:1.4";
+legend.innerHTML='<span><span style="color:#a45e30;font-weight:850">↓</span> <strong style="color:#a45e30">Orange:</strong> positive electrical axis</span><span><span style="color:#237eae;font-weight:850">↑</span> <strong style="color:#237eae">Blue:</strong> view from electrode toward heart</span>';
+svg.insertAdjacentElement("afterend",legend);
+function drawVector(arrow,from,to,vx,vy,offset){
+ const px=-vy,py=vx;
+ const startX=207+from*vx+offset*px,startY=302+from*vy+offset*py;
+ const endX=207+to*vx+offset*px,endY=302+to*vy+offset*py;
+ arrow.shaft.setAttribute("x1",startX.toFixed(1));arrow.shaft.setAttribute("y1",startY.toFixed(1));
+ arrow.shaft.setAttribute("x2",endX.toFixed(1));arrow.shaft.setAttribute("y2",endY.toFixed(1));
+ const dx=endX-startX,dy=endY-startY,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len;
+ const bx=endX-9*ux,by=endY-9*uy;
+ arrow.head.setAttribute("d",`M ${(bx-5*uy).toFixed(1)} ${(by+5*ux).toFixed(1)} L ${endX.toFixed(1)} ${endY.toFixed(1)} L ${(bx+5*uy).toFixed(1)} ${(by-5*ux).toFixed(1)}`);
+}
 function showLeadAxis(lead){
- if(!(lead in limbAxes)){axesLayer.setAttribute("display","none");return;}
- axesLayer.removeAttribute("display");
+ if(!(lead in limbAxes)){axesLayer.setAttribute("display","none");legend.hidden=true;return;}
+ axesLayer.removeAttribute("display");legend.hidden=false;
  const degrees=limbAxes[lead],radians=degrees*Math.PI/180;
  const vx=Math.cos(radians),vy=Math.sin(radians);
- const endX=207+41*vx,endY=302+41*vy;
- arrowShaft.setAttribute("x1",(207-15*vx).toFixed(1));
- arrowShaft.setAttribute("y1",(302-15*vy).toFixed(1));
- arrowShaft.setAttribute("x2",endX.toFixed(1));arrowShaft.setAttribute("y2",endY.toFixed(1));
- const backX=endX-10*vx,backY=endY-10*vy,perpX=-vy,perpY=vx;
- arrowHead.setAttribute("d",`M ${(backX+6*perpX).toFixed(1)} ${(backY+6*perpY).toFixed(1)} L ${endX.toFixed(1)} ${endY.toFixed(1)} L ${(backX-6*perpX).toFixed(1)} ${(backY-6*perpY).toFixed(1)}`);
+ drawVector(positiveArrow,5,43,vx,vy,-9);
+ drawVector(viewingArrow,43,5,vx,vy,9);
  axisCaption.textContent="Lead "+lead+" · "+(degrees>0?"+":"")+degrees+"°";
 }
-
 positions.forEach(p=>{
  const g=el("g");g.setAttribute("class","electrode-point");g.setAttribute("role","button");g.setAttribute("tabindex","0");g.setAttribute("aria-label","Select "+p.id+" electrode");
  const halo=el("circle");halo.setAttribute("cx",p.x);halo.setAttribute("cy",p.y);halo.setAttribute("r",20);halo.setAttribute("class","electrode-halo");g.append(halo);
@@ -95,7 +108,7 @@ function selectLead(name){
  select.value=name;mark(entry.highlight);showLeadAxis(name);
  $("electrode-selection").textContent="Lead "+name+" • "+entry.description;
  $("electrode-formula").textContent=entry.formula;
- $("electrode-detail").textContent="Blue markers show electrodes used in the lead equation. "+(name in limbAxes?"The arrow shows the lead’s frontal-plane viewing direction (negative toward positive), at "+(limbAxes[name]>0?"+":"")+limbAxes[name]+"°. ":"")+"RL is the reference/ground electrode.";
+ $("electrode-detail").textContent="Blue electrode markers identify the electrodes used in the lead equation. "+(name in limbAxes?"Orange arrow: positive electrical axis at "+(limbAxes[name]>0?"+":"")+limbAxes[name]+"°, toward the positive electrode. Blue arrow: viewing direction from that electrode back toward the heart. Depolarization toward the positive electrode produces a positive deflection. ":"")+"RL is the reference/ground electrode.";
 }
 function selectElectrode(name){
  const p=positions.find(x=>x.id===name);if(!p)return;
