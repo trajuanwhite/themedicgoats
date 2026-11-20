@@ -38,6 +38,7 @@ cursor.setAttribute("visibility","hidden");
 rhythmSvg.append(rhythmPath,cursor);
 rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
 let recording=null;
+let stripSeconds=0;
 window.MedicECGReference={getRecording:()=>recording};
 function validate(obj){
  if(!obj||typeof obj!=="object"||obj.schemaVersion!=="1.0"||!["clinical-recording","synthetic-demo"].includes(obj.kind))throw Error("Expected version 1.0 clinical recording or explicitly labeled synthetic demo.");
@@ -66,9 +67,9 @@ let frame=0, startedAt=0, lastWindow=-1;
 function renderPosition(updatePrint=false){
  if(!recording)return;
  const elapsed=Number(position.value);
- const seconds=Math.min(2,recording.seconds);
+ const seconds=Math.min(2,stripSeconds);
  const samples=Math.floor(seconds*recording.hz);
- const interval=Math.min(Math.floor(elapsed/seconds)*seconds,recording.seconds-seconds);
+ const interval=Math.min(Math.floor(elapsed/seconds)*seconds,stripSeconds-seconds);
  const index=Math.round(interval*recording.hz);
  if(index!==lastWindow){
   for(const lead of L){
@@ -83,9 +84,9 @@ function renderPosition(updatePrint=false){
   }
   lastWindow=index;
  }
- const x=String(elapsed/recording.seconds*960);
+ const x=String(elapsed/stripSeconds*960);
  cursor.setAttribute("x1",x);cursor.setAttribute("x2",x);
- $("reference-time").textContent=elapsed.toFixed(1)+" / "+recording.seconds.toFixed(1)+" s";
+ $("reference-time").textContent=elapsed.toFixed(1)+" / "+stripSeconds.toFixed(1)+" s";
  if(updatePrint)window.MedicECGPrint?.render(recording);
 }
 function renderRhythm(){
@@ -93,9 +94,10 @@ function renderRhythm(){
  rhythmHeading.textContent="Lead "+label;
  if(!recording)return;
  const arr=recording.waveforms[label];
- const points=[],stride=Math.max(1,Math.ceil(arr.length/3000));
- for(let i=0;i<arr.length;i+=stride){
-  const x=i/recording.hz/recording.seconds*960;
+ const samples=Math.round(stripSeconds*recording.hz);
+ const points=[],stride=Math.max(1,Math.ceil(samples/3000));
+ for(let i=0;i<samples;i+=stride){
+  const x=i/recording.hz/stripSeconds*960;
   const y=44-arr[i]*25;
   points.push((i?"L":"M")+x.toFixed(2)+" "+y.toFixed(2));
  }
@@ -108,9 +110,9 @@ function pause(){
  play.textContent="Play";
 }
 function tick(now){
- const elapsed=Math.min(recording.seconds,(now-startedAt)/1000);
+ const elapsed=Math.min(stripSeconds,(now-startedAt)/1000);
  position.value=String(elapsed);
- if(elapsed>=recording.seconds){
+ if(elapsed>=stripSeconds){
   pause();
   renderPosition(true);
   return;
@@ -122,10 +124,11 @@ function applyRecording(raw){
  const result=validate(raw);
  pause();
  recording=result;
- for(const svg of Object.values(leadSvgs))window.MedicECGPaperGrid(svg,420,Math.min(2,recording.seconds));
- window.MedicECGPaperGrid(rhythmSvg,960,recording.seconds);
+ stripSeconds=Math.min(6,recording.seconds);
+ for(const svg of Object.values(leadSvgs))window.MedicECGPaperGrid(svg,420,Math.min(2,stripSeconds));
+ window.MedicECGPaperGrid(rhythmSvg,960,stripSeconds);
  lastWindow=-1;
- position.max=String(recording.seconds);
+ position.max=String(stripSeconds);
  position.value="0";
  position.disabled=play.disabled=restart.disabled=false;
  cursor.removeAttribute("visibility");
@@ -139,7 +142,7 @@ play.addEventListener("click",()=>{
   renderPosition(true);
   return;
  }
- if(Number(position.value)>=recording.seconds)position.value="0";
+ if(Number(position.value)>=stripSeconds)position.value="0";
  startedAt=performance.now()-Number(position.value)*1000;
  play.textContent="Pause";
  frame=requestAnimationFrame(tick);
