@@ -55,12 +55,19 @@
 <section class="lab-panel conduction-panel"><div class="conduction-header"><h2>Cardiac conduction</h2><div class="rhythm-picker"><label for="rhythm-mode">Electrical rhythm</label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Bundle branch blocks"><option value="rbbb">Right bundle branch block (RBBB)</option><option value="lbbb">Left bundle branch block (LBBB)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="pvt">Polymorphic ventricular tachycardia</option><option value="vf">Ventricular fibrillation (VFib)</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select></div></div><small id="heart-status" hidden></small>
 <div id="heart-view" class="heart-container"><p id="rhythm-explanation" class="heart-rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><div id="heart-fallback" class="heart-fallback"><p role="status">Loading the electrical conduction drawing…</p></div></div>
 
-<div class="heart-mode-control"><button id="play-btn" type="button" aria-pressed="true">Pause</button><select id="heart-labels" aria-label="Show or hide conduction labels"><option value="show" selected>Show labels</option><option value="hide">Hide labels</option></select></div>
+<div class="heart-mode-control"><button id="play-btn" type="button" aria-pressed="true">Pause</button>
+<label for="conduction-speed">Conduction speed
+ <select id="conduction-speed">
+  <option value="0.04" selected>4%</option>
+  <option value="0.08">8%</option>
+  <option value="0.16">16%</option>
+  <option value="1">100% (real time)</option>
+ </select>
+</label><select id="heart-labels" aria-label="Show or hide conduction labels"><option value="show" selected>Show labels</option><option value="hide">Hide labels</option></select></div>
 
 <div class="conduction-stage" id="conduction-stage"><p class="lab-sub" id="stage-description" aria-live="off">SA node initiates atrial activation.</p></div>
-<div class="stat-row"><button class="stat phase-step" id="phase-step" type="button" aria-label="Advance to next cardiac cycle phase" title="Tap to advance and pause at the next phase"><strong id="phase">P</strong><span>ECG PHASE</span></button><div class="stat"><strong id="bpm-readout">75</strong><span>SELECTED RATE</span></div><div class="stat"><strong>12</strong><span>DISPLAYED LEADS</span></div></div>
+<div class="stat-row"><button class="stat phase-step" id="phase-step" type="button" aria-label="Advance to next cardiac cycle phase" title="Tap to advance and pause at the next phase"><strong id="phase">P</strong><span>ECG PHASE</span></button><div class="stat"><strong id="bpm-readout">75</strong><span>RHYTHM RATE (BPM)</span></div><div class="stat"><strong>12</strong><span>DISPLAYED LEADS</span></div></div>
 
-<div class="controls"><label for="rate"><span id="rate-label">Rate</span> <output id="rate-value">75 bpm</output></label><input id="rate" type="range" min="45" max="180" step="1" value="75"></div>
 </section>
 <section class="lab-panel challenge-panel" id="lead-challenge"><h2>12-lead ECG quizzes</h2><div class="challenge-quiz-picker"><label for="challenge-quiz"><strong>Choose a quiz</strong></label><select id="challenge-quiz"><option value="territories">Lead territories</option><option value="reciprocal">Reciprocal changes</option><option value="arteries">Associated coronary arteries</option></select></div><p class="lab-sub" id="challenge-intro">Practice identifying anatomical lead groups on the same 3 × 4 layout you use in the field. Select every lead that belongs to the named group.</p><div class="challenge-head"><strong id="challenge-prompt">Select the matching leads</strong><span id="challenge-progress"></span></div><div class="challenge-grid" id="challenge-grid" aria-label="Interactive twelve lead selection grid"></div><p class="challenge-feedback" id="challenge-feedback" role="status" aria-live="polite"></p><div class="challenge-actions"><button id="challenge-check" type="button">Check answer</button><button id="challenge-next" type="button" hidden>Next question</button><button id="challenge-restart" type="button" hidden>Play again</button></div><small id="challenge-caveat">Lead patterns support ECG interpretation but cannot independently establish an infarct location or culprit artery.</small></section>
 <section class="lab-panel activation-card" id="activation-study"><h2>Electrical activation timeline</h2><p class="lab-sub">Explore the order of atrial activation, AV nodal delay, His–Purkinje conduction, ventricular depolarization, and recovery.</p><div class="activation-tools"><label for="activation-scrub">Scrub heartbeat</label><input id="activation-scrub" type="range" min="0" max="799" value="0" step="1" aria-label="Scrub through one ECG beat"><output class="activation-ms" id="activation-time">0 ms</output></div><div class="activation-track" id="activation-track" aria-hidden="true"></div><div id="activation-list" class="activation-list"></div><p class="activation-desc" id="activation-description" aria-live="off"></p>
@@ -168,8 +175,9 @@
  const $=id=>document.getElementById(id),model=window.MedicECG;if(!model)return;
 
  const descriptions=["SA node initiates atrial activation.","AV node briefly delays the electrical impulse.","The His bundle conducts toward the ventricles.","Ventricular activation corresponds to the QRS complex.","Ventricular recovery is represented by the T wave."];
- let bpm=75,playing=true,speed=.02*Math.pow(200,.13),time=0,previous=0,phaseStepAnimation=null;
+ let bpm=75,playing=true,time=0,previous=0,phaseStepAnimation=null;
  const rhythmMode=$("rhythm-mode");
+ const conductionSpeed=$("conduction-speed");
  const stageDescription=$("stage-description");
  const stageNotes={
   av:" • AV node: nonconducted P wave",
@@ -195,20 +203,13 @@
  }
  sizeStageDescription();
  rhythmMode.onchange=()=>{
-  time=0;phaseStepAnimation=null;lastCycleIndex=-1;
+  time=0;phaseStepAnimation=null;
   bpm=window.MedicRhythm.modes[rhythmMode.value].rate;
-  $("rate").min=rhythmMode.value==="av3"?"25":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"100":rhythmMode.value==="flutter"?"90":"45";
-  $("rate").max=rhythmMode.value==="av3"?"70":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"230":"180";
-  $("rate").disabled=rhythmMode.value==="vf";
-  $("rate-label").textContent=rhythmMode.value==="vf"?"No organized ventricular rate":rhythmMode.value==="av3"?"Ventricular escape rate":rhythmMode.value==="vt"||rhythmMode.value==="pvt"?"VT rate":rhythmMode.value==="flutter"?"Ventricular rate":rhythmMode.value==="mobitz1"||rhythmMode.value==="mobitz2"||rhythmMode.value==="av1"?"Atrial rate":"Rate";
-  $("rate").value=String(bpm);
-  $("rate-value").textContent=rhythmMode.value==="vf"?"Not measurable":bpm+" bpm";
   $("bpm-readout").textContent=rhythmMode.value==="vf"?"—":bpm;
   $("rhythm-explanation").textContent=window.MedicRhythm.modes[rhythmMode.value].detail;
   sizeStageDescription();
   paint();
  };
- let lastCycleIndex=-1;
  window.MedicLabAPI={seek(phase){time=Math.max(0,Math.min(.999,phase));playing=false;$("play-btn").textContent="Play";$("play-btn").setAttribute("aria-pressed","false");paint()},getBpm(){return bpm},getPhase(){return ((time%1)+1)%1}};
  window.MedicLabState={phase:0};
  function paint(){
@@ -232,7 +233,7 @@
    time=animation.from+(animation.to-animation.from)*eased;
    if(progress>=1)phaseStepAnimation=null;
   }else if(previous&&playing){
-   time+=Math.min((now-previous)/1000,.1)*bpm/60*speed;
+   time+=Math.min((now-previous)/1000,.1)*bpm/60*Number(conductionSpeed.value);
   }
   previous=now;
   paint();
@@ -257,7 +258,6 @@
    time=from;
    paint();
  };
- $("rate").oninput=e=>{bpm=+e.target.value;$("rate-value").textContent=bpm+" bpm";$("bpm-readout").textContent=bpm;window.dispatchEvent(new Event("medic-bpm-change"))};
  if(![0,.2,.5,.9].every(t=>model.checkIdentities(t)))console.error("Limb-lead identity test failed");
  paint();requestAnimationFrame(animate);
 })();
