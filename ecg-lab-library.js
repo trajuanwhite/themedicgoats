@@ -2,7 +2,18 @@
 (async function(){
  "use strict";
  const list=document.getElementById("library-record"),status=document.getElementById("library-status");
- if(!list||!status)return;
+ const picker=document.getElementById("library-picker"),choice=document.getElementById("library-choice");
+ if(!list||!status||!picker||!choice)return;
+ document.addEventListener("click",event=>{
+  if(picker.open&&!picker.contains(event.target))picker.open=false;
+ });
+ picker.addEventListener("keydown",event=>{
+  if(event.key==="Escape"&&picker.open){
+   event.preventDefault();
+   picker.open=false;
+   choice.focus();
+  }
+ });
  const safePath=p=>typeof p==="string"&&/^\/ecg-library\/records\/[a-zA-Z0-9_-]+\.json$/.test(p);
  const buttons=new Map();
  let loading=false;
@@ -65,7 +76,11 @@
    button.type="button";
    button.textContent=record.title;
    button.setAttribute("aria-pressed","false");
-   button.addEventListener("click",()=>loadSelected(record));
+   button.addEventListener("click",()=>{
+    picker.open=false;
+    choice.focus();
+    return loadSelected(record);
+   });
    buttons.set(record.id,button);
    list.appendChild(button);
   });
@@ -86,7 +101,8 @@
    loadedId=record.id;
    buttons.get(loadedId).setAttribute("aria-pressed","true");
    void showMeasurements(record);
-   status.textContent=record.title;
+   choice.textContent=record.title;
+   status.textContent="";
   }catch(e){
    status.textContent="Could not open "+record.title+".";
   }finally{

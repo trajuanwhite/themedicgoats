@@ -12,6 +12,9 @@
 .lead-cell svg,.reference-cell svg,.rhythm-strip svg,.focus-ecg{background-image:none}
 .lead-cell svg,.rhythm-strip svg{height:auto}
  .ecg-measurements{margin-top:14px;padding:12px 14px;border:1px solid #decdbb;border-radius:12px;background:#faf5ef}
+.library-picker{position:relative;width:100%}
+.library-picker summary{padding:11px 14px;border:1px solid #cbbdae;border-radius:10px;background:#fff8f0;cursor:pointer;font-weight:700;overflow-wrap:anywhere}
+.library-picker .library-grid{position:absolute;z-index:10;box-sizing:border-box;max-height:min(55vh,26rem);overflow:auto;padding:8px;background:#faf5ef;border:1px solid #cbbdae;border-radius:10px;box-shadow:0 8px 20px #39291e26}
 .library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
 .library-grid button{width:100%;min-width:0;min-height:44px;text-align:left;overflow-wrap:anywhere}
 .library-grid button[aria-pressed="true"]{background:#e9d4bf;border-color:#875b39}
@@ -126,7 +129,7 @@
  </div>
 </div></section>
 <section class="lab-panel reference-panel" id="reference-ecg"><h2>12-lead ECG Simulator</h2><p class="lab-sub">25 mm/s grid · Small box = 0.04 s · Large box = 0.20 s</p>
-<div class="library-selector"><strong id="library-heading">Clinical ECG library</strong><div id="library-record" class="library-grid" role="group" aria-labelledby="library-heading"></div><p id="library-status" role="status">Loading recordings…</p></div>
+<div class="library-selector"><strong id="library-heading">Clinical ECG library</strong><details id="library-picker" class="library-picker"><summary id="library-choice">Choose a recording</summary><div id="library-record" class="library-grid" role="group" aria-labelledby="library-heading"></div></details><p id="library-status" role="status">Loading recordings…</p></div>
 <div class="ecg-measurements" id="ecg-measurements" aria-label="Automated ECG measurements" hidden>
  <dl>
   <div><dt>QRS axis</dt><dd id="ecg-qrs-axis"></dd></div>
@@ -350,6 +353,6 @@
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
-<script src="/ecg-lab-library.js?v=6"></script>
+<script src="/ecg-lab-library.js?v=7"></script>
 <script src="/ecg-lab-3d.js?v=29"></script>
 </body></html>
