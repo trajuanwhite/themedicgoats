@@ -9,11 +9,13 @@
 *{box-sizing:border-box}
 body{margin:0;background:#f4ece1;color:var(--ink);font-family:system-ui,sans-serif;line-height:1.5}
 main{width:min(100% - 32px,850px);margin:clamp(18px,5vw,52px) auto 64px}
-.hero{position:relative;isolation:isolate;overflow:hidden;padding:clamp(22px,5vw,45px);border-radius:25px;background:#352820;color:#fff7eb}
-.hero::after{content:"";position:absolute;inset:0 0 0 42%;z-index:-1;background:repeating-linear-gradient(0deg,transparent 0 27px,#ffffff15 28px 29px),repeating-linear-gradient(90deg,transparent 0 27px,#ffffff15 28px 29px);mask-image:linear-gradient(90deg,transparent,#000);pointer-events:none}
-.hero a{color:#ffe0ac;font-weight:700;text-underline-offset:4px}
-h1{margin:24px 0 8px;font-family:Georgia,serif;font-size:clamp(3.15rem,10vw,6rem);font-weight:700;line-height:.96;letter-spacing:-.065em}
-.hero p{margin:12px 0 0;color:#f5dfca}
+ .mix-nav{padding:0 0 16px;border-bottom:1px solid var(--line)}
+.mix-nav a{color:inherit;font-weight:850;text-decoration:none}
+.intro{display:flex;align-items:end;justify-content:space-between;gap:24px;color:#17130f;margin-top:22px}
+.intro h1{font-family:Inter,system-ui,sans-serif;font-size:clamp(48px,8vw,76px);letter-spacing:-.065em;line-height:1;margin:12px 0;font-weight:700}
+.intro h1 span{color:#b38952}
+.intro p{max-width:410px;margin-bottom:4px;color:var(--muted)}
+@media(max-width:580px){.intro{display:block}.intro p{margin-top:12px}}
 h2,p{margin:0}
 .mix-card{border:1px solid var(--line);border-radius:21px;background:var(--paper);box-shadow:0 8px 22px #442b1510}
 #welcome{display:grid;grid-template-columns:.85fr 1.15fr;gap:14px;margin-top:16px}
@@ -54,9 +56,9 @@ form{gap:12px}
 </head>
 <body>
 <main>
-<header class="hero">
-<nav aria-label="Games navigation"><a href="/games">← Games</a></nav>
-<h1>Medic Mix</h1>
+<nav class="mix-nav" aria-label="Games navigation"><a href="/games">← Games</a></nav>
+<header class="intro">
+<h1>Medic Mix<span>.</span></h1>
 <p>Unscramble the medical word. The first correct guess wins.</p>
 </header>
 <div id="welcome">
