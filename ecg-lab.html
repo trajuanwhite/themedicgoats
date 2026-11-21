@@ -201,7 +201,7 @@
   window.MedicLabState.phase=phase;
   window.MedicLabState.rhythm=rhythm;
   const stage=rhythm.stage;
-  if(window.MedicLabTools)window.MedicLabTools.update(phase);if(window.MedicActivationUI&&rhythmMode.value==="sinus")window.MedicActivationUI.update(phase,bpm);
+  if(window.MedicLabTools)window.MedicLabTools.update(phase);window.MedicActivationUI?.update(phase,bpm,rhythm);
   const selectedMode=rhythmMode.value;
   const note=rhythm.blockSite?(stageNotes[rhythm.blockSite]||stageNotes.blocked):selectedMode==="wpw"&&stage==="accessory"?stageNotes.accessory:selectedMode==="vt"?stageNotes.ventricular:"";
   const description=selectedMode==="sinus"?(window.MedicActivation?.at(phase).stage.description||descriptions[0]):window.MedicRhythm.modes[selectedMode].detail+note;
@@ -246,7 +246,7 @@
  paint();requestAnimationFrame(animate);
 })();
 </script>
-<script src="/ecg-lab-activation-ui.js?v=6"></script>
+<script src="/ecg-lab-activation-ui.js?v=7"></script>
 <script src="/ecg-lab-action-potentials.js?v=3"></script>
 <script src="/ecg-lab-tools.js?v=5"></script>
 <script src="/ecg-lab-electrodes.js?v=6"></script>

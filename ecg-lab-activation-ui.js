@@ -20,30 +20,49 @@
    list.appendChild(btn);buttons.push({btn,segment});
  });
  scrub.addEventListener("input",()=>api.seek(Number(scrub.value)/data.cycleMs));
- let last=-1;
+ let last="";
+ const rhythmMode=$("rhythm-mode");
+ const rhythmDescriptions={
+  blocked:"Atrial impulse fails to conduct.",
+  accessory:"The accessory pathway activates ventricular tissue early.",
+  "ventricular-origin":"Activation starts in ventricular tissue.",
+  fibrillation:"Chaotic ventricular activity with no organized beat."
+ };
  window.MedicActivationUI={
-  update(phase,bpm){
+  update(phase,bpm,rhythm){
+    const sinus=!rhythm||rhythm.mode==="sinus";
     const current=data.at(phase);
-    scrub.value=String(Math.min(data.cycleMs-1,Math.round(current.ms)));
-    $("activation-time").textContent=Math.round(current.ms*75/bpm)+" ms";
-    const idx=data.stages.indexOf(current.stage);
-    if(idx!==last){
-      buttons.forEach((x,i)=>{const active=i===idx;x.btn.classList.toggle("active",active);x.segment.classList.toggle("active",active);x.btn.setAttribute("aria-current",String(active))});
-      $("activation-description").textContent=current.stage.label+": "+current.stage.description;
-      last=idx;
-    }
+    const stageId=sinus?current.stage.id:rhythm.stage==="rest"?"diastole":rhythm.stage;
+    const idx=data.stages.findIndex(stage=>stage.id===stageId);
+    const fibrillation=stageId==="fibrillation";
+    const elapsed=sinus?current.ms*75/bpm:phase*60000/bpm;
+    scrub.value=String(fibrillation?0:Math.min(data.cycleMs-1,Math.round(current.ms)));
+    $("activation-time").textContent=fibrillation?"No organized cycle":Math.round(elapsed)+" ms";
+    const key=(rhythm?.mode||"sinus")+":"+stageId;
+    if(key===last)return;
+    buttons.forEach((x,i)=>{
+      const active=i===idx;
+      x.btn.classList.toggle("active",active);
+      x.segment.classList.toggle("active",active);
+      x.btn.setAttribute("aria-current",String(active));
+    });
+    const stage=data.stages[idx];
+    const branch=rhythm?.blockedBranch;
+    const branchDetail=branch&&(stageId==="bundles"||stageId==="ventricles")
+      ? (branch==="right"?"Left":"Right")+" bundle conducts first. The "+branch+" ventricle activates later."
+      : null;
+    $("activation-description").textContent=stage
+      ? stage.label+": "+(branchDetail||stage.description)
+      : (rhythmDescriptions[stageId]||"");
+    last=key;
   }
  };
  function syncMode(){
-  const sinus=document.getElementById("rhythm-mode")?.value==="sinus";
-  panel.classList.toggle("activation-sinus-only",!sinus);
+  const sinus=rhythmMode.value==="sinus";
   scrub.disabled=!sinus;
   buttons.forEach(x=>x.btn.disabled=!sinus);
-  if(!sinus){
-   $("activation-description").textContent="This nine-stage timeline illustrates sinus-origin conduction only. The heart drawing and ECG above now follow the selected arrhythmia instead.";
-   $("activation-time").textContent="Rhythm-controlled";
-  }else window.MedicActivationUI.update(api.getPhase(),api.getBpm());
+  window.MedicActivationUI.update(api.getPhase(),api.getBpm(),window.MedicLabState?.rhythm);
  }
- document.getElementById("rhythm-mode")?.addEventListener("change",syncMode);
+ rhythmMode.addEventListener("change",syncMode);
  syncMode();
 })();
