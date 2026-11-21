@@ -63,11 +63,6 @@
  <p class="ap-instruction">The selected cell type now follows the electrical activation timeline automatically. Tap a phase button to jump to that point and pause for study.</p><div id="ap-phase-controls" class="ap-phase-controls" role="group" aria-label="Choose cellular action potential phase"></div><div class="action-potential-layout"><div class="ap-graph"><svg id="ap-trace" viewBox="0 0 520 260" role="img" aria-label="Action potential voltage over time with highlighted phase"><line x1="46" y1="20" x2="46" y2="225" stroke="#9d8978"/><line x1="46" y1="225" x2="495" y2="225" stroke="#9d8978"/><text x="8" y="18" font-size="12" fill="#665446">mV</text><text x="454" y="248" font-size="12" fill="#665446">Time</text><path id="ap-trace-path" fill="none" stroke="#9a6039" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle id="ap-trace-marker" cx="46" cy="205" r="7" fill="#bf7433" stroke="#fff" stroke-width="2"/></svg><p class="ap-graph-note">Cell-level membrane voltage, not the surface ECG. The cardiac conduction timeline and individual cell action potentials are different measurements.</p></div>
  <div class="ap-details"><div class="ap-phase-heading"><strong id="ap-phase-name">Phase 4 — Resting</strong><span id="ap-stage-name">Electrical rest</span></div><p id="ap-summary"></p><div class="ap-ions" id="ap-ions"></div><p id="ap-context" class="ap-context"></p></div></div>
 </div></section>
-<section class="lab-panel focus-panel" id="lead-focus-tools"><h2>Lead inspection & timing</h2><p class="lab-sub">Study an individual lead with three repeated example beats. Move the blue calipers to explore time intervals; jump to key phases to see cardiac activation at the same time.</p>
-<div class="focus-layout"><div class="focus-controls"><label for="focus-lead"><strong>Inspect</strong></label><select id="focus-lead" aria-label="Select ECG lead"></select><button id="jump-p" type="button">Show P</button><button id="jump-qrs" type="button">Show QRS</button><button id="jump-t" type="button">Show T</button></div>
-<div class="focus-ecg"><svg id="focus-svg" viewBox="0 0 960 190" role="img" aria-label="Enlarged ECG waveform with movable timing calipers"></svg></div>
-<div class="focus-calipers"><label for="marker-a">Caliper A<input id="marker-a" type="range" min="0" max="1" step=".001" value=".3"></label><label for="marker-b">Caliper B<input id="marker-b" type="range" min="0" max="1" step=".001" value=".46"></label></div>
-<div class="focus-summary" id="caliper-result">Timing interval</div><div class="focus-meta" id="lead-formula">Lead formula</div></div></section>
 <section class="lab-panel" id="electrode-guide" style="grid-column:1/-1"><h2>Electrode placement & lead derivation</h2><p class="lab-sub">A standard 12-lead ECG uses 10 electrodes. Tap an electrode to learn its placement, or select a lead to see which electrodes contribute to its voltage calculation.</p>
 <div class="electrode-layout"><div class="electrode-diagram"><svg id="electrode-map" viewBox="0 0 415 410" aria-label="Schematic front view of torso with electrode positions. Not to anatomical scale." role="group">
 <path d="M148 42 L266 42 L322 92 L344 156 L316 175 L306 327 Q205 366 108 327 L98 175 L70 156 L94 92 Z" fill="#e9cfba" stroke="#aa8c76" stroke-width="2"/>
@@ -201,7 +196,7 @@
   window.MedicLabState.phase=phase;
   window.MedicLabState.rhythm=rhythm;
   const stage=rhythm.stage;
-  if(window.MedicLabTools)window.MedicLabTools.update(phase);window.MedicActivationUI?.update(phase,bpm,rhythm);
+  window.MedicActivationUI?.update(phase,bpm,rhythm);
   const selectedMode=rhythmMode.value;
   const note=rhythm.blockSite?(stageNotes[rhythm.blockSite]||stageNotes.blocked):selectedMode==="wpw"&&stage==="accessory"?stageNotes.accessory:selectedMode==="vt"?stageNotes.ventricular:"";
   const description=selectedMode==="sinus"?(window.MedicActivation?.at(phase).stage.description||descriptions[0]):window.MedicRhythm.modes[selectedMode].detail+note;
@@ -248,7 +243,6 @@
 </script>
 <script src="/ecg-lab-activation-ui.js?v=7"></script>
 <script src="/ecg-lab-action-potentials.js?v=3"></script>
-<script src="/ecg-lab-tools.js?v=5"></script>
 <script src="/ecg-lab-electrodes.js?v=6"></script>
 <script src="/ecg-lab-axis.js?v=4"></script>
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
