@@ -7,7 +7,54 @@
   const requestedRoom = new URL(location.href).searchParams.get("room");
   if (/^\d{6}$/.test(requestedRoom || "")) $("code").value = requestedRoom;
 
-  const words = ["APNEA", "BRADYCARDIA", "CAPNOGRAPHY", "DEFIBRILLATION", "DYSPNEA", "EDEMA", "EMBOLISM", "EPINEPHRINE", "FIBRILLATION", "HEMATOMA", "HEMORRHAGE", "HYPOGLYCEMIA", "HYPOXEMIA", "INTUBATION", "ISCHEMIA", "LARYNX", "NALOXONE", "NEBULIZER", "OXYGENATION", "PALPATION", "PERFUSION", "PNEUMOTHORAX", "PULSELESS", "RESUSCITATION", "SEPSIS", "STRIDOR", "SYNCOPE", "TACHYCARDIA", "TRACHEA", "VENTILATION", "BRONCHOSPASM", "CYANOSIS", "DIASTOLE", "GLUCAGON", "HYPERCAPNIA", "LARYNGOSCOPY", "MELENA", "MYOCARDIUM", "OCCLUSION", "PERICARDIUM", "RIGIDITY", "SUCTION", "SYSTOLE", "TOURNIQUET", "URTICARIA"];
+  const categories = {
+    "APNEA": "Airway & Breathing",
+    "CAPNOGRAPHY": "Airway & Breathing",
+    "DYSPNEA": "Airway & Breathing",
+    "HYPOXEMIA": "Airway & Breathing",
+    "INTUBATION": "Airway & Breathing",
+    "LARYNX": "Airway & Breathing",
+    "NEBULIZER": "Airway & Breathing",
+    "OXYGENATION": "Airway & Breathing",
+    "PNEUMOTHORAX": "Airway & Breathing",
+    "STRIDOR": "Airway & Breathing",
+    "TRACHEA": "Airway & Breathing",
+    "VENTILATION": "Airway & Breathing",
+    "BRONCHOSPASM": "Airway & Breathing",
+    "CYANOSIS": "Airway & Breathing",
+    "HYPERCAPNIA": "Airway & Breathing",
+    "LARYNGOSCOPY": "Airway & Breathing",
+    "SUCTION": "Airway & Breathing",
+    "BRADYCARDIA": "Cardiology & Circulation",
+    "DEFIBRILLATION": "Cardiology & Circulation",
+    "EMBOLISM": "Cardiology & Circulation",
+    "FIBRILLATION": "Cardiology & Circulation",
+    "ISCHEMIA": "Cardiology & Circulation",
+    "PERFUSION": "Cardiology & Circulation",
+    "PULSELESS": "Cardiology & Circulation",
+    "RESUSCITATION": "Cardiology & Circulation",
+    "SYNCOPE": "Cardiology & Circulation",
+    "TACHYCARDIA": "Cardiology & Circulation",
+    "DIASTOLE": "Cardiology & Circulation",
+    "MYOCARDIUM": "Cardiology & Circulation",
+    "OCCLUSION": "Cardiology & Circulation",
+    "PERICARDIUM": "Cardiology & Circulation",
+    "SYSTOLE": "Cardiology & Circulation",
+    "HEMATOMA": "Trauma & Bleeding",
+    "HEMORRHAGE": "Trauma & Bleeding",
+    "TOURNIQUET": "Trauma & Bleeding",
+    "EPINEPHRINE": "Medications",
+    "NALOXONE": "Medications",
+    "GLUCAGON": "Medications",
+    "EDEMA": "Medical Emergencies",
+    "HYPOGLYCEMIA": "Medical Emergencies",
+    "SEPSIS": "Medical Emergencies",
+    "MELENA": "Medical Emergencies",
+    "URTICARIA": "Medical Emergencies",
+    "PALPATION": "Patient Assessment",
+    "RIGIDITY": "Patient Assessment"
+  };
+  const words = Object.keys(categories);
   let solo;
   let cpuTimer;
   let room;
@@ -49,6 +96,8 @@
       }));
       letters.setAttribute("aria-label", "Scrambled letters: " + (next.scramble || "").split("").join(" "));
     }
+    $("category").hidden = !next.category;
+    $("category").textContent = next.category ? "Category: " + next.category : "";
     letters.hidden = !next.scramble;
     $("guess-form").hidden = !active;
     $("start").hidden = !next.host || active;
@@ -134,7 +183,7 @@
     } while (scramble === solo.answer);
     const delay = 9000 + 850 * solo.answer.length + 6000 * Math.random();
     solo.deadline = performance.now() + delay;
-    render({ round: (state?.round || 0) + 1, host: true, players: ["You", "CPU"], scramble });
+    render({ round: (state?.round || 0) + 1, host: true, players: ["You", "CPU"], category: categories[solo.answer], scramble });
     $("guess").focus();
     cpuTimer = setTimeout(() => finishSolo("CPU"), delay);
   }
