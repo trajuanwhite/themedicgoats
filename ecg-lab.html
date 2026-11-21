@@ -57,7 +57,7 @@
 <div class="controls"><label for="rate"><span id="rate-label">Rate</span> <output id="rate-value">75 bpm</output></label><input id="rate" type="range" min="45" max="180" step="1" value="75"></div>
 </section>
 <section class="lab-panel territory-panel" id="territory-guide"><h2>12-lead territory study</h2><p class="lab-sub">Highlight lead groups across the simulated and reference 3 × 4 ECG displays. Learn the viewing territories without treating this schematic as an artery diagnosis.</p><div class="territory-controls"><label for="territory-select"><strong>Show territory</strong></label><select id="territory-select" aria-label="Select ECG anatomical lead group"></select><output id="territory-current" aria-live="polite"></output></div><p id="territory-explain" class="territory-explain"></p><small>Lead-territory groupings are teaching conventions; injury patterns, reciprocal changes, coronary dominance, conduction abnormalities and the patient context affect interpretation.</small>
-<div class="territory-waveforms"><h3>12-lead ECG view</h3><small>Standard 3 × 4 lead order · 25 mm/s</small><div class="ecg-layout-scroll" role="region" aria-label="Standard three-row four-column ECG layout; scroll sideways on small screens" tabindex="0"><div id="lead-grid" class="lead-grid" aria-label="Twelve synchronized ECG leads"></div></div><p class="focus-meta">Standard 3 × 4 arrangement matching the clinical 12-lead printout. On narrow screens, swipe sideways to see every column.</p><div class="rhythm-section"><div class="rhythm-selector"><h3>Continuous rhythm strip</h3><label for="rhythm-lead">Rhythm lead <select id="rhythm-lead" aria-label="Choose rhythm strip lead"></select></label></div><p>Six-second rhythm display · synchronized to playback</p><div class="rhythm-scroll" role="region" aria-label="Selected continuous rhythm strip" tabindex="0"><div id="rhythm-strips"></div></div></div></div>
+<div class="territory-waveforms"><h3>12-lead ECG view</h3><small>Sinus rhythm example · 75 bpm · 25 mm/s</small><div class="ecg-layout-scroll" role="region" aria-label="Standard three-row four-column ECG layout; scroll sideways on small screens" tabindex="0"><div id="lead-grid" class="lead-grid" aria-label="Twelve simulated ECG leads"></div></div><p class="focus-meta">Standard 3 × 4 arrangement matching the clinical 12-lead printout. On narrow screens, swipe sideways to see every column.</p><div class="rhythm-section"><div class="rhythm-selector"><h3>Continuous rhythm strip</h3><label for="rhythm-lead">Rhythm lead <select id="rhythm-lead" aria-label="Choose rhythm strip lead"></select></label></div><p>Six-second rhythm strip</p><div class="rhythm-scroll" role="region" aria-label="Selected continuous rhythm strip" tabindex="0"><div id="rhythm-strips"></div></div></div></div>
 </section>
 <section class="lab-panel challenge-panel" id="lead-challenge"><h2>12-lead ECG quizzes</h2><div class="challenge-quiz-picker"><label for="challenge-quiz"><strong>Choose a quiz</strong></label><select id="challenge-quiz"><option value="territories">Lead territories</option><option value="reciprocal">Reciprocal changes</option><option value="arteries">Associated coronary arteries</option></select></div><p class="lab-sub" id="challenge-intro">Practice identifying anatomical lead groups on the same 3 × 4 layout you use in the field. Select every lead that belongs to the named group.</p><div class="challenge-head"><strong id="challenge-prompt">Select the matching leads</strong><span id="challenge-progress"></span></div><div class="challenge-grid" id="challenge-grid" aria-label="Interactive twelve lead selection grid"></div><p class="challenge-feedback" id="challenge-feedback" role="status" aria-live="polite"></p><div class="challenge-actions"><button id="challenge-check" type="button">Check answer</button><button id="challenge-next" type="button" hidden>Next question</button><button id="challenge-restart" type="button" hidden>Play again</button></div><small id="challenge-caveat">Lead patterns support ECG interpretation but cannot independently establish an infarct location or culprit artery.</small></section>
 <section class="lab-panel activation-card" id="activation-study"><h2>Electrical activation timeline</h2><p class="lab-sub">Explore the order of atrial activation, AV nodal delay, His–Purkinje conduction, ventricular depolarization, and recovery.</p><div class="activation-tools"><label for="activation-scrub">Scrub heartbeat</label><input id="activation-scrub" type="range" min="0" max="799" value="0" step="1" aria-label="Scrub through one ECG beat"><output class="activation-ms" id="activation-time">0 ms</output></div><div class="activation-track" id="activation-track" aria-hidden="true"></div><div id="activation-list" class="activation-list"></div><p class="activation-desc" id="activation-description" aria-live="off"></p>
@@ -155,7 +155,7 @@
  const $=id=>document.getElementById(id),model=window.MedicECG;if(!model)return;
  const grid=$("lead-grid");const svgNS="http://www.w3.org/2000/svg";
  function elt(tag){return document.createElementNS(svgNS,tag)}
- const cursors=[],leadPaths=[];
+ const leadPaths=[],territoryBpm=75;
  const clinicalPrintOrder=["I","aVR","V1","V4","II","aVL","V2","V5","III","aVF","V3","V6"];
  clinicalPrintOrder.forEach(label=>{
   const cell=document.createElement("div");cell.className="lead-cell";
@@ -163,7 +163,6 @@
   const svg=elt("svg");svg.setAttribute("viewBox","0 0 360 87");svg.setAttribute("role","img");svg.setAttribute("aria-label","Lead "+label+" waveform");
   window.MedicECGPaperGrid(svg,360,2.5);
   const path=elt("path");svg.appendChild(path);leadPaths.push({label,path});
-  const cursor=elt("line");cursor.setAttribute("y1","0");cursor.setAttribute("y2","87");svg.appendChild(cursor);cursors.push(cursor);
   cell.appendChild(svg);grid.appendChild(cell);
  });
  const rhythmHost=$("rhythm-strips"),rhythmWidth=960,rhythmSeconds=6;
@@ -175,13 +174,12 @@
  const rhythmSvg=elt("svg");rhythmSvg.setAttribute("viewBox","0 0 960 88");rhythmSvg.setAttribute("role","img");rhythmSvg.setAttribute("aria-label","Continuous lead II rhythm strip");
  window.MedicECGPaperGrid(rhythmSvg,rhythmWidth,rhythmSeconds);
  const rhythmTrace=elt("path");rhythmSvg.appendChild(rhythmTrace);
- const rhythmCursor=elt("line");rhythmCursor.setAttribute("y1","0");rhythmCursor.setAttribute("y2","88");rhythmSvg.appendChild(rhythmCursor);
  rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
  function redrawRhythm(){
    const label=rhythmSelect.value;
-   const values=[],mode=$("rhythm-mode").value;
+   const values=[];
    for(let i=0;i<=rhythmWidth;i++){
-     const v=window.MedicRhythm.sample(i/rhythmWidth*rhythmSeconds,bpm,mode)[label];
+     const v=window.MedicRhythm.sample(i/rhythmWidth*rhythmSeconds,territoryBpm)[label];
      values.push((i===0?"M":"L")+i+" "+Math.max(3,Math.min(85,44-v*35)).toFixed(2));
    }
    rhythmTrace.setAttribute("d",values.join(" "));
@@ -189,17 +187,22 @@
    rhythmSvg.setAttribute("aria-label","Continuous lead "+label+" rhythm strip");
  }
  function redrawLeads(){
-  const mode=$("rhythm-mode").value;
   leadPaths.forEach(({label,path},index)=>{
    const start=(index%4)*2.5,values=[];
    for(let i=0;i<=360;i++){
-    const v=window.MedicRhythm.sample(start+i/360*2.5,bpm,mode)[label];
+    const v=window.MedicRhythm.sample(start+i/360*2.5,territoryBpm)[label];
     values.push((i===0?"M":"L")+i+" "+Math.max(3,Math.min(84,44-v*36)).toFixed(2));
    }
    path.setAttribute("d",values.join(" "));
   });
  }
  rhythmSelect.onchange=redrawRhythm;
+ redrawLeads();
+ redrawRhythm();
+})();
+(function(){
+ "use strict";
+ const $=id=>document.getElementById(id),model=window.MedicECG;if(!model)return;
 
  const descriptions=["SA node initiates atrial activation.","AV node briefly delays the electrical impulse.","The His bundle conducts toward the ventricles.","Ventricular activation corresponds to the QRS complex.","Ventricular recovery is represented by the T wave."];
  let bpm=75,playing=true,speed=.02*Math.pow(200,.13),time=0,previous=0,phaseStepAnimation=null;
@@ -240,7 +243,7 @@
   $("bpm-readout").textContent=rhythmMode.value==="vf"?"—":bpm;
   $("rhythm-explanation").textContent=window.MedicRhythm.modes[rhythmMode.value].detail;
   sizeStageDescription();
-  redrawLeads();redrawRhythm();paint();
+  paint();
  };
  let lastCycleIndex=-1;
  window.MedicLabAPI={seek(phase){time=Math.max(0,Math.min(.999,phase));playing=false;$("play-btn").textContent="Play";$("play-btn").setAttribute("aria-pressed","false");paint()},getBpm(){return bpm},getPhase(){return ((time%1)+1)%1}};
@@ -251,16 +254,7 @@
   window.MedicLabState.phase=phase;
   window.MedicLabState.rhythm=rhythm;
   const stage=rhythm.stage;
-   const sweepSeconds=((time*60/bpm)%10+10)%10;
-  const currentColumn=Math.min(3,Math.floor(sweepSeconds/2.5));
-  cursors.forEach((c,index)=>{
-   const visible=index%4===currentColumn;
-   const x=(sweepSeconds-currentColumn*2.5)/2.5*360;
-   c.setAttribute("x1",String(x));c.setAttribute("x2",String(x));
-   c.setAttribute("visibility",visible?"visible":"hidden");
-  });
-  const rhythmX=(((time*60/bpm)%rhythmSeconds)+rhythmSeconds)%rhythmSeconds/rhythmSeconds*rhythmWidth;
-  rhythmCursor.setAttribute("x1",String(rhythmX));rhythmCursor.setAttribute("x2",String(rhythmX));if(window.MedicLabTools)window.MedicLabTools.update(phase);if(window.MedicActivationUI&&rhythmMode.value==="sinus")window.MedicActivationUI.update(phase,bpm);
+  if(window.MedicLabTools)window.MedicLabTools.update(phase);if(window.MedicActivationUI&&rhythmMode.value==="sinus")window.MedicActivationUI.update(phase,bpm);
   const selectedMode=rhythmMode.value;
   const note=rhythm.blockSite?(stageNotes[rhythm.blockSite]||stageNotes.blocked):selectedMode==="wpw"&&stage==="accessory"?stageNotes.accessory:selectedMode==="vt"?stageNotes.ventricular:"";
   const description=selectedMode==="sinus"?(window.MedicActivation?.at(phase).stage.description||descriptions[0]):window.MedicRhythm.modes[selectedMode].detail+note;
@@ -300,9 +294,9 @@
    time=from;
    paint();
  };
- $("rate").oninput=e=>{bpm=+e.target.value;$("rate-value").textContent=bpm+" bpm";$("bpm-readout").textContent=bpm;redrawLeads();redrawRhythm();window.dispatchEvent(new Event("medic-bpm-change"))};
+ $("rate").oninput=e=>{bpm=+e.target.value;$("rate-value").textContent=bpm+" bpm";$("bpm-readout").textContent=bpm;window.dispatchEvent(new Event("medic-bpm-change"))};
  if(![0,.2,.5,.9].every(t=>model.checkIdentities(t)))console.error("Limb-lead identity test failed");
- redrawLeads();redrawRhythm();paint();requestAnimationFrame(animate);
+ paint();requestAnimationFrame(animate);
 })();
 </script>
 <script src="/ecg-lab-activation-ui.js?v=6"></script>
