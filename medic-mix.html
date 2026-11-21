@@ -22,12 +22,13 @@ button:disabled{opacity:.55;cursor:default}
 .actions{display:flex;gap:10px;flex-wrap:wrap}
 .letters{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:22px 0}
 .letters span{display:grid;place-items:center;min-width:1.8em;min-height:2em;background:#f0dcc6;border-radius:8px;font-size:clamp(1.15rem,6vw,2rem);font-weight:850}
+#round-timer{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;text-align:center;margin:.3em 0}
 #category{font-weight:750;text-align:center;margin:18px 0 -10px}
 #players{overflow-wrap:anywhere}
 #feedback,#message{color:#663a25}
 [hidden]{display:none!important}
 </style>
-<script defer src="/medic-mix.js?v=3"></script>
+<script defer src="/medic-mix.js?v=4"></script>
 </head>
 <body>
 <main>
@@ -48,6 +49,7 @@ button:disabled{opacity:.55;cursor:default}
 <div class="actions"><button type="button" id="copy" class="secondary">Copy Invite Link</button><button type="button" id="leave" class="secondary">Leave Room</button></div>
 <p id="players"></p>
 <p id="round-status" role="status"></p>
+<p id="round-timer" role="timer" aria-label="Seconds remaining" hidden></p>
 <p id="category" hidden></p>
 <div id="letters" class="letters" hidden></div>
 <form id="guess-form" hidden>

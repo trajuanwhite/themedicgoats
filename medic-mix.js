@@ -57,6 +57,8 @@
   const words = Object.keys(categories);
   let solo;
   let cpuTimer;
+  let timerInterval;
+  let displayDeadline;
   let room;
   let state;
   let pollTimer;
@@ -75,15 +77,30 @@
     return result;
   }
 
+  function updateTimer() {
+    $("round-timer").textContent = Math.max(0, Math.ceil((displayDeadline - performance.now()) / 1000)) + "s";
+  }
+
   function render(next) {
     const newRound = next.round !== state?.round;
+    const active = next.round > 0 && !next.winner && !next.timedOut;
+    if (active && next !== state && Number.isFinite(next.remainingMs)) {
+      displayDeadline = performance.now() + next.remainingMs;
+    }
     state = next;
-    const active = next.round > 0 && !next.winner;
+    const timer = $("round-timer");
+    timer.hidden = !active || !Number.isFinite(displayDeadline);
+    clearInterval(timerInterval);
+    if (!timer.hidden) {
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 100);
+    }
     $("room-title").textContent = solo ? "You vs. CPU" : "Room " + next.code;
     $("copy").hidden = Boolean(solo);
     $("players").textContent = "Players: " + next.players.join(", ");
     $("round-status").textContent = next.winner
       ? (solo && next.winner === "You" ? "You win!" : next.winner + " wins!") + " The word was " + next.answer + "."
+      : next.timedOut ? "Time’s up! The word was " + next.answer + "."
       : active ? "Round " + next.round : "Waiting for the host to start.";
     const letters = $("letters");
     if (newRound) {
@@ -102,7 +119,7 @@
     $("guess-form").hidden = !active;
     $("start").hidden = !next.host || active;
     $("start").disabled = next.players.length < 2 || working;
-    $("start").textContent = next.winner ? "Next Round" : "Start Round";
+    $("start").textContent = next.round > 0 ? "Next Round" : "Start Round";
   }
 
   function poll() {
@@ -164,7 +181,7 @@
   function finishSolo(winner) {
     clearTimeout(cpuTimer);
     $("feedback").textContent = "";
-    render({ ...state, winner, answer: solo.answer });
+    render({ ...state, winner, timedOut: !winner, answer: solo.answer });
   }
 
   function startSoloRound() {
@@ -182,10 +199,11 @@
       scramble = letters.join("");
     } while (scramble === solo.answer);
     const delay = 9000 + 850 * solo.answer.length + 6000 * Math.random();
-    solo.deadline = performance.now() + delay;
-    render({ round: (state?.round || 0) + 1, host: true, players: ["You", "CPU"], category: categories[solo.answer], scramble });
+    solo.deadline = performance.now() + 30000;
+    solo.solvesAt = performance.now() + delay;
+    render({ round: (state?.round || 0) + 1, host: true, players: ["You", "CPU"], category: categories[solo.answer], remainingMs: 30000, scramble });
     $("guess").focus();
-    cpuTimer = setTimeout(() => finishSolo("CPU"), delay);
+    cpuTimer = setTimeout(() => finishSolo(delay < 30000 ? "CPU" : null), Math.min(delay, 30000));
   }
 
   $("cpu").onclick = () => {
@@ -207,8 +225,8 @@
     event.preventDefault();
     const input = $("guess");
     if (solo) {
-      if (state.winner) return;
-      if (performance.now() >= solo.deadline) return finishSolo("CPU");
+      if (state.winner || state.timedOut) return;
+      if (performance.now() >= Math.min(solo.deadline, solo.solvesAt)) return finishSolo(solo.solvesAt < solo.deadline ? "CPU" : null);
       if (input.value.trim().toUpperCase() === solo.answer) return finishSolo("You");
       $("feedback").textContent = "Try again.";
       input.select();
@@ -225,6 +243,8 @@
     if (working) return;
     const wasSolo = Boolean(solo);
     clearTimeout(cpuTimer);
+    clearInterval(timerInterval);
+    displayDeadline = undefined;
     solo = room = state = null;
     clearTimeout(pollTimer);
     if (!wasSolo) sessionStorage.removeItem(sessionKey);
