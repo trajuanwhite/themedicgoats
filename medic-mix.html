@@ -4,60 +4,100 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Medic Mix | The Medic Goats</title>
-<link rel="stylesheet" href="/styles.css">
 <style>
-body{margin:0;background:#f5ede3;color:#2d211a;font-family:system-ui,sans-serif}
-main{width:min(100% - 32px,680px);margin:36px auto 72px}
-nav a{color:#65442f;font-weight:750}
-h1{font-size:clamp(2.7rem,10vw,5rem);line-height:1;margin:28px 0 12px;letter-spacing:-.07em}
-.mix-card{padding:clamp(16px,4vw,30px);margin-top:22px;background:#fffbf6;border:1px solid #ddc7b4;border-radius:20px}
-.mix-card h2{margin-top:0}
-form,label{display:grid;gap:7px}
-form{gap:14px}
-button,input{font:inherit;border-radius:9px;padding:11px 13px;min-width:0}
-input{border:1px solid #a7846b;background:#fff;color:#2d211a}
-button{background:#744d36;color:#fff;border:1px solid #744d36;font-weight:750;cursor:pointer}
-button.secondary{background:#f5e7d9;color:#563928}
-button:disabled{opacity:.55;cursor:default}
-.actions{display:flex;gap:10px;flex-wrap:wrap}
-.letters{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:22px 0}
-.letters span{display:grid;place-items:center;min-width:1.8em;min-height:2em;background:#f0dcc6;border-radius:8px;font-size:clamp(1.15rem,6vw,2rem);font-weight:850}
-#round-timer{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;text-align:center;margin:.3em 0}
-#category{font-weight:750;text-align:center;margin:18px 0 -10px}
-#players{overflow-wrap:anywhere}
-#feedback,#message{color:#663a25}
+:root{color-scheme:light;--ink:#31261f;--muted:#67564b;--paper:#fffbf5;--line:#e2d1c0;--button:#75442d;--accent:#ffd99c}
+*{box-sizing:border-box}
+body{margin:0;background:#f4ece1;color:var(--ink);font-family:system-ui,sans-serif;line-height:1.5}
+main{width:min(100% - 32px,850px);margin:clamp(18px,5vw,52px) auto 64px}
+.hero{position:relative;isolation:isolate;overflow:hidden;padding:clamp(22px,5vw,45px);border-radius:25px;background:#352820;color:#fff7eb}
+.hero::after{content:"";position:absolute;inset:0 0 0 42%;z-index:-1;background:repeating-linear-gradient(0deg,transparent 0 27px,#ffffff15 28px 29px),repeating-linear-gradient(90deg,transparent 0 27px,#ffffff15 28px 29px);mask-image:linear-gradient(90deg,transparent,#000);pointer-events:none}
+.hero a{color:#ffe0ac;font-weight:700;text-underline-offset:4px}
+h1{margin:24px 0 8px;font-family:Georgia,serif;font-size:clamp(3.15rem,10vw,6rem);font-weight:700;line-height:.96;letter-spacing:-.065em}
+.hero p{margin:12px 0 0;color:#f5dfca}
+h2,p{margin:0}
+.mix-card{border:1px solid var(--line);border-radius:21px;background:var(--paper);box-shadow:0 8px 22px #442b1510}
+#welcome{display:grid;grid-template-columns:.85fr 1.15fr;gap:14px;margin-top:16px}
+.setup{display:grid;align-content:start;gap:13px;padding:clamp(18px,4vw,28px)}
+.setup h2,.room-header h2{font-size:1.25rem;line-height:1.25}
+.setup p,#players{color:var(--muted)}
+button,input{min-width:0;min-height:45px;border-radius:10px;font:inherit}
+input{width:100%;padding:10px 12px;border:1px solid #bda592;background:white;color:var(--ink)}
+button{padding:10px 15px;border:1px solid transparent;background:var(--button);color:white;font-weight:750;cursor:pointer}
+button.secondary{background:#f4e7d8;color:#503628;border-color:#e4cdb9}
+button:hover:not(:disabled){filter:brightness(.92)}
+button:disabled{opacity:.52;cursor:default}
+:focus-visible{outline:3px solid #ae633b;outline-offset:3px}
+form,label{display:grid;gap:8px}
+label{font-weight:650}
+form{gap:12px}
+.actions,.join-row{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.join-row label{flex:1 1 120px}
+#cpu{justify-self:start;margin-top:3px}
+#room{margin-top:16px;overflow:hidden}
+.room-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:15px clamp(14px,4vw,26px);border-bottom:1px solid var(--line)}
+#players{margin-top:3px;overflow-wrap:anywhere}
+.board-wrap{padding:clamp(12px,3vw,22px)}
+.board{padding:clamp(12px,4vw,29px);border-radius:15px;background:radial-gradient(at 45% 0%,#5a4032,#392a22 76%);color:#fff4e8}
+.board-header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
+#category{font-weight:750;color:#ffe7c9}
+#round-timer{flex:none;padding:5px 12px;border:1px solid #ffffff52;border-radius:9px;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent)}
+.letters{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(4px,1vw,8px);margin:clamp(16px,4vw,32px) 0 9px}
+.letters span{display:grid;place-items:center;width:clamp(28px,5.7vw,44px);height:clamp(36px,7vw,58px);border:1px solid #f8dfb8;border-radius:8px;background:linear-gradient(#ffebcb,#edcda5);box-shadow:0 3px 0 #ae845f;color:#38271d;font-size:clamp(1.1rem,3vw,1.75rem);font-weight:850}
+#round-status{margin-top:14px;font-weight:700;overflow-wrap:anywhere}
+#guess-form{grid-template-columns:minmax(0,1fr) auto;align-items:end;margin-top:15px}
+#start{margin-top:14px}
+#feedback:not(:empty),#message:not(:empty){margin-top:10px;color:#713c27}
 [hidden]{display:none!important}
+@media(max-width:580px){#welcome{grid-template-columns:1fr}.room-header .actions button{font-size:.875rem;padding:9px 11px}}
 </style>
 <script defer src="/medic-mix.js?v=4"></script>
 </head>
 <body>
 <main>
-<nav><a href="/games">← Games</a></nav>
+<header class="hero">
+<nav aria-label="Games navigation"><a href="/games">← Games</a></nav>
 <h1>Medic Mix</h1>
 <p>Unscramble the medical word. The first correct guess wins.</p>
-<section class="mix-card" id="welcome" aria-label="Host or join a game">
-<div class="actions"><button type="button" id="cpu">Play CPU</button></div>
-<form id="entry" style="margin-top:18px">
+</header>
+<div id="welcome">
+<section class="mix-card setup" aria-labelledby="solo-heading">
+<h2 id="solo-heading">Solo</h2>
+<p>Race the computer to solve the word.</p>
+<button type="button" id="cpu">Play CPU</button>
+</section>
+<section class="mix-card setup" aria-labelledby="multiplayer-heading">
+<h2 id="multiplayer-heading">Multiplayer</h2>
+<form id="entry">
 <label>Player name <input id="name" required minlength="2" maxlength="24" autocomplete="nickname"></label>
 <div class="actions"><button type="button" id="host">Host Game</button></div>
+<div class="join-row">
 <label>Room code <input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off"></label>
 <button type="submit" class="secondary">Join Game</button>
+</div>
 </form>
 </section>
+</div>
 <section class="mix-card" id="room" hidden aria-label="Game room">
-<h2 id="room-title"></h2>
+<header class="room-header">
+<div><h2 id="room-title"></h2><p id="players"></p></div>
 <div class="actions"><button type="button" id="copy" class="secondary">Copy Invite Link</button><button type="button" id="leave" class="secondary">Leave Room</button></div>
-<p id="players"></p>
-<p id="round-status" role="status"></p>
-<p id="round-timer" role="timer" aria-label="Seconds remaining" hidden></p>
+</header>
+<div class="board-wrap">
+<div class="board">
+<div class="board-header">
 <p id="category" hidden></p>
+<p id="round-timer" role="timer" aria-label="Seconds remaining" hidden></p>
+</div>
 <div id="letters" class="letters" hidden></div>
+<p id="round-status" role="status"></p>
+</div>
 <form id="guess-form" hidden>
 <label>Your guess <input id="guess" required maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
 <button type="submit">Submit Guess</button>
 </form>
 <p id="feedback" role="status"></p>
 <button id="start" type="button" hidden>Start Round</button>
+</div>
 </section>
 <p id="message" role="status"></p>
 </main>
