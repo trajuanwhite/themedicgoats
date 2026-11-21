@@ -22,6 +22,12 @@
 .ecg-measurements dt{font-size:13px;color:#655244}
 .ecg-measurements dd{margin:3px 0 0;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
 #heart-view .blocked-bundle{stroke:#b4232c;stroke-dasharray:5 4}
+ .optional-placement{display:grid;gap:8px;margin-top:18px}
+.optional-placement details{border:1px solid #decdbb;border-radius:10px;background:#faf5ef}
+.optional-placement summary{padding:11px 14px;cursor:pointer;font-weight:750}
+.optional-placement-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));align-items:center;gap:12px;padding:0 14px 14px}
+.optional-placement svg{width:100%;max-width:370px;margin:auto;font:700 11px system-ui;fill:#513b2a}
+.optional-placement-body p{margin:6px 0}
 .conduction-panel{grid-column:1/-1}
 
 
@@ -73,6 +79,21 @@
 
 <small>Placement map is schematic. Arm and leg markers indicate limb electrode locations rather than exact distances. Positions correspond to a standard diagnostic ECG, not torso-modified monitoring.</small>
 <p class="focus-meta">Placement references: <a href="https://www.jacc.org/doi/10.1016/j.jacc.2007.01.024" target="_blank" rel="noopener">AHA/ACCF/HRS ECG standardization</a> · <a href="https://www.gehealthcare.com/-/jssmedia/global/products/files/diagnostic-ecg/diagnostic-ecg-lead-placement--doc0259509-rev2.pdf?rev=-1" target="_blank" rel="noopener">GE Healthcare lead placement</a>.</p></div></div>
+<div class="optional-placement" aria-label="Optional electrode placements">
+<details><summary>Right-sided V4R</summary><div class="optional-placement-body">
+<svg viewBox="0 0 320 190" role="img" aria-label="Front view showing V4R electrode placement"><text x="160" y="19" text-anchor="middle">Front view</text><path d="M125 32H195L253 58L240 87L227 154Q160 176 93 154L80 87L67 58Z" fill="#e9cfba" stroke="#aa8c76"/><path d="M160 49V113 M102 69Q160 86 218 69 M103 92Q160 111 218 92" fill="none" stroke="#b49781" stroke-width="2"/><path d="M82 114H238" stroke="#b49781" stroke-dasharray="4 4"/><circle cx="108" cy="114" r="8" fill="#8a5637"/><text x="108" y="141" text-anchor="middle">V4R</text><text x="160" y="186" text-anchor="middle">Patient’s right is on the left</text></svg>
+<p><strong>V4R</strong> goes in the fifth intercostal space at the right midclavicular line, mirroring V4. Label the tracing V4R.</p>
+</div></details>
+<details><summary>Posterior V7–V9</summary><div class="optional-placement-body">
+<svg viewBox="0 0 320 190" role="img" aria-label="Back view showing V7, V8, V9 electrode placement"><text x="160" y="19" text-anchor="middle">Back view</text><path d="M125 32H195L253 58L240 87L227 154Q160 176 93 154L80 87L67 58Z" fill="#e9cfba" stroke="#aa8c76"/><path d="M160 49V155 M98 79Q117 105 139 91 M222 79Q203 105 181 91" fill="none" stroke="#b49781" stroke-width="2"/><path d="M82 114H238" stroke="#b49781" stroke-dasharray="4 4"/><circle cx="87" cy="114" r="8" fill="#8a5637"/><text x="87" y="141" text-anchor="middle">V7</text><circle cx="115" cy="114" r="8" fill="#8a5637"/><text x="115" y="141" text-anchor="middle">V8</text><circle cx="148" cy="114" r="8" fill="#8a5637"/><text x="148" y="141" text-anchor="middle">V9</text><text x="160" y="186" text-anchor="middle">Patient’s left is on the left</text></svg>
+<div><p>Place all three on the patient’s left, on the same horizontal plane as V6.</p><ul>
+<li><strong>V7</strong> at the posterior axillary line</li>
+<li><strong>V8</strong> at the midscapular line</li>
+<li><strong>V9</strong> near the left paraspinal line</li>
+</ul><p>Label the tracing V7–V9.</p></div>
+</div></details>
+<small>Schematic views. <a href="https://www.hillrom.eu/content/dam/hillrom-aem/us/en/sap-documents/LIT/9515-/9515-189-50-ENGLITPDF.pdf">Placement reference</a></small>
+</div>
 <div class="axis-study" id="axis-study">
  <h3>Electrical axis deviation &amp; Einthoven's triangle</h3>
  <p class="lab-sub">Explore the three bipolar limb leads, then move the mean QRS axis to see the expected net polarity in leads I, aVF, and II.</p>
