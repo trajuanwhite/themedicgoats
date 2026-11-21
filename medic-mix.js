@@ -7,6 +7,9 @@
   const requestedRoom = new URL(location.href).searchParams.get("room");
   if (/^\d{6}$/.test(requestedRoom || "")) $("code").value = requestedRoom;
 
+  const words = ["APNEA", "BRADYCARDIA", "CAPNOGRAPHY", "DEFIBRILLATION", "DYSPNEA", "EDEMA", "EMBOLISM", "EPINEPHRINE", "FIBRILLATION", "HEMATOMA", "HEMORRHAGE", "HYPOGLYCEMIA", "HYPOXEMIA", "INTUBATION", "ISCHEMIA", "LARYNX", "NALOXONE", "NEBULIZER", "OXYGENATION", "PALPATION", "PERFUSION", "PNEUMOTHORAX", "PULSELESS", "RESUSCITATION", "SEPSIS", "STRIDOR", "SYNCOPE", "TACHYCARDIA", "TRACHEA", "VENTILATION", "BRONCHOSPASM", "CYANOSIS", "DIASTOLE", "GLUCAGON", "HYPERCAPNIA", "LARYNGOSCOPY", "MELENA", "MYOCARDIUM", "OCCLUSION", "PERICARDIUM", "RIGIDITY", "SUCTION", "SYSTOLE", "TOURNIQUET", "URTICARIA"];
+  let solo;
+  let cpuTimer;
   let room;
   let state;
   let pollTimer;
@@ -29,10 +32,11 @@
     const newRound = next.round !== state?.round;
     state = next;
     const active = next.round > 0 && !next.winner;
-    $("room-title").textContent = "Room " + next.code;
+    $("room-title").textContent = solo ? "You vs. CPU" : "Room " + next.code;
+    $("copy").hidden = Boolean(solo);
     $("players").textContent = "Players: " + next.players.join(", ");
     $("round-status").textContent = next.winner
-      ? next.winner + " wins! The word was " + next.answer + "."
+      ? (solo && next.winner === "You" ? "You win!" : next.winner + " wins!") + " The word was " + next.answer + "."
       : active ? "Round " + next.round : "Waiting for the host to start.";
     const letters = $("letters");
     if (newRound) {
@@ -108,13 +112,60 @@
     });
   }
 
+  function finishSolo(winner) {
+    clearTimeout(cpuTimer);
+    $("feedback").textContent = "";
+    render({ ...state, winner, answer: solo.answer });
+  }
+
+  function startSoloRound() {
+    clearTimeout(cpuTimer);
+    const previous = solo.answer;
+    const available = words.filter(word => word !== previous);
+    solo.answer = available[Math.floor(Math.random() * available.length)];
+    let scramble;
+    do {
+      const letters = [...solo.answer];
+      for (let i = letters.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [letters[i], letters[j]] = [letters[j], letters[i]];
+      }
+      scramble = letters.join("");
+    } while (scramble === solo.answer);
+    const delay = 9000 + 850 * solo.answer.length + 6000 * Math.random();
+    solo.deadline = performance.now() + delay;
+    render({ round: (state?.round || 0) + 1, host: true, players: ["You", "CPU"], scramble });
+    $("guess").focus();
+    cpuTimer = setTimeout(() => finishSolo("CPU"), delay);
+  }
+
+  $("cpu").onclick = () => {
+    if (working) return;
+    solo = {};
+    state = null;
+    $("message").textContent = "";
+    $("welcome").hidden = true;
+    $("room").hidden = false;
+    startSoloRound();
+  };
   $("host").onclick = () => join("create");
   $("entry").onsubmit = event => { event.preventDefault(); join("join"); };
-  $("start").onclick = () => run(async () => render(await request("start", room)));
+  $("start").onclick = () => {
+    if (solo) return startSoloRound();
+    return run(async () => render(await request("start", room)));
+  };
   $("guess-form").onsubmit = event => {
     event.preventDefault();
+    const input = $("guess");
+    if (solo) {
+      if (state.winner) return;
+      if (performance.now() >= solo.deadline) return finishSolo("CPU");
+      if (input.value.trim().toUpperCase() === solo.answer) return finishSolo("You");
+      $("feedback").textContent = "Try again.";
+      input.select();
+      return;
+    }
     run(async () => {
-      const input = $("guess");
       const next = await request("guess", { ...room, round_number: state.round, value: input.value });
       render(next);
       $("feedback").textContent = next.outcome === "incorrect" ? "Try again." : "";
@@ -123,9 +174,11 @@
   };
   $("leave").onclick = () => {
     if (working) return;
-    room = state = null;
+    const wasSolo = Boolean(solo);
+    clearTimeout(cpuTimer);
+    solo = room = state = null;
     clearTimeout(pollTimer);
-    sessionStorage.removeItem(sessionKey);
+    if (!wasSolo) sessionStorage.removeItem(sessionKey);
     $("room").hidden = true;
     $("welcome").hidden = false;
     $("message").textContent = "";

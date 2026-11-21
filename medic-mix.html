@@ -26,7 +26,7 @@ button:disabled{opacity:.55;cursor:default}
 #feedback,#message{color:#663a25}
 [hidden]{display:none!important}
 </style>
-<script defer src="/medic-mix.js"></script>
+<script defer src="/medic-mix.js?v=2"></script>
 </head>
 <body>
 <main>
@@ -34,7 +34,8 @@ button:disabled{opacity:.55;cursor:default}
 <h1>Medic Mix</h1>
 <p>Unscramble the medical word. The first correct guess wins.</p>
 <section class="mix-card" id="welcome" aria-label="Host or join a game">
-<form id="entry">
+<div class="actions"><button type="button" id="cpu">Play CPU</button></div>
+<form id="entry" style="margin-top:18px">
 <label>Player name <input id="name" required minlength="2" maxlength="24" autocomplete="nickname"></label>
 <div class="actions"><button type="button" id="host">Host Game</button></div>
 <label>Room code <input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off"></label>
