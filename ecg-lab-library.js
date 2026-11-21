@@ -6,14 +6,28 @@
  const safePath=p=>typeof p==="string"&&/^\/ecg-library\/records\/[a-zA-Z0-9_-]+\.json$/.test(p);
  let records=[];
  let loadedId="";
+ const stLine=document.getElementById("ecg-st-jpoint");
+ let stByLead=null;
+ function showSt(){
+  if(!stLine)return;
+  const lead=window.MedicECGReference.getRhythmLead();
+  const mv=stByLead?.[lead];
+  stLine.hidden=!Number.isFinite(mv);
+  if(stLine.hidden)return;
+  const sign=mv>0?"+":"";
+  stLine.textContent="Lead "+lead+" · ST at J-point: "+sign+(mv*10).toFixed(2)+" mm ("+sign+mv.toFixed(3)+" mV, automated)";
+ }
+ document.getElementById("reference-ecg").addEventListener("ecg-rhythm-lead-change",showSt);
  const panel=document.getElementById("ecg-measurements");
- const measurements=fetch("/ecg-library/ptb-xl-plus-12sl.json?v=2").then(response=>{
+ const measurements=fetch("/ecg-library/ptb-xl-plus-12sl.json?v=3").then(response=>{
   if(!response.ok)throw Error("Measurements unavailable");
   return response.json();
  }).catch(()=>null);
  async function showMeasurements(record){
   if(!panel)return;
   panel.hidden=true;
+  stByLead=null;
+  showSt();
   if(record.dataset!=="PTB-XL v1.0.3")return;
   const data=await measurements;
   if(loadedId!==record.id)return;
@@ -29,6 +43,8 @@
    const sign=key==="qrsAxis"&&value>0?"+":"";
    document.getElementById(id).textContent=Number.isFinite(value)?sign+value+unit:"Unavailable";
   }
+  stByLead=values.stJPointMv;
+  showSt();
   panel.hidden=false;
  }
  try{

@@ -35,7 +35,7 @@ rhythmSvg.appendChild(rhythmPath);
 rhythmCell.appendChild(rhythmSvg);rhythmHost.appendChild(rhythmCell);
 let recording=null;
 let stripSeconds=0;
-window.MedicECGReference={getRecording:()=>recording};
+window.MedicECGReference={getRecording:()=>recording,getRhythmLead:()=>rhythmLead};
 function validate(obj){
  if(!obj||typeof obj!=="object"||obj.schemaVersion!=="1.0"||!["clinical-recording","synthetic-demo"].includes(obj.kind))throw Error("Expected version 1.0 clinical recording or explicitly labeled synthetic demo.");
  const meta=obj.recording||{},source=obj.source||{};
@@ -102,5 +102,6 @@ function updateRhythmLead(){
   leadButtons[lead].setAttribute("aria-pressed",String(lead===rhythmLead));
  }
  renderRhythm();
+ host.dispatchEvent(new Event("ecg-rhythm-lead-change"));
 }
 })();

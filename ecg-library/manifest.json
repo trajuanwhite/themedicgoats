@@ -37,6 +37,190 @@
       "sourceRecordId": "4",
       "file": "/ecg-library/records/00004.json",
       "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-15130",
+      "title": "Inferolateral ST elevation candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "15130",
+      "file": "/ecg-library/records/15130.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-11353",
+      "title": "Anterior ST elevation candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "11353",
+      "file": "/ecg-library/records/11353.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-19269",
+      "title": "Inferior and lateral ST elevation candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "19269",
+      "file": "/ecg-library/records/19269.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-02681",
+      "title": "Anterior and inferior ST elevation candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2681",
+      "file": "/ecg-library/records/02681.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-18506",
+      "title": "Posterior infarct candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "18506",
+      "file": "/ecg-library/records/18506.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-06997",
+      "title": "S in I, Q in III",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "6997",
+      "file": "/ecg-library/records/06997.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-14730",
+      "title": "Possible RV strain comparison",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "14730",
+      "file": "/ecg-library/records/14730.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-07304",
+      "title": "VT candidate with conflicting label",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "7304",
+      "file": "/ecg-library/records/07304.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-21632",
+      "title": "VT candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "21632",
+      "file": "/ecg-library/records/21632.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-07960",
+      "title": "Wide-complex tachycardia comparison",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "7960",
+      "file": "/ecg-library/records/07960.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-00959",
+      "title": "Complete AV block candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "959",
+      "file": "/ecg-library/records/00959.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-07688",
+      "title": "Wenckebach candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "7688",
+      "file": "/ecg-library/records/07688.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-13238",
+      "title": "SVT candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "13238",
+      "file": "/ecg-library/records/13238.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-02633",
+      "title": "Precordial ST depression",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2633",
+      "file": "/ecg-library/records/02633.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-02181",
+      "title": "Subtle lateral ST depression",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2181",
+      "file": "/ecg-library/records/02181.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-02032",
+      "title": "Atrial fibrillation",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2032",
+      "file": "/ecg-library/records/02032.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-02125",
+      "title": "Atrial fibrillation with RVR",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2125",
+      "file": "/ecg-library/records/02125.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-02430",
+      "title": "Atrial flutter with slow response",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2430",
+      "file": "/ecg-library/records/02430.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-18035",
+      "title": "Right bundle branch block",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "18035",
+      "file": "/ecg-library/records/18035.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-18278",
+      "title": "Left bundle branch block",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "18278",
+      "file": "/ecg-library/records/18278.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-18458",
+      "title": "First-degree AV block",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "18458",
+      "file": "/ecg-library/records/18458.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-13158",
+      "title": "Inferior ST elevation candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "13158",
+      "file": "/ecg-library/records/13158.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-02805",
+      "title": "Anterior ST elevation candidate",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "2805",
+      "file": "/ecg-library/records/02805.json",
+      "reviewStatus": "reviewed"
     }
   ]
 }
