@@ -81,97 +81,6 @@
     $("round-timer").textContent = Math.max(0, Math.ceil((displayDeadline - performance.now()) / 1000)) + "s";
   }
 
-  const tileBoard = $("letters");
-  let chosenTile;
-  let drag;
-  let skipClick = false;
-  let queuedGuess;
-  let lastTileGuess;
-  let stateTileWinner = false;
-
-  function clearTileSelection() {
-    chosenTile?.setAttribute("aria-pressed", "false");
-    chosenTile = null;
-  }
-
-  function showTiles(word) {
-    clearTileSelection();
-    tileBoard.replaceChildren(...Array.from(word, letter => {
-      const tile = document.createElement("button");
-      tile.type = "button";
-      tile.textContent = letter;
-      tile.setAttribute("aria-pressed", "false");
-      return tile;
-    }));
-  }
-
-  function tileAt(element) {
-    const tile = element?.closest("button");
-    return tile?.parentElement === tileBoard && !tile.disabled ? tile : null;
-  }
-
-  function checkTiles() {
-    const guess = Array.from(tileBoard.children, tile => tile.textContent).join("");
-    if (guess === lastTileGuess) return;
-    if (working) {
-      queuedGuess = { round: state.round, guess };
-      return;
-    }
-    lastTileGuess = guess;
-    void submitGuess(guess, true);
-  }
-
-  tileBoard.addEventListener("pointerdown", event => {
-    skipClick = false;
-    const tile = tileAt(event.target);
-    if (!tile || drag || !event.isPrimary || event.button !== 0) return;
-    drag = { tile, id: event.pointerId, x: event.clientX, y: event.clientY, moved: false, target: null };
-    tile.setPointerCapture(event.pointerId);
-  });
-  tileBoard.addEventListener("pointermove", event => {
-    if (drag?.id !== event.pointerId) return;
-    if (!drag.moved && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 6) return;
-    drag.moved = true;
-    drag.tile.classList.add("dragging");
-    drag.tile.style.transform = "translate(" + (event.clientX - drag.x) + "px," + (event.clientY - drag.y) + "px)";
-    drag.target?.classList.remove("drop-target");
-    drag.target = tileAt(document.elementFromPoint(event.clientX, event.clientY));
-    if (drag.target !== drag.tile) drag.target?.classList.add("drop-target");
-  });
-  function endDrag(event) {
-    if (drag?.id !== event.pointerId) return;
-    const { tile, target, moved } = drag;
-    drag = null;
-    tile.classList.remove("dragging");
-    tile.style.transform = "";
-    target?.classList.remove("drop-target");
-    skipClick = moved;
-    if (event.type !== "pointerup" || !moved || !target || target === tile || tile.disabled || target.disabled) return;
-    clearTileSelection();
-    const tiles = [...tileBoard.children];
-    const from = tiles.indexOf(tile), to = tiles.indexOf(target);
-    tileBoard.insertBefore(tile, from < to ? target.nextSibling : target);
-    checkTiles();
-  }
-  tileBoard.addEventListener("pointerup", endDrag);
-  tileBoard.addEventListener("pointercancel", endDrag);
-  tileBoard.addEventListener("lostpointercapture", endDrag);
-  tileBoard.addEventListener("click", event => {
-    if (skipClick && event.detail) return;
-    const tile = tileAt(event.target);
-    if (!tile) return;
-    const first = chosenTile;
-    clearTileSelection();
-    if (first === tile) return;
-    if (!first) {
-      chosenTile = tile;
-      tile.setAttribute("aria-pressed", "true");
-      return;
-    }
-    [first.textContent, tile.textContent] = [tile.textContent, first.textContent];
-    checkTiles();
-  });
-
   function render(next) {
     const newRound = next.round !== state?.round;
     const active = next.round > 0 && !next.winner && !next.timedOut;
@@ -193,21 +102,20 @@
       ? (solo && next.winner === "You" ? "You win!" : next.winner + " wins!") + " The word was " + next.answer + "."
       : next.timedOut ? "Time’s up! The word was " + next.answer + "."
       : active ? "Round " + next.round : "Waiting for the host to start.";
+    const letters = $("letters");
     if (newRound) {
       $("guess").value = "";
       $("feedback").textContent = "";
-      lastTileGuess = next.scramble;
-      queuedGuess = null;
-      showTiles(next.scramble || "");
+      letters.replaceChildren(...Array.from(next.scramble || "", letter => {
+        const tile = document.createElement("span");
+        tile.textContent = letter;
+        return tile;
+      }));
+      letters.setAttribute("aria-label", "Scrambled letters: " + (next.scramble || "").split("").join(" "));
     }
-    if (next.winner && !stateTileWinner) showTiles(next.answer);
-    stateTileWinner = Boolean(next.winner);
-    $("game-board").classList.toggle("solved", stateTileWinner);
-    for (const tile of tileBoard.children) tile.disabled = !active;
-    $("tile-help").hidden = !active;
     $("category").hidden = !next.category;
     $("category").textContent = next.category ? "Category: " + next.category : "";
-    tileBoard.hidden = !next.scramble;
+    letters.hidden = !next.scramble;
     $("guess-form").hidden = !active;
     $("start").hidden = !next.host || active;
     $("start").disabled = next.players.length < 2 || working;
@@ -255,12 +163,6 @@
     } finally {
       working = false;
       if (state) render(state);
-      const pending = queuedGuess;
-      queuedGuess = null;
-      if (pending && state?.round === pending.round && !state.winner && !state.timedOut) {
-        lastTileGuess = pending.guess;
-        void submitGuess(pending.guess, true);
-      }
     }
   }
 
@@ -300,7 +202,7 @@
     solo.deadline = performance.now() + 30000;
     solo.solvesAt = performance.now() + delay;
     render({ round: (state?.round || 0) + 1, host: true, players: ["You", "CPU"], category: categories[solo.answer], remainingMs: 30000, scramble });
-    tileBoard.firstElementChild?.focus();
+    $("guess").focus();
     cpuTimer = setTimeout(() => finishSolo(delay < 30000 ? "CPU" : null), Math.min(delay, 30000));
   }
 
@@ -319,28 +221,23 @@
     if (solo) return startSoloRound();
     return run(async () => render(await request("start", room)));
   };
-  async function submitGuess(value, fromTiles = false) {
-    if (!state?.round || state.winner || state.timedOut) return;
-    const input = $("guess");
-    if (solo) {
-      if (performance.now() >= Math.min(solo.deadline, solo.solvesAt)) return finishSolo(solo.solvesAt < solo.deadline ? "CPU" : null);
-      if (value.trim().toUpperCase() === solo.answer) return finishSolo("You");
-      if (!fromTiles) {
-        $("feedback").textContent = "Try again.";
-        input.select();
-      }
-      return;
-    }
-    await run(async () => {
-      const next = await request("guess", { ...room, round_number: state.round, value });
-      render(next);
-      $("feedback").textContent = !fromTiles && next.outcome === "incorrect" ? "Try again." : "";
-      if (!fromTiles && next.outcome === "incorrect") input.select();
-    });
-  }
   $("guess-form").onsubmit = event => {
     event.preventDefault();
-    if (!working) void submitGuess($("guess").value);
+    const input = $("guess");
+    if (solo) {
+      if (state.winner || state.timedOut) return;
+      if (performance.now() >= Math.min(solo.deadline, solo.solvesAt)) return finishSolo(solo.solvesAt < solo.deadline ? "CPU" : null);
+      if (input.value.trim().toUpperCase() === solo.answer) return finishSolo("You");
+      $("feedback").textContent = "Try again.";
+      input.select();
+      return;
+    }
+    run(async () => {
+      const next = await request("guess", { ...room, round_number: state.round, value: input.value });
+      render(next);
+      $("feedback").textContent = next.outcome === "incorrect" ? "Try again." : "";
+      if (next.outcome === "incorrect") input.select();
+    });
   };
   $("leave").onclick = () => {
     if (working) return;
@@ -349,8 +246,6 @@
     clearInterval(timerInterval);
     displayDeadline = undefined;
     solo = room = state = null;
-    stateTileWinner = false;
-    queuedGuess = null;
     clearTimeout(pollTimer);
     if (!wasSolo) sessionStorage.removeItem(sessionKey);
     $("room").hidden = true;
