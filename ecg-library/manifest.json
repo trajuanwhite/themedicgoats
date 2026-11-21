@@ -221,6 +221,30 @@
       "sourceRecordId": "2805",
       "file": "/ecg-library/records/02805.json",
       "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-01993",
+      "title": "Sinus rhythm with a PVC",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "1993",
+      "file": "/ecg-library/records/01993.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-05786",
+      "title": "Ventricular bigeminy",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "5786",
+      "file": "/ecg-library/records/05786.json",
+      "reviewStatus": "reviewed"
+    },
+    {
+      "id": "ptbxl-13102",
+      "title": "Ventricular trigeminy",
+      "dataset": "PTB-XL v1.0.3",
+      "sourceRecordId": "13102",
+      "file": "/ecg-library/records/13102.json",
+      "reviewStatus": "reviewed"
     }
   ]
 }

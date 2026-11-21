@@ -31,7 +31,7 @@
  }
  document.getElementById("reference-ecg").addEventListener("ecg-rhythm-lead-change",showSt);
  const panel=document.getElementById("ecg-measurements");
- const measurements=fetch("/ecg-library/ptb-xl-plus-12sl.json?v=3").then(response=>{
+ const measurements=fetch("/ecg-library/ptb-xl-plus-12sl.json?v=4").then(response=>{
   if(!response.ok)throw Error("Measurements unavailable");
   return response.json();
  }).catch(()=>null);
