@@ -12,6 +12,9 @@
 .lead-cell svg,.reference-cell svg,.rhythm-strip svg,.focus-ecg{background-image:none}
 .lead-cell svg,.rhythm-strip svg{height:auto}
  .ecg-measurements{margin-top:14px;padding:12px 14px;border:1px solid #decdbb;border-radius:12px;background:#faf5ef}
+.library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+.library-grid button{width:100%;min-width:0;min-height:44px;text-align:left;overflow-wrap:anywhere}
+.library-grid button[aria-pressed="true"]{background:#e9d4bf;border-color:#875b39}
 .ecg-measurements dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr));gap:10px;margin:0 0 8px}
 .ecg-measurements dt{font-size:13px;color:#655244}
 .ecg-measurements dd{margin:3px 0 0;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
@@ -123,7 +126,7 @@
  </div>
 </div></section>
 <section class="lab-panel reference-panel" id="reference-ecg"><h2>12-lead ECG Simulator</h2><p class="lab-sub">25 mm/s grid · Small box = 0.04 s · Large box = 0.20 s</p>
-<div class="library-selector"><label for="library-record"><strong>Clinical ECG library</strong></label><select id="library-record" disabled><option value="">Choose a recording</option></select><p id="library-status" role="status">Loading recordings…</p></div>
+<div class="library-selector"><strong id="library-heading">Clinical ECG library</strong><div id="library-record" class="library-grid" role="group" aria-labelledby="library-heading"></div><p id="library-status" role="status">Loading recordings…</p></div>
 <div class="ecg-measurements" id="ecg-measurements" aria-label="Automated ECG measurements" hidden>
  <dl>
   <div><dt>QRS axis</dt><dd id="ecg-qrs-axis"></dd></div>
@@ -347,6 +350,6 @@
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
 <script src="/ecg-lab-territories.js?v=1"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
-<script src="/ecg-lab-library.js?v=5"></script>
+<script src="/ecg-lab-library.js?v=6"></script>
 <script src="/ecg-lab-3d.js?v=29"></script>
 </body></html>
