@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medic Mix | The Medic Goats</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+body{margin:0;background:#f5ede3;color:#2d211a;font-family:system-ui,sans-serif}
+main{width:min(100% - 32px,680px);margin:36px auto 72px}
+nav a{color:#65442f;font-weight:750}
+h1{font-size:clamp(2.7rem,10vw,5rem);line-height:1;margin:28px 0 12px;letter-spacing:-.07em}
+.mix-card{padding:clamp(16px,4vw,30px);margin-top:22px;background:#fffbf6;border:1px solid #ddc7b4;border-radius:20px}
+.mix-card h2{margin-top:0}
+form,label{display:grid;gap:7px}
+form{gap:14px}
+button,input{font:inherit;border-radius:9px;padding:11px 13px;min-width:0}
+input{border:1px solid #a7846b;background:#fff;color:#2d211a}
+button{background:#744d36;color:#fff;border:1px solid #744d36;font-weight:750;cursor:pointer}
+button.secondary{background:#f5e7d9;color:#563928}
+button:disabled{opacity:.55;cursor:default}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.letters{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:22px 0}
+.letters span{display:grid;place-items:center;min-width:1.8em;min-height:2em;background:#f0dcc6;border-radius:8px;font-size:clamp(1.15rem,6vw,2rem);font-weight:850}
+#players{overflow-wrap:anywhere}
+#feedback,#message{color:#663a25}
+[hidden]{display:none!important}
+</style>
+<script defer src="/medic-mix.js"></script>
+</head>
+<body>
+<main>
+<nav><a href="/games">← Games</a></nav>
+<h1>Medic Mix</h1>
+<p>Unscramble the medical word. The first correct guess wins.</p>
+<section class="mix-card" id="welcome" aria-label="Host or join a game">
+<form id="entry">
+<label>Player name <input id="name" required minlength="2" maxlength="24" autocomplete="nickname"></label>
+<div class="actions"><button type="button" id="host">Host Game</button></div>
+<label>Room code <input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off"></label>
+<button type="submit" class="secondary">Join Game</button>
+</form>
+</section>
+<section class="mix-card" id="room" hidden aria-label="Game room">
+<h2 id="room-title"></h2>
+<div class="actions"><button type="button" id="copy" class="secondary">Copy Invite Link</button><button type="button" id="leave" class="secondary">Leave Room</button></div>
+<p id="players"></p>
+<p id="round-status" role="status"></p>
+<div id="letters" class="letters" hidden></div>
+<form id="guess-form" hidden>
+<label>Your guess <input id="guess" required maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
+<button type="submit">Submit Guess</button>
+</form>
+<p id="feedback" role="status"></p>
+<button id="start" type="button" hidden>Start Round</button>
+</section>
+<p id="message" role="status"></p>
+</main>
+</body>
+</html>
