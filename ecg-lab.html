@@ -76,6 +76,21 @@
 .myocardium-key span:nth-child(2)::before{background:#f0bb62;border-color:#99703c}
 .myocardium-key small{flex-basis:100%;text-align:center;font-size:.75rem}
 .show-myocardium-state #dep-vt-rv,.show-myocardium-state #dep-vt-lv{fill:#f0bb62;opacity:1}
+
+/* Compact, aligned conduction playback toolbar */
+.heart-mode-control{display:grid;grid-template-columns:minmax(110px,.8fr) minmax(170px,1.25fr) minmax(145px,1fr);align-items:end;gap:12px;padding:14px;border:1px solid #e4d5c5;border-radius:15px;background:#faf6f1;margin:16px 0}
+.heart-mode-control label{display:flex;flex-direction:column;align-items:stretch;gap:6px;min-width:0;font-size:12px;font-weight:800;color:#68513c;line-height:1.25}
+.heart-mode-control #play-btn,.heart-mode-control select{box-sizing:border-box;width:100%;height:46px;min-width:0;max-width:100%;margin:0;padding:10px 12px;border-radius:10px;font:inherit;font-size:14px;color:#4e3827;border:1px solid #d2bba4}
+.heart-mode-control #play-btn{background:#855b39;color:#fff;border-color:#855b39;font-weight:800}
+.heart-mode-control select{background:#fffaf5;font-weight:700}
+.heart-mode-control select:focus-visible{outline:3px solid #875d3e;outline-offset:2px}
+@media(max-width:600px){
+ .heart-mode-control{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:11px;padding:12px}
+ .heart-mode-control #play-btn{grid-column:1;grid-row:1;align-self:end}
+ .heart-mode-control .conduction-labels-control{grid-column:2;grid-row:1}
+ .heart-mode-control .conduction-speed-control{grid-column:1/-1;grid-row:2}
+ .heart-mode-control #play-btn{margin-top:21px}
+}
 </style></head><body>
 <header class="site-header"><a class="brand" href="/">THE MEDIC GOATS</a><nav><a class="navlink" href="/training">Training</a><a class="navlink" href="/games">Games</a><a class="navlink" href="/">Home</a></nav></header>
 <main class="lab">
@@ -84,15 +99,20 @@
 <section class="lab-panel conduction-panel"><div class="conduction-header"><h2>Cardiac conduction</h2><div class="rhythm-picker"><label for="rhythm-mode">Electrical rhythm</label><select id="rhythm-mode"><optgroup label="Sinus and atrial rhythms"><option value="sinus">Sinus rhythm</option><option value="afib">Atrial fibrillation (AFib)</option><option value="flutter">Atrial flutter (2:1)</option></optgroup><optgroup label="Atrioventricular blocks"><option value="av1">First-degree AV block</option><option value="mobitz1">Second-degree AV block — Mobitz I</option><option value="mobitz2">Second-degree AV block — Mobitz II</option><option value="av3">Third-degree AV block (complete)</option></optgroup><optgroup label="Bundle branch blocks"><option value="rbbb">Right bundle branch block (RBBB)</option><option value="lbbb">Left bundle branch block (LBBB)</option></optgroup><optgroup label="Ventricular rhythm and pre-excitation"><option value="vt">Monomorphic ventricular tachycardia</option><option value="pvt">Polymorphic ventricular tachycardia</option><option value="vf">Ventricular fibrillation (VFib)</option><option value="wpw">WPW pre-excitation pattern</option></optgroup></select></div></div><small id="heart-status" hidden></small>
 <div id="heart-view" class="heart-container"><p id="rhythm-explanation" class="heart-rhythm-explanation" aria-live="polite">SA node initiates organized atrial activation, followed by AV delay and His–Purkinje conduction.</p><div id="heart-fallback" class="heart-fallback"><p role="status">Loading the electrical conduction drawing…</p></div></div>
 
-<div class="heart-mode-control"><button id="play-btn" type="button" aria-pressed="true">Pause</button>
-<label for="conduction-speed">Conduction speed
- <select id="conduction-speed">
-  <option value="0.04" selected>4%</option>
-  <option value="0.08">8%</option>
-  <option value="0.16">16%</option>
-  <option value="1">100% (real time)</option>
- </select>
-</label><select id="heart-labels" aria-label="Show or hide conduction labels"><option value="show" selected>Show labels</option><option value="hide">Hide labels</option></select></div>
+<div class="heart-mode-control" role="group" aria-label="Cardiac conduction playback controls">
+  <button id="play-btn" type="button" aria-pressed="true">Pause</button>
+  <label class="conduction-speed-control" for="conduction-speed"><span>Conduction speed</span>
+    <select id="conduction-speed">
+      <option value="0.04" selected>4%</option>
+      <option value="0.08">8%</option>
+      <option value="0.16">16%</option>
+      <option value="1">100% (real time)</option>
+    </select>
+  </label>
+  <label class="conduction-labels-control" for="heart-labels"><span>Heart labels</span>
+    <select id="heart-labels"><option value="show" selected>Show labels</option><option value="hide">Hide labels</option></select>
+  </label>
+</div>
 
 <div class="conduction-stage" id="conduction-stage"><p class="lab-sub" id="stage-description" aria-live="off">SA node initiates atrial activation.</p></div>
 <div class="stat-row"><button class="stat phase-step" id="phase-step" type="button" aria-label="Advance to next cardiac cycle phase" title="Tap to advance and pause at the next phase"><strong id="phase">P</strong><span>ECG PHASE</span></button><div class="stat"><strong id="bpm-readout">75</strong><span>RHYTHM RATE (BPM)</span></div><div class="stat"><strong>12</strong><span>DISPLAYED LEADS</span></div></div>
