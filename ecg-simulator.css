@@ -53,5 +53,6 @@
 .ecg-vote input:focus-visible + span{outline:3px solid #3175a5;outline-offset:2px}
 .ecg-feedback #ecg-feedback-details label{display:block;margin-bottom:10px}
 .ecg-feedback select,.ecg-feedback textarea{display:block;width:min(100%,460px);padding:8px;font:inherit}
-.ecg-feedback button{padding:8px 12px;border:1px solid #cbbdae;border-radius:8px;background:#fff8f0;color:#39291e;font:inherit;cursor:pointer}
 .ecg-feedback p:empty,.ecg-quiz-unanswered #ecg-feedback{display:none}
+
+.ecg-vote input:checked + span svg{fill:currentColor}

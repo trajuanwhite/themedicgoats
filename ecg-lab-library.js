@@ -18,6 +18,7 @@
  const buttons=new Map();
  let loading=false;
  let loadedId="";
+ const saveRating=()=>window.MedicECGFeedback?.save()??true;
  const get=id=>document.getElementById(id);
  const viewer=get("reference-ecg"), quiz=get("ecg-quiz");
  let quizMode=false, answered=false, round=null, correct=0, attempts=0;
@@ -114,13 +115,14 @@
    feedback.textContent="";
    options.firstElementChild?.focus({preventScroll:true});
   }
-  next.onclick=()=>{
+  next.onclick=async()=>{
+   if(loading||!await saveRating())return;
    get("ecg-quiz-mode").scrollIntoView({block:"nearest"});
    void nextRound();
   };
   toggle.disabled=false;
-  toggle.onclick=()=>{
-   if(loading||quizMode)return;
+  toggle.onclick=async()=>{
+   if(loading||quizMode||!await saveRating())return;
    quizMode=true;
    answered=false;
    correct=attempts=0;
@@ -133,8 +135,8 @@
    toggle.setAttribute("aria-pressed","true");
    void nextRound();
   };
-  browse.onclick=()=>{
-   if(loading||!quizMode)return;
+  browse.onclick=async()=>{
+   if(loading||!quizMode||!await saveRating())return;
    quizMode=false;
    quiz.hidden=true;
    viewer.classList.remove("ecg-quiz-unanswered","ecg-quiz-no-tracing");
@@ -208,7 +210,8 @@
    button.type="button";
    button.textContent=record.title;
    button.setAttribute("aria-pressed","false");
-   button.addEventListener("click",()=>{
+   button.addEventListener("click",async()=>{
+    if(loading||record.id===loadedId||!await saveRating())return;
     picker.open=false;
     choice.focus();
     return loadSelected(record);
