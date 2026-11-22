@@ -100,6 +100,9 @@
      if(label===round.answer)correct++;
      updateScore();
      feedback.textContent=(label===round.answer?"Correct. ":"Incorrect. ")+"Answer: "+round.answer+". Recording: "+round.record.title+".";
+     if(round.record.id==="vfdb-424-1545"&&label==="Ventricular fibrillation"){
+      feedback.textContent="Fine VF is an understandable choice here. Both channels show similar slow baseline drift with small wiggles, and PhysioNet classified this segment as asystole. Confirmed fine VF is shockable. If the rhythm is unclear during a real arrest, quickly check another lead and verify the signal during the rhythm check.";
+     }
      for(const option of options.children){
       option.disabled=true;
       if(option.textContent===round.answer)option.dataset.result="correct";
