@@ -22,7 +22,6 @@
  viewer.addEventListener("ecg-recording-selected",({detail})=>{
   recordingId=detail.monitor?null:detail.id;
   panel.hidden=!recordingId;
-  panel.open=false;
   form.reset();
   status.textContent="";
   syncFields();

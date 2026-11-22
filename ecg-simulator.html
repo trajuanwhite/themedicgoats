@@ -6,7 +6,7 @@
 <title>12-Lead ECG Simulator | The Medic Goats</title>
 <meta name="description" content="Practice interpreting clinical 12-leads and recorded monitor rhythms with The Medic Goats.">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/ecg-simulator.css?v=4">
+<link rel="stylesheet" href="/ecg-simulator.css?v=5">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="/">THE MEDIC GOATS</a><nav><a class="navlink" href="/training">Training</a><a class="navlink" href="/games">Games</a><a class="navlink" href="/">Home</a></nav></header>
@@ -45,13 +45,13 @@
  <p id="ecg-quiz-feedback" role="status"></p>
  <button type="button" id="ecg-quiz-next" hidden>Next tracing</button>
 </section>
-<details id="ecg-feedback" class="ecg-feedback" hidden>
- <summary>Rate this 12-lead</summary>
+<section id="ecg-feedback" class="ecg-feedback" aria-labelledby="ecg-feedback-heading" hidden>
+ <h2 id="ecg-feedback-heading">Rate this 12-lead</h2>
  <form id="ecg-feedback-form">
   <fieldset>
    <legend>Does this recording match its interpretation?</legend>
-   <label><input name="verdict" type="radio" value="accurate" required> Looks accurate</label>
-   <label><input name="verdict" type="radio" value="flag"> Flag for review</label>
+   <label class="ecg-vote ecg-vote-accurate"><input name="verdict" type="radio" value="accurate" required><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v10H3V10h4Zm0 9c2 1 3 1 5 1h5a2 2 0 0 0 2-1.5l2-7a2 2 0 0 0-2-2.5h-5l.7-3a2.6 2.6 0 0 0-2.6-3L7 10"/></svg>Looks accurate</span></label>
+   <label class="ecg-vote ecg-vote-flag"><input name="verdict" type="radio" value="flag"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v10H3V10h4Zm0 9c2 1 3 1 5 1h5a2 2 0 0 0 2-1.5l2-7a2 2 0 0 0-2-2.5h-5l.7-3a2.6 2.6 0 0 0-2.6-3L7 10"/></svg>Flag for review</span></label>
   </fieldset>
   <div id="ecg-feedback-details" hidden>
    <label>Reason
@@ -70,13 +70,13 @@
   <button type="submit">Send feedback</button>
   <p id="ecg-feedback-status" role="status"></p>
  </form>
-</details>
+</section>
 </section>
 </main>
 <footer><div class="medic-footer-info"><strong>THE MEDIC GOATS</strong><span>Teaching While Learning • Educational practice only</span><span>ECG recordings: <a href="https://physionet.org/content/ptb-xl/1.0.3/">PTB‑XL v1.0.3, Wagner et al.</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span></div></footer>
 <script src="/ecg-lab-paper-grid.js?v=1"></script>
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
-<script src="/ecg-simulator-feedback.js?v=1"></script>
+<script src="/ecg-simulator-feedback.js?v=2"></script>
 <script src="/ecg-lab-library.js?v=12"></script>
 </body>
 </html>

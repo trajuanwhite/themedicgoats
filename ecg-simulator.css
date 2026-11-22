@@ -38,9 +38,19 @@
 .ecg-quiz-unanswered #clinical-record-source{display:none}
 .ecg-quiz-no-tracing #ecg-measurements,.ecg-quiz-no-tracing #clinical-twelve-lead,.ecg-quiz-no-tracing #clinical-monitor{display:none}
 .ecg-feedback{margin-top:16px;padding:12px 14px;border:1px solid #decdbb;border-radius:12px;background:#faf5ef}
-.ecg-feedback summary{cursor:pointer;font-weight:700}
+.ecg-feedback h2{margin:0;font-size:18px}
 .ecg-feedback fieldset{border:0;padding:0;margin:12px 0}
-.ecg-feedback fieldset label{display:inline-block;margin:6px 14px 0 0}
+.ecg-vote{display:inline-flex;position:relative;max-width:100%;margin:6px 8px 0 0;cursor:pointer}
+.ecg-vote input{position:absolute;width:1px;height:1px;opacity:0}
+.ecg-vote span{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 12px;border:1px solid currentColor;border-radius:8px;font-weight:700}
+.ecg-vote svg{width:20px;height:20px;flex:none}
+.ecg-vote-accurate{color:#196139}
+.ecg-vote-accurate span{background:#edf7ef}
+.ecg-vote-flag{color:#942a2a}
+.ecg-vote-flag span{background:#fff0ef}
+.ecg-vote-flag svg{transform:rotate(180deg)}
+.ecg-vote input:checked + span{box-shadow:inset 0 0 0 1px currentColor}
+.ecg-vote input:focus-visible + span{outline:3px solid #3175a5;outline-offset:2px}
 .ecg-feedback #ecg-feedback-details label{display:block;margin-bottom:10px}
 .ecg-feedback select,.ecg-feedback textarea{display:block;width:min(100%,460px);padding:8px;font:inherit}
 .ecg-feedback button{padding:8px 12px;border:1px solid #cbbdae;border-radius:8px;background:#fff8f0;color:#39291e;font:inherit;cursor:pointer}
