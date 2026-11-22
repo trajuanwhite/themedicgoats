@@ -173,12 +173,18 @@ function state(seconds,bpm,mode="sinus"){
    ["bundles",.153,bbbPR],["ventricles",bbbPR,bbbPR+bbbQrs],["recovery",bbbPR+bbbQrs,.52]];
   const [stage,start,end]=phases.find(([,from,to])=>t>=from&&t<to)||["rest",0,1];
   return {mode,phase,seconds,stage,progress:stage==="rest"?0:(t-start)/(end-start),origin:"sinus",
-   atrialActive:t<.105,atrialProgress:Math.max(0,(t-.012)/.093),blockedBranch:block.side};
+   atrialElapsed:t,atrialActive:t<.105,atrialProgress:Math.max(0,(t-.012)/.093),blockedBranch:block.side};
  }
  const seq=schedule(mode,bpm);
  let atrial=null,vent=null;
  for(const a of seq.atria){if(a.t<=seconds)atrial=a;else break;}
- for(const q of seq.vents){if(q.t<=seconds+.17)vent=q;else break;}
+ const ventricularTachycardia=mode==="vt"||mode==="pvt";
+ let nextVent=null;
+ for(const q of seq.vents){
+  if(q.t<=seconds+(ventricularTachycardia?0:.17))vent=q;
+  else {nextVent=q;break;}
+ }
+ if(ventricularTachycardia&&!vent&&nextVent?.t<=seconds+.13)vent=nextVent;
  const aElapsed=atrial?seconds-atrial.t:Infinity;
  const vElapsed=vent?seconds-vent.t:Infinity;
  const atrialActive=atrial!==null&&aElapsed>=0&&aElapsed<.16;
@@ -197,7 +203,10 @@ function state(seconds,bpm,mode="sinus"){
   if(vent.source==="ventricular"||vent.source==="polymorphic"||vent.source==="escape"){
    if(vElapsed<0){stage="ventricular-origin";progress=(vElapsed+.13)/.13;}
    else if(vElapsed<.16){stage="ventricles";progress=vElapsed/.16;}
-   else {stage="recovery";progress=(vElapsed-.16)/.23;}
+   else {
+    const recoveryEnd=ventricularTachycardia&&nextVent?Math.min(.39,nextVent.t-vent.t):.39;
+    stage="recovery";progress=(vElapsed-.16)/Math.max(.001,recoveryEnd-.16);
+   }
   }else if(vent.source==="accessory"&&vElapsed<0){
    stage="accessory";progress=(vElapsed+.13)/.13;
   }else if(vElapsed<-.08){stage="av";progress=(vElapsed+.13)/.05;}

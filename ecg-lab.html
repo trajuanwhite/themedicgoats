@@ -47,6 +47,35 @@
   .reference-scroll input{min-width:0;width:100%;flex-basis:100%}
   .ecg-layout-scroll{width:100%;max-width:100%}
 }
+
+.conduction-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 16px;list-style:none;counter-reset:conduction;margin:12px 0;padding:12px 14px;border:1px solid #eadbcb;border-radius:12px;background:#fffbf6;color:#503b2c}
+.conduction-legend[hidden]{display:none}
+.conduction-legend li{position:relative;counter-increment:conduction;min-height:22px;padding-left:28px;font-size:.875rem;line-height:1.45}
+.conduction-legend li::before{content:counter(conduction);position:absolute;top:0;left:0;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#f2e4d5;color:#65462c;font-size:.75rem;font-weight:750}
+.conduction-legend small{display:block;color:#725b48;font-size:.78rem}
+@media(max-width:420px){.conduction-legend{grid-template-columns:1fr}}
+
+#heart-view{height:auto;container-type:inline-size;padding:10px 12px 12px}
+#heart-view .heart-rhythm-explanation{position:relative;inset:auto;margin:0 0 8px}
+.heart-conduction-layout{display:grid;gap:10px;align-items:center}
+#heart-view .electrical-heart-drawing{min-width:0;padding:0}
+.heart-conduction-layout .electrical-heart-drawing svg{height:auto!important;max-height:435px}
+.heart-conduction-layout .conduction-legend{margin:0}
+@container (min-width:540px){
+ .heart-conduction-layout:has(.conduction-legend:not([hidden])){grid-template-columns:minmax(0,1fr) minmax(190px,33%)}
+ .heart-conduction-layout .conduction-legend{grid-template-columns:1fr}
+}
+
+.myocardium-resting{visibility:hidden}
+.show-myocardium-state .myocardium-resting{visibility:visible}
+.show-myocardium-state #dep-atrial-wave,.show-myocardium-state #dep-rv-fill,.show-myocardium-state #dep-lv-fill{fill:#f0bb62;opacity:1}
+.atrial-recovering #dep-atrial-edge,.recovering #dep-rv-front,.recovering #dep-lv-front{stroke:#4f829e}
+.myocardium-key{display:flex;justify-content:center;align-items:center;gap:5px 14px;flex-wrap:wrap;margin-top:9px;color:#594838;font-size:.8rem}
+.myocardium-key[hidden]{display:none}
+.myocardium-key span::before{content:"";display:inline-block;width:.9em;height:.9em;margin-right:5px;vertical-align:-.05em;border-radius:3px;border:1px solid #6e8797;background:#c3dceb}
+.myocardium-key span:nth-child(2)::before{background:#f0bb62;border-color:#99703c}
+.myocardium-key small{flex-basis:100%;text-align:center;font-size:.75rem}
+.show-myocardium-state #dep-vt-rv,.show-myocardium-state #dep-vt-lv{fill:#f0bb62;opacity:1}
 </style></head><body>
 <header class="site-header"><a class="brand" href="/">THE MEDIC GOATS</a><nav><a class="navlink" href="/training">Training</a><a class="navlink" href="/games">Games</a><a class="navlink" href="/">Home</a></nav></header>
 <main class="lab">
@@ -168,7 +197,7 @@
 <script src="/ecg-lab-paper-grid.js?v=1"></script>
 <script src="/ecg-lab-engine.js?v=2"></script>
 <script src="/ecg-lab-activation.js?v=5"></script>
-<script src="/ecg-lab-rhythms.js?v=5"></script>
+<script src="/ecg-lab-rhythms.js?v=6"></script>
 <script>
 (function(){
  "use strict";
@@ -269,5 +298,5 @@
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
 <script src="/ecg-lab-library.js?v=8"></script>
-<script src="/ecg-lab-3d.js?v=29"></script>
+<script src="/ecg-lab-3d.js?v=38"></script>
 </body></html>
