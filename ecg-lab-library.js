@@ -112,9 +112,12 @@
     options.append(button);
    }
    feedback.textContent="";
-   options.firstElementChild?.focus();
+   options.firstElementChild?.focus({preventScroll:true});
   }
-  next.onclick=nextRound;
+  next.onclick=()=>{
+   get("ecg-quiz-mode").scrollIntoView({block:"nearest"});
+   void nextRound();
+  };
   toggle.disabled=false;
   toggle.onclick=()=>{
    if(loading||quizMode)return;
@@ -222,25 +225,37 @@
   if(hz!==250||!Number.isInteger(count)||seconds<1||seconds>30||amplitudeUnit!=="mV"||
      !Array.isArray(leads)||leads.join(",")!=="Channel 1,Channel 2")throw Error("Invalid monitor clip");
   const width=seconds*150;
-  const transition=(!quizMode||answered)&&raw.source.annotation==="VF to asystole"?7.6:null;
-  const makeSvg=tag=>document.createElementNS("http://www.w3.org/2000/svg",tag);
-  const channels=leads.map(lead=>{
+  const halfHeight=78;
+  const traces=leads.map(lead=>{
    const samples=raw.waveforms[lead];
    if(!Array.isArray(samples)||samples.length!==count||
       !samples.every(v=>Number.isFinite(v)&&Math.abs(v)<=30))throw Error("Invalid monitor samples");
+   const ordered=[...samples].sort((a,b)=>a-b);
+   const middle=Math.floor(count/2);
+   const baseline=(ordered[middle]+ordered[Math.floor((count-1)/2)])/2;
+   const peak=samples.reduce((max,v)=>Math.max(max,Math.abs(v-baseline)),0);
+   return {lead,samples,baseline,peak};
+  });
+  // Preserve the same voltage scale on both channels and keep the grid square.
+  const peak=Math.max(...traces.map(trace=>trace.peak));
+  const maxGain=(halfHeight-10)/(Math.max(peak,0.01)*6);
+  const gain=[10,5,2.5,1,.5,.25].find(candidate=>candidate<=maxGain)??.125;
+  const pixelsPerMv=gain*6;
+  const transition=(!quizMode||answered)&&raw.source.annotation==="VF to asystole"?7.6:null;
+  const makeSvg=tag=>document.createElementNS("http://www.w3.org/2000/svg",tag);
+  const channels=traces.map(({lead,samples,baseline})=>{
    const strip=document.createElement("div"),heading=document.createElement("strong");
    strip.className="rhythm-strip";
    strip.style.width=width+"px";
    heading.textContent=lead;
    const svg=makeSvg("svg");
-   const halfHeight=Math.max(69,Math.ceil(samples.reduce((peak,v)=>Math.max(peak,Math.abs(v)),0)*60)+12);
    svg.setAttribute("viewBox","0 0 "+width+" "+(halfHeight*2));
    svg.setAttribute("role","img");
    svg.setAttribute("aria-label",lead+" recorded waveform");
    window.MedicECGPaperGrid(svg,width,seconds);
    const path=makeSvg("path");
    path.setAttribute("d",samples.map((sample,i)=>(i?"L":"M")+
-    (i*150/hz).toFixed(2)+" "+(halfHeight-sample*60).toFixed(2)).join(" "));
+    (i*150/hz).toFixed(2)+" "+(halfHeight-(sample-baseline)*pixelsPerMv).toFixed(2)).join(" "));
    svg.append(path);
    if(transition!==null){
     const marker=makeSvg("line");
@@ -257,7 +272,7 @@
   scroll.tabIndex=0;
   scroll.setAttribute("aria-label","Recorded rhythm strips, scroll horizontally");
   scroll.append(...channels);
-  caption.textContent=seconds+"-second clip · Two recorded channels · 25 mm/s grid";
+  caption.textContent=seconds+"-second clip · Two recorded channels · 25 mm/s grid · "+gain+" mm/mV";
   if(transition!==null)caption.textContent+=" · Asystole annotation at "+transition+" s";
   document.getElementById("clinical-monitor").replaceChildren(caption,scroll);
  }
