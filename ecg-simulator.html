@@ -6,7 +6,7 @@
 <title>12-Lead ECG Simulator | The Medic Goats</title>
 <meta name="description" content="Practice interpreting clinical 12-leads and recorded monitor rhythms with The Medic Goats.">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/ecg-simulator.css?v=1">
+<link rel="stylesheet" href="/ecg-simulator.css?v=2">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="/">THE MEDIC GOATS</a><nav><a class="navlink" href="/training">Training</a><a class="navlink" href="/games">Games</a><a class="navlink" href="/">Home</a></nav></header>
@@ -15,7 +15,11 @@
   <h1>12-Lead ECG Simulator</h1>
   <p>Explore clinical 12-leads and two-channel monitor recordings.</p>
 <section class="card simulator-viewer" id="reference-ecg" aria-label="Clinical ECG recordings"><p class="lab-sub">25 mm/s grid · Small box = 0.04 s · Large box = 0.20 s</p>
-<div class="library-selector"><strong id="library-heading">Clinical ECG library</strong><details id="library-picker" class="library-picker"><summary id="library-choice">Choose a recording</summary><div id="library-record" class="library-grid" role="group" aria-labelledby="library-heading"></div></details><p id="library-status" role="status">Loading recordings…</p></div>
+<div class="simulator-modes" role="group" aria-label="Simulator mode">
+ <button type="button" id="ecg-browse-mode" aria-pressed="true">Browse recordings</button>
+ <button type="button" id="ecg-quiz-mode" aria-pressed="false" disabled>Quiz mode</button>
+</div>
+<div class="library-selector" id="ecg-browse-controls"><strong id="library-heading">Clinical ECG library</strong><details id="library-picker" class="library-picker"><summary id="library-choice">Choose a recording</summary><div id="library-record" class="library-grid" role="group" aria-labelledby="library-heading"></div></details><p id="library-status" role="status">Loading recordings…</p></div>
 <div class="ecg-measurements" id="ecg-measurements" aria-label="Automated ECG measurements" hidden>
  <dl>
   <div id="ecg-rate-cell" hidden><dt>Rate</dt><dd id="ecg-rate"></dd></div>
@@ -34,11 +38,18 @@
 </div>
 <div id="clinical-monitor" class="rhythm-section" hidden></div>
 <p class="reference-meta" id="clinical-record-source"></p>
+<section id="ecg-quiz" class="ecg-quiz" aria-labelledby="ecg-quiz-prompt" hidden>
+ <p id="ecg-quiz-score"></p>
+ <h2 id="ecg-quiz-prompt">What rhythm or finding do you see?</h2>
+ <div id="ecg-quiz-options" class="ecg-quiz-options" role="group" aria-labelledby="ecg-quiz-prompt"></div>
+ <p id="ecg-quiz-feedback" role="status"></p>
+ <button type="button" id="ecg-quiz-next" hidden>Next tracing</button>
+</section>
 </section>
 </main>
 <footer><div class="medic-footer-info"><strong>THE MEDIC GOATS</strong><span>Teaching While Learning • Educational practice only</span><span>ECG recordings: <a href="https://physionet.org/content/ptb-xl/1.0.3/">PTB‑XL v1.0.3, Wagner et al.</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span></div></footer>
 <script src="/ecg-lab-paper-grid.js?v=1"></script>
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
-<script src="/ecg-lab-library.js?v=9"></script>
+<script src="/ecg-lab-library.js?v=10"></script>
 </body>
 </html>

@@ -18,6 +18,129 @@
  const buttons=new Map();
  let loading=false;
  let loadedId="";
+ const get=id=>document.getElementById(id);
+ const viewer=get("reference-ecg"), quiz=get("ecg-quiz");
+ let quizMode=false, answered=false, round=null, correct=0, attempts=0;
+ let remaining=[], lastQuizId="", browseRecord=null, displayedRaw=null;
+ const answerGroups=[
+  ["Sinus rhythm",/^ptbxl-(00001|00003|00004)$/],
+  ["Sinus bradycardia",/^ptbxl-00002$/],
+  ["Atrial fibrillation",/^ptbxl-02032$/],
+  ["Atrial fibrillation with RVR",/^ptbxl-02125$|^sph-A(24295|06017|09492)$/],
+  ["Atrial flutter",/^ptbxl-02430$|^sph-A(18377|23247|15066)$/],
+  ["Complete AV block",/^sph-A(23013|24356|17439)$/],
+  ["Mobitz II AV block",/^sph-A(09204|10158)$/],
+  ["First-degree AV block",/^ptbxl-18458$/],
+  ["Right bundle branch block",/^ptbxl-18035$/],
+  ["Left bundle branch block",/^ptbxl-18278$/],
+  ["Ventricular preexcitation",/^sph-A(09221|19062|24957)$/],
+  ["Sinus rhythm with a PVC",/^ptbxl-01993$/],
+  ["Ventricular bigeminy",/^ptbxl-05786$/],
+  ["Ventricular trigeminy",/^ptbxl-13102$/],
+  ["ST depression",/^ptbxl-(02633|02181)$|^sph-A(02868|08465|00598)$/],
+  ["Early repolarization",/^sph-A(10453|13641|21880)$/],
+  ["LVH with strain",/^sph-A(13780|20682|01350)$/],
+  ["Anteroseptal ST elevation",/^sph-A07802$/],
+  ["Ventricular tachycardia",/^vfdb-(420-1440|422-1350|425-935)$/],
+  ["Ventricular fibrillation",/^vfdb-(424-1265|426-655|430-490)$/],
+  ["Asystole",/^vfdb-(424-1545|427-1540|430-526)$/],
+  ["VF progressing to asystole",/^vfdb-430-517$/]
+ ];
+ function shuffle(items){
+  const result=[...items];
+  for(let i=result.length-1;i>0;i--){
+   const j=Math.floor(Math.random()*(i+1));
+   [result[i],result[j]]=[result[j],result[i]];
+  }
+  return result;
+ }
+ function installQuiz(records){
+  if(!quiz)return;
+  const cases=records.flatMap(record=>{
+   const group=answerGroups.find(([,pattern])=>pattern.test(record.id));
+   return group?[{record,answer:group[0],monitor:record.leadCount===2}]:[];
+  });
+  if(new Set(cases.map(item=>item.answer)).size<4)return;
+  const browse=get("ecg-browse-mode"), toggle=get("ecg-quiz-mode");
+  const next=get("ecg-quiz-next"), options=get("ecg-quiz-options"), feedback=get("ecg-quiz-feedback");
+  const score=get("ecg-quiz-score");
+  const updateScore=()=>{score.textContent="Score: "+correct+" / "+attempts;};
+  async function nextRound(){
+   if(loading||!quizMode)return;
+   answered=false;
+   viewer.classList.add("ecg-quiz-unanswered");
+   if(!remaining.length){
+    remaining=shuffle(cases);
+    if(remaining[0].record.id===lastQuizId)remaining.push(remaining.shift());
+   }
+   round=remaining.shift();
+   next.hidden=true;
+   options.replaceChildren();
+   feedback.textContent="Loading tracing…";
+   viewer.classList.add("ecg-quiz-no-tracing");
+   const loaded=await loadSelected(round.record);
+   if(!loaded){
+    feedback.textContent="This tracing could not load. Try the next one.";
+    next.hidden=false;
+    next.focus();
+    return;
+   }
+   viewer.classList.remove("ecg-quiz-no-tracing");
+   lastQuizId=round.record.id;
+   const alternatives=[...new Set(cases.filter(item=>item.monitor===round.monitor&&item.answer!==round.answer).map(item=>item.answer))];
+   for(const label of shuffle([round.answer,...shuffle(alternatives).slice(0,3)])){
+    const button=document.createElement("button");
+    button.type="button";
+    button.textContent=label;
+    button.onclick=()=>{
+     if(answered)return;
+     answered=true;
+     attempts++;
+     if(label===round.answer)correct++;
+     updateScore();
+     feedback.textContent=(label===round.answer?"Correct. ":"Incorrect. ")+"Answer: "+round.answer+". Recording: "+round.record.title+".";
+     for(const option of options.children){
+      option.disabled=true;
+      if(option.textContent===round.answer)option.dataset.result="correct";
+      else if(option===button)option.dataset.result="incorrect";
+     }
+     viewer.classList.remove("ecg-quiz-unanswered");
+     if(round.monitor)renderMonitor(displayedRaw);
+     next.hidden=false;
+     next.focus();
+    };
+    options.append(button);
+   }
+   feedback.textContent="";
+   options.firstElementChild?.focus();
+  }
+  next.onclick=nextRound;
+  toggle.disabled=false;
+  toggle.onclick=()=>{
+   if(loading||quizMode)return;
+   quizMode=true;
+   answered=false;
+   correct=attempts=0;
+   remaining=[];
+   updateScore();
+   picker.open=false;
+   get("ecg-browse-controls").hidden=true;
+   quiz.hidden=false;
+   browse.setAttribute("aria-pressed","false");
+   toggle.setAttribute("aria-pressed","true");
+   void nextRound();
+  };
+  browse.onclick=()=>{
+   if(loading||!quizMode)return;
+   quizMode=false;
+   quiz.hidden=true;
+   viewer.classList.remove("ecg-quiz-unanswered","ecg-quiz-no-tracing");
+   get("ecg-browse-controls").hidden=false;
+   browse.setAttribute("aria-pressed","true");
+   toggle.setAttribute("aria-pressed","false");
+   void loadSelected(browseRecord||records[0]);
+  };
+ }
  const stLine=document.getElementById("ecg-st-jpoint");
  let stByLead=null;
  function showSt(){
@@ -91,6 +214,7 @@
    list.appendChild(button);
   });
   await loadSelected(firstRecord);
+  installQuiz(records);
  }catch(e){status.textContent="The ECG library could not be loaded.";}
  function renderMonitor(raw){
   const {samplingHz:hz,durationSeconds:seconds,leads,amplitudeUnit}=raw.recording;
@@ -98,7 +222,7 @@
   if(hz!==250||!Number.isInteger(count)||seconds<1||seconds>30||amplitudeUnit!=="mV"||
      !Array.isArray(leads)||leads.join(",")!=="Channel 1,Channel 2")throw Error("Invalid monitor clip");
   const width=seconds*150;
-  const transition=raw.source.annotation==="VF to asystole"?7.6:null;
+  const transition=(!quizMode||answered)&&raw.source.annotation==="VF to asystole"?7.6:null;
   const makeSvg=tag=>document.createElementNS("http://www.w3.org/2000/svg",tag);
   const channels=leads.map(lead=>{
    const samples=raw.waveforms[lead];
@@ -138,15 +262,17 @@
   document.getElementById("clinical-monitor").replaceChildren(caption,scroll);
  }
  async function loadSelected(record){
-  if(loading||record.id===loadedId)return;
+  if(loading)return false;
+  if(record.id===loadedId&&!quizMode&&record===browseRecord)return true;
   loading=true;
-  status.textContent="Loading "+record.title+"…";
+  status.textContent=quizMode?"Loading tracing…":"Loading "+record.title+"…";
   list.setAttribute("aria-busy","true");
   try{
    const res=await fetch(record.file,{cache:"no-store"});
    if(!res.ok)throw Error("Recording unavailable");
    const raw=await res.json();
    if(raw.source?.recordId!==record.sourceRecordId||raw.source?.dataset!==record.dataset)throw Error("Recording does not match the library");
+   displayedRaw=raw;
    const monitor=raw.kind==="clinical-monitor-strip";
    if(monitor)renderMonitor(raw);
    else window.MedicECGReference.loadObject(raw);
@@ -160,10 +286,15 @@
    loadedId=record.id;
    buttons.get(loadedId).setAttribute("aria-pressed","true");
    void showMeasurements(record,raw);
-   choice.textContent=record.title;
+   if(!quizMode){
+    browseRecord=record;
+    choice.textContent=record.title;
+   }
    status.textContent="";
+   return true;
   }catch(e){
-   status.textContent="Could not open "+record.title+".";
+   status.textContent=quizMode?"Could not load the tracing.":"Could not open "+record.title+".";
+   return false;
   }finally{
    loading=false;
    list.removeAttribute("aria-busy");

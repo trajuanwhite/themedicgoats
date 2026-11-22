@@ -25,3 +25,15 @@
 .rhythm-strip line{stroke:#c48951;stroke-width:1.8}
 .reference-meta:empty{display:none}
 @media(max-width:520px){.library-grid{grid-template-columns:1fr}}
+.simulator-modes,.ecg-quiz-options{display:flex;flex-wrap:wrap;gap:8px}
+.simulator-modes button,.ecg-quiz button{padding:10px 14px;border:1px solid #cbbdae;border-radius:10px;background:#fff8f0;color:#39291e;font:inherit;font-weight:700;cursor:pointer}
+.simulator-modes button[aria-pressed="true"],.ecg-quiz #ecg-quiz-next{background:#855b39;color:white;border-color:#855b39}
+.ecg-quiz{margin-top:16px;padding:14px;border:1px solid #decdbb;border-radius:12px;background:#faf5ef}
+.ecg-quiz h2{font-size:20px;margin:8px 0}
+.ecg-quiz #ecg-quiz-score{margin:0;font-size:13px}
+.ecg-quiz #ecg-quiz-feedback:empty{display:none}
+.ecg-quiz button[data-result="correct"]{background:#e3f0e6;color:#244f33;border-color:#6e9b79}
+.ecg-quiz button[data-result="incorrect"]{background:#f9e6e2;color:#762f28;border-color:#bb776f}
+.simulator-modes button:focus-visible,.ecg-quiz button:focus-visible{outline:3px solid #3175a5;outline-offset:2px}
+.ecg-quiz-unanswered #ecg-measurements,.ecg-quiz-unanswered #ecg-st-jpoint,.ecg-quiz-unanswered #clinical-record-source{display:none}
+.ecg-quiz-no-tracing #clinical-twelve-lead,.ecg-quiz-no-tracing #clinical-monitor{display:none}
