@@ -224,7 +224,6 @@
   const count=hz*seconds;
   if(hz!==250||!Number.isInteger(count)||seconds<1||seconds>30||amplitudeUnit!=="mV"||
      !Array.isArray(leads)||leads.join(",")!=="Channel 1,Channel 2")throw Error("Invalid monitor clip");
-  const width=seconds*150;
   const halfHeight=78;
   const traces=leads.map(lead=>{
    const samples=raw.waveforms[lead];
@@ -241,38 +240,50 @@
   const maxGain=(halfHeight-10)/(Math.max(peak,0.01)*6);
   const gain=[10,5,2.5,1,.5,.25].find(candidate=>candidate<=maxGain)??.125;
   const pixelsPerMv=gain*6;
-  const transition=(!quizMode||answered)&&raw.source.annotation==="VF to asystole"?7.6:null;
+  const hasTransition=raw.source.annotation==="VF to asystole";
+  const transition=hasTransition&&(!quizMode||answered)?7.6:null;
+  const split=Math.floor(count/2);
+  const spans=hasTransition?[[0,split],[split,count]]:[[0,count]];
   const makeSvg=tag=>document.createElementNS("http://www.w3.org/2000/svg",tag);
-  const channels=traces.map(({lead,samples,baseline})=>{
+  const channels=spans.flatMap(([start,end])=>traces.map(({lead,samples,baseline})=>{
+   const spanSeconds=(end-start)/hz;
+   const width=spanSeconds*150;
+   const markerTime=transition===null?null:transition-start/hz;
    const strip=document.createElement("div"),heading=document.createElement("strong");
    strip.className="rhythm-strip";
    strip.style.width=width+"px";
-   heading.textContent=lead;
+   if(hasTransition){
+    strip.style.maxWidth="100%";
+    strip.style.minWidth="0";
+   }
+   const label=hasTransition?lead+" · "+start/hz+"–"+end/hz+" s":lead;
+   heading.textContent=label;
    const svg=makeSvg("svg");
    svg.setAttribute("viewBox","0 0 "+width+" "+(halfHeight*2));
    svg.setAttribute("role","img");
-   svg.setAttribute("aria-label",lead+" recorded waveform");
-   window.MedicECGPaperGrid(svg,width,seconds);
+   svg.setAttribute("aria-label",label+" recorded waveform");
+   window.MedicECGPaperGrid(svg,width,spanSeconds);
    const path=makeSvg("path");
-   path.setAttribute("d",samples.map((sample,i)=>(i?"L":"M")+
+   path.setAttribute("d",samples.slice(start,end).map((sample,i)=>(i?"L":"M")+
     (i*150/hz).toFixed(2)+" "+(halfHeight-(sample-baseline)*pixelsPerMv).toFixed(2)).join(" "));
    svg.append(path);
-   if(transition!==null){
+   if(markerTime!==null&&markerTime>=0&&markerTime<spanSeconds){
     const marker=makeSvg("line");
-    for(const [key,value] of Object.entries({x1:transition*150,x2:transition*150,y1:0,y2:halfHeight*2,"stroke-dasharray":"5 4"})){
+    for(const [key,value] of Object.entries({x1:markerTime*150,x2:markerTime*150,y1:0,y2:halfHeight*2,"stroke-dasharray":"5 4"})){
      marker.setAttribute(key,value);
     }
     svg.append(marker);
    }
    strip.append(heading,svg);
    return strip;
-  });
+  }));
   const scroll=document.createElement("div"),caption=document.createElement("p");
   scroll.className="rhythm-scroll";
   scroll.tabIndex=0;
-  scroll.setAttribute("aria-label","Recorded rhythm strips, scroll horizontally");
+  scroll.setAttribute("aria-label",hasTransition?"Recorded rhythm strips in time order":"Recorded rhythm strips, scroll horizontally");
   scroll.append(...channels);
   caption.textContent=seconds+"-second clip · Two recorded channels · 25 mm/s grid · "+gain+" mm/mV";
+  if(hasTransition)caption.textContent+=" · Read both time segments in order";
   if(transition!==null)caption.textContent+=" · Asystole annotation at "+transition+" s";
   document.getElementById("clinical-monitor").replaceChildren(caption,scroll);
  }
