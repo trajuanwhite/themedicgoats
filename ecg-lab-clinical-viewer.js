@@ -90,6 +90,8 @@ function renderRhythm(){
 function applyRecording(raw){
  const result=validate(raw);
  recording=result;
+ rhythmLead="II";
+ for(const lead of L)leadButtons[lead].setAttribute("aria-pressed",String(lead==="II"));
  stripSeconds=Math.min(6,recording.seconds);
  for(const svg of Object.values(leadSvgs))window.MedicECGPaperGrid(svg,420,Math.min(2,stripSeconds));
  window.MedicECGPaperGrid(rhythmSvg,960,stripSeconds);
