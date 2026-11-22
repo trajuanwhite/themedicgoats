@@ -183,15 +183,23 @@
 <div class="library-selector"><strong id="library-heading">Clinical ECG library</strong><details id="library-picker" class="library-picker"><summary id="library-choice">Choose a recording</summary><div id="library-record" class="library-grid" role="group" aria-labelledby="library-heading"></div></details><p id="library-status" role="status">Loading recordings…</p></div>
 <div class="ecg-measurements" id="ecg-measurements" aria-label="Automated ECG measurements" hidden>
  <dl>
+  <div id="ecg-rate-cell" hidden><dt>Rate</dt><dd id="ecg-rate"></dd></div>
+  <div id="ecg-qrs-cell" hidden><dt>QRS duration</dt><dd id="ecg-qrs"></dd></div>
   <div><dt>QRS axis</dt><dd id="ecg-qrs-axis"></dd></div>
   <div><dt>QT</dt><dd id="ecg-qt"></dd></div>
   <div><dt>QTc (Bazett)</dt><dd id="ecg-qtc-bazett"></dd></div>
   <div><dt>PR interval</dt><dd id="ecg-pr"></dd></div>
  </dl>
- <small>Automated 12SL measurements from the full recording. <a href="https://physionet.org/content/ptb-xl-plus/1.0.1/features/">Source</a></small>
+ <small id="ecg-measurement-12sl">Automated 12SL measurements from the full recording. <a href="https://physionet.org/content/ptb-xl-plus/1.0.1/features/">Source</a></small>
+ <small id="ecg-measurement-estimated" hidden>Automated waveform estimates for teaching.</small>
 </div>
+<div id="clinical-twelve-lead">
 <div class="ecg-layout-scroll" role="region" aria-label="Clinical ECG 3 by 4 lead layout; scroll sideways on small screens" tabindex="0"><div id="reference-leads" class="reference-grid" aria-label="Separate viewer for loaded clinical ECG waveforms"></div></div>
-<div class="rhythm-section"><div class="rhythm-scroll" role="region" aria-label="Selected clinical ECG rhythm strip" tabindex="0"><div id="reference-rhythm-strips"></div></div><p id="ecg-st-jpoint" hidden></p><p>6-second rhythm strip · 30 large boxes at 25 mm/s</p></div></section>
+<div class="rhythm-section"><div class="rhythm-scroll" role="region" aria-label="Selected clinical ECG rhythm strip" tabindex="0"><div id="reference-rhythm-strips"></div></div><p id="ecg-st-jpoint" hidden></p><p>6-second rhythm strip · 30 large boxes at 25 mm/s</p></div>
+</div>
+<div id="clinical-monitor" class="rhythm-section" hidden></div>
+<p class="reference-meta" id="clinical-record-source"></p>
+</section>
 <section class="lab-panel" style="grid-column:1/-1"><h2>What we're building next</h2><div class="roadmap"><article><h3>Validated clinical library</h3><p>Compare simulation output with de-identified, quality-reviewed clinical ECG recordings.</p></article><article><h3>Physiological forward model</h3><p>Replace simple dipole approximations with a validated activation and body-surface potential model.</p></article><article><h3>Higher-fidelity anatomy</h3><p>Use properly sourced anatomical geometry with measured activation timing.</p></article></div></section></div>
 </main><footer><div class="medic-footer-info"><strong>THE MEDIC GOATS</strong><span>Teaching While Learning • Educational practice only</span><span>ECG recordings: <a href="https://physionet.org/content/ptb-xl/1.0.3/">PTB‑XL v1.0.3, Wagner et al.</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span></div></footer>
 <script src="/ecg-lab-paper-grid.js?v=1"></script>
@@ -297,6 +305,6 @@
 <script src="/ecg-lab-axis.js?v=4"></script>
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
 <script src="/ecg-lab-lead-challenge.js?v=2"></script>
-<script src="/ecg-lab-library.js?v=8"></script>
+<script src="/ecg-lab-library.js?v=9"></script>
 <script src="/ecg-lab-3d.js?v=38"></script>
 </body></html>
