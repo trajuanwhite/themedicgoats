@@ -6,7 +6,7 @@
 <title>12-Lead ECG Simulator | The Medic Goats</title>
 <meta name="description" content="Practice interpreting clinical 12-leads and recorded monitor rhythms with The Medic Goats.">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/ecg-simulator.css?v=6">
+<link rel="stylesheet" href="/ecg-simulator.css?v=7">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="/">THE MEDIC GOATS</a><nav><a class="navlink" href="/training">Training</a><a class="navlink" href="/games">Games</a><a class="navlink" href="/">Home</a></nav></header>
@@ -38,6 +38,10 @@
 </div>
 <div id="clinical-monitor" class="rhythm-section" hidden></div>
 <p class="reference-meta" id="clinical-record-source"></p>
+<section id="ecg-explanation" class="ecg-explanation" aria-labelledby="ecg-explanation-heading" hidden>
+ <h2 id="ecg-explanation-heading">What to look for</h2>
+ <p id="ecg-explanation-text"></p>
+</section>
 <section id="ecg-quiz" class="ecg-quiz" aria-labelledby="ecg-quiz-prompt" hidden>
  <p id="ecg-quiz-score"></p>
  <h2 id="ecg-quiz-prompt">What rhythm or finding do you see?</h2>
@@ -76,6 +80,6 @@
 <script src="/ecg-lab-paper-grid.js?v=1"></script>
 <script src="/ecg-lab-clinical-viewer.js?v=23"></script>
 <script src="/ecg-simulator-feedback.js?v=3"></script>
-<script src="/ecg-lab-library.js?v=14"></script>
+<script src="/ecg-lab-library.js?v=15"></script>
 </body>
 </html>

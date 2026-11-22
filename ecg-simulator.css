@@ -56,3 +56,8 @@
 .ecg-feedback p:empty,.ecg-quiz-unanswered #ecg-feedback{display:none}
 
 .ecg-vote input:checked + span svg{fill:currentColor}
+
+.ecg-explanation{margin:14px 0;padding:12px 14px;border-left:3px solid #855b39;background:#fff8f0;border-radius:6px}
+.ecg-explanation h2,.ecg-quiz .ecg-explanation h2{font-size:17px;margin:0 0 6px}
+.ecg-explanation p{margin:0}
+.ecg-quiz-unanswered #ecg-explanation,.ecg-quiz-no-tracing #ecg-explanation{display:none}

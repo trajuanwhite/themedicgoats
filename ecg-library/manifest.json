@@ -12,7 +12,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "1",
       "file": "/ecg-library/records/00001.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Start with rhythm: look for a P before each QRS and a consistent PR. Then compare QRS amplitudes in the limb leads with the chest leads. The finding being taught is small limb-lead complexes despite an organized sinus rhythm."
     },
     {
       "id": "ptbxl-00002",
@@ -20,7 +21,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2",
       "file": "/ecg-library/records/00002.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Use the long strip to count QRS complexes. Look for a regular, slow rhythm with a P before each QRS and a consistent PR. The slow rate is what turns sinus rhythm into sinus bradycardia."
     },
     {
       "id": "ptbxl-00003",
@@ -28,7 +30,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "3",
       "file": "/ecg-library/records/00003.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Trace several beats in lead II. Look for a regular rhythm, an upright P before each QRS, and a consistent PR. Those relationships support sinus rhythm."
     },
     {
       "id": "ptbxl-00004",
@@ -36,7 +39,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "4",
       "file": "/ecg-library/records/00004.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "The baseline drifts gradually. Follow the P-to-QRS relationship across several beats and use the baseline immediately before each beat for comparison. The drift is an artifact clue rather than a rhythm change."
     },
     {
       "id": "ptbxl-15130",
@@ -44,7 +48,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "15130",
       "file": "/ecg-library/records/15130.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare the J points in the inferior leads (II, III, aVF) and lateral leads (I, aVL, V5–V6). Look for a contiguous pattern and check the opposing leads for reciprocal changes. The library labels this an inferolateral ST-elevation candidate."
     },
     {
       "id": "ptbxl-11353",
@@ -52,7 +57,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "11353",
       "file": "/ecg-library/records/11353.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Work across V1–V4 and compare each J point with its own baseline. Look for elevation in neighboring anterior leads and compare the inferior leads for reciprocal depression. This recording is an anterior ST-elevation candidate."
     },
     {
       "id": "ptbxl-19269",
@@ -60,7 +66,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "19269",
       "file": "/ecg-library/records/19269.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare the inferior leads (II, III, aVF) with the lateral leads (I, aVL, V5–V6). Ask which contiguous leads show elevation and whether the distribution supports involvement of both territories."
     },
     {
       "id": "ptbxl-02681",
@@ -68,7 +75,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2681",
       "file": "/ecg-library/records/02681.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Check the anterior chest leads and the inferior limb leads separately. Compare J points in neighboring leads in each group. This example is labeled as a candidate for ST elevation in both territories."
     },
     {
       "id": "ptbxl-18506",
@@ -76,7 +84,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "18506",
       "file": "/ecg-library/records/18506.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Inspect V1–V3 for horizontal ST depression and prominent R waves, which can be mirror-image clues to posterior injury. Posterior leads V7–V9 can help clarify the pattern. This case is a posterior infarct candidate."
     },
     {
       "id": "ptbxl-06997",
@@ -84,7 +93,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "6997",
       "file": "/ecg-library/records/06997.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare QRS shapes in I and III: the finding to look for is an S wave in I and a Q wave in III. Check the T wave in III separately. These findings alone cannot establish a cause."
     },
     {
       "id": "ptbxl-14730",
@@ -92,7 +102,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "14730",
       "file": "/ecg-library/records/14730.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare V1–V4 and the inferior leads for repolarization changes. Check rightward axis or right bundle morphology as additional clues. The tracing is a comparison case for possible RV strain, which has several causes."
     },
     {
       "id": "ptbxl-07304",
@@ -100,7 +111,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "7304",
       "file": "/ecg-library/records/07304.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Start with QRS width, regularity and the relationship between P waves and QRS complexes. AV dissociation, capture or fusion beats support VT. This recording has conflicting labels, so it is best used to compare possibilities."
     },
     {
       "id": "ptbxl-21632",
@@ -108,7 +120,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "21632",
       "file": "/ecg-library/records/21632.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Assess the regularity and width of the tachycardia. Search across leads for P waves marching independently or for capture and fusion beats, which support ventricular origin. The source labels this a VT candidate."
     },
     {
       "id": "ptbxl-07960",
@@ -116,7 +129,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "7960",
       "file": "/ecg-library/records/07960.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare QRS shape across the chest leads and look for independent atrial activity. A wide, fast rhythm can reflect VT or a supraventricular rhythm with aberrancy or pre-excitation. Width alone cannot distinguish them."
     },
     {
       "id": "ptbxl-00959",
@@ -124,7 +138,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "959",
       "file": "/ecg-library/records/00959.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "March out the P waves and QRS complexes separately. The finding to verify is that both march independently, with the apparent PR interval changing and no consistent conduction between them. Compare lead II and V1 if P waves are hard to see."
     },
     {
       "id": "ptbxl-07688",
@@ -132,7 +147,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "7688",
       "file": "/ecg-library/records/07688.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Find a sequence of conducted beats around a dropped QRS. Progressive PR lengthening before the dropped beat, followed by a shorter PR when conduction resumes, is the Wenckebach pattern."
     },
     {
       "id": "ptbxl-13238",
@@ -140,7 +156,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "13238",
       "file": "/ecg-library/records/13238.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Check whether the tachycardia is regular and narrow, then search for atrial activity in II and V1. P waves may be buried in the QRS or appear just after it. The library labels this an SVT candidate."
     },
     {
       "id": "ptbxl-02633",
@@ -148,7 +165,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2633",
       "file": "/ecg-library/records/02633.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Focus on the chest leads and compare the J point and early ST segment with the local baseline. Look for horizontal or downsloping depression in contiguous leads. The ST finding alone does not establish its cause."
     },
     {
       "id": "ptbxl-02181",
@@ -156,7 +174,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2181",
       "file": "/ecg-library/records/02181.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare I, aVL, V5 and V6 against their own baselines. Pay attention to subtle horizontal or downsloping ST segments across neighboring lateral leads. A repeated change is more useful than one noisy beat."
     },
     {
       "id": "ptbxl-02032",
@@ -164,7 +183,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2032",
       "file": "/ecg-library/records/02032.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare several R–R intervals on the long strip. Irregularly irregular spacing with no consistent P waves supports atrial fibrillation. Zoom in on V1 or II if atrial activity is subtle."
     },
     {
       "id": "ptbxl-02125",
@@ -172,7 +192,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2125",
       "file": "/ecg-library/records/02125.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Use the long strip to check for irregularly irregular R–R intervals without consistent P waves, then count the ventricular rate manually. The rapid ventricular response refers to the QRS rate. Compare it with the automated estimate."
     },
     {
       "id": "ptbxl-02430",
@@ -180,7 +201,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2430",
       "file": "/ecg-library/records/02430.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Inspect II, III, aVF and V1 between QRS complexes for repeating flutter waves. Compare the fast atrial activity with the slower ventricular response to identify how many atrial waves occur per QRS."
     },
     {
       "id": "ptbxl-18035",
@@ -188,7 +210,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "18035",
       "file": "/ecg-library/records/18035.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare V1 with I and V6. A terminal positive deflection in V1 and a broad terminal S wave in the lateral leads support right bundle branch block. Check QRS duration to assess whether the block is complete."
     },
     {
       "id": "ptbxl-18278",
@@ -196,7 +219,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "18278",
       "file": "/ecg-library/records/18278.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare the deep negative QRS in V1 with the broad or notched lateral R wave in I, aVL, V5 or V6. That combination with a wide QRS supports left bundle branch block."
     },
     {
       "id": "ptbxl-18458",
@@ -204,7 +228,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "18458",
       "file": "/ecg-library/records/18458.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Measure from P onset to QRS onset over several beats. A consistently prolonged PR interval above 200 ms with every P wave followed by a QRS supports first-degree AV block."
     },
     {
       "id": "ptbxl-13158",
@@ -212,7 +237,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "13158",
       "file": "/ecg-library/records/13158.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Compare the J point in II, III and aVF and look for reciprocal depression in I or aVL. This is an inferior ST-elevation candidate, so assess the full pattern across contiguous leads."
     },
     {
       "id": "ptbxl-02805",
@@ -220,7 +246,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "2805",
       "file": "/ecg-library/records/02805.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Work across V1–V4 and compare each J point with its own baseline. Look for elevation in neighboring anterior leads and compare the inferior leads for reciprocal depression. This recording is an anterior ST-elevation candidate."
     },
     {
       "id": "ptbxl-01993",
@@ -228,7 +255,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "1993",
       "file": "/ecg-library/records/01993.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Find the beat that arrives early and has a wider, different QRS shape. Compare it with the surrounding sinus beats and look for a preceding P wave and a pause afterward. Those clues help identify a PVC."
     },
     {
       "id": "ptbxl-05786",
@@ -236,7 +264,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "5786",
       "file": "/ecg-library/records/05786.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Follow the repeating sequence across the long strip. A sinus beat alternating with an early ventricular beat produces ventricular bigeminy."
     },
     {
       "id": "ptbxl-13102",
@@ -244,7 +273,8 @@
       "dataset": "PTB-XL v1.0.3",
       "sourceRecordId": "13102",
       "file": "/ecg-library/records/13102.json",
-      "reviewStatus": "reviewed"
+      "reviewStatus": "reviewed",
+      "explanation": "Follow the repeating sequence across the long strip. Two conducted beats followed by an early ventricular beat produce ventricular trigeminy."
     },
     {
       "id": "sph-A07802",
@@ -253,7 +283,8 @@
       "sourceRecordId": "A07802",
       "file": "/ecg-library/records/sph-A07802.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare V1–V3, particularly V2 and V3, for J-point elevation and abnormal early QRS forces. The source labels this acute anteroseptal MI with ST elevation. Compare contiguous leads and the baseline before each beat."
     },
     {
       "id": "sph-A02868",
@@ -262,7 +293,8 @@
       "sourceRecordId": "A02868",
       "file": "/ecg-library/records/sph-A02868.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare the ST segment to the preceding isoelectric baseline in neighboring leads. Look for persistent horizontal or downsloping depression across beats. The tracing demonstrates a repolarization finding whose cause depends on context."
     },
     {
       "id": "sph-A08465",
@@ -271,7 +303,8 @@
       "sourceRecordId": "A08465",
       "file": "/ecg-library/records/sph-A08465.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare the ST segment to the preceding isoelectric baseline in neighboring leads. Look for persistent horizontal or downsloping depression across beats. The tracing demonstrates a repolarization finding whose cause depends on context."
     },
     {
       "id": "sph-A00598",
@@ -280,7 +313,8 @@
       "sourceRecordId": "A00598",
       "file": "/ecg-library/records/sph-A00598.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare the ST segment to the preceding isoelectric baseline in neighboring leads. Look for persistent horizontal or downsloping depression across beats. The tracing demonstrates a repolarization finding whose cause depends on context."
     },
     {
       "id": "sph-A10453",
@@ -289,7 +323,8 @@
       "sourceRecordId": "A10453",
       "file": "/ecg-library/records/sph-A10453.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect the end of the QRS for a small notch or slur at the J point and see how the ST segment rises afterward. Compare adjacent leads and consider the distribution and any reciprocal changes before attributing ST elevation to early repolarization."
     },
     {
       "id": "sph-A13641",
@@ -298,7 +333,8 @@
       "sourceRecordId": "A13641",
       "file": "/ecg-library/records/sph-A13641.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect the end of the QRS for a small notch or slur at the J point and see how the ST segment rises afterward. Compare adjacent leads and consider the distribution and any reciprocal changes before attributing ST elevation to early repolarization."
     },
     {
       "id": "sph-A21880",
@@ -307,7 +343,8 @@
       "sourceRecordId": "A21880",
       "file": "/ecg-library/records/sph-A21880.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect the end of the QRS for a small notch or slur at the J point and see how the ST segment rises afterward. Compare adjacent leads and consider the distribution and any reciprocal changes before attributing ST elevation to early repolarization."
     },
     {
       "id": "sph-A13780",
@@ -316,7 +353,8 @@
       "sourceRecordId": "A13780",
       "file": "/ecg-library/records/sph-A13780.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare QRS voltage and polarity with the ST–T changes. In LVH with strain, tall lateral R waves may be accompanied by downsloping ST depression and asymmetric T-wave inversion. Check I, aVL, V5 and V6 first."
     },
     {
       "id": "sph-A20682",
@@ -325,7 +363,8 @@
       "sourceRecordId": "A20682",
       "file": "/ecg-library/records/sph-A20682.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare QRS voltage and polarity with the ST–T changes. In LVH with strain, tall lateral R waves may be accompanied by downsloping ST depression and asymmetric T-wave inversion. Check I, aVL, V5 and V6 first."
     },
     {
       "id": "sph-A01350",
@@ -334,7 +373,8 @@
       "sourceRecordId": "A01350",
       "file": "/ecg-library/records/sph-A01350.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare QRS voltage and polarity with the ST–T changes. In LVH with strain, tall lateral R waves may be accompanied by downsloping ST depression and asymmetric T-wave inversion. Check I, aVL, V5 and V6 first."
     },
     {
       "id": "sph-A23013",
@@ -343,7 +383,8 @@
       "sourceRecordId": "A23013",
       "file": "/ecg-library/records/sph-A23013.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "March out the P waves and QRS complexes separately. The finding to verify is that both march independently, with the apparent PR interval changing and no consistent conduction between them. Compare lead II and V1 if P waves are hard to see."
     },
     {
       "id": "sph-A24356",
@@ -352,7 +393,8 @@
       "sourceRecordId": "A24356",
       "file": "/ecg-library/records/sph-A24356.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "March out the P waves and QRS complexes separately. The finding to verify is that both march independently, with the apparent PR interval changing and no consistent conduction between them. Compare lead II and V1 if P waves are hard to see."
     },
     {
       "id": "sph-A17439",
@@ -361,7 +403,8 @@
       "sourceRecordId": "A17439",
       "file": "/ecg-library/records/sph-A17439.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "March out the P waves and QRS complexes separately. The finding to verify is that both march independently, with the apparent PR interval changing and no consistent conduction between them. Compare lead II and V1 if P waves are hard to see."
     },
     {
       "id": "sph-A09204",
@@ -370,7 +413,8 @@
       "sourceRecordId": "A09204",
       "file": "/ecg-library/records/sph-A09204.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Find P waves that arrive on time. Look for an occasional P wave without a following QRS while the PR stays similar on conducted beats. That pattern favors Mobitz II over progressive PR lengthening."
     },
     {
       "id": "sph-A10158",
@@ -379,7 +423,8 @@
       "sourceRecordId": "A10158",
       "file": "/ecg-library/records/sph-A10158.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Find P waves that arrive on time. Look for an occasional P wave without a following QRS while the PR stays similar on conducted beats. That pattern favors Mobitz II over progressive PR lengthening."
     },
     {
       "id": "sph-A25353",
@@ -388,7 +433,8 @@
       "sourceRecordId": "A25353",
       "file": "/ecg-library/records/sph-A25353.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare PR intervals before each dropped QRS. The source includes both Mobitz I and Mobitz II labels. Progressive PR lengthening favors Wenckebach, while a similar PR on conducted beats favors Mobitz II. Use this as a comparison tracing."
     },
     {
       "id": "sph-A24295",
@@ -397,7 +443,8 @@
       "sourceRecordId": "A24295",
       "file": "/ecg-library/records/sph-A24295.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Use the long strip to check for irregularly irregular R–R intervals without consistent P waves, then count the ventricular rate manually. The rapid ventricular response refers to the QRS rate. Compare it with the automated estimate."
     },
     {
       "id": "sph-A06017",
@@ -406,7 +453,8 @@
       "sourceRecordId": "A06017",
       "file": "/ecg-library/records/sph-A06017.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Use the long strip to check for irregularly irregular R–R intervals without consistent P waves, then count the ventricular rate manually. The rapid ventricular response refers to the QRS rate. Compare it with the automated estimate."
     },
     {
       "id": "sph-A09492",
@@ -415,7 +463,8 @@
       "sourceRecordId": "A09492",
       "file": "/ecg-library/records/sph-A09492.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Use the long strip to check for irregularly irregular R–R intervals without consistent P waves, then count the ventricular rate manually. The rapid ventricular response refers to the QRS rate. Compare it with the automated estimate."
     },
     {
       "id": "sph-A18377",
@@ -424,7 +473,8 @@
       "sourceRecordId": "A18377",
       "file": "/ecg-library/records/sph-A18377.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Look between QRS complexes in II, III, aVF and V1 for repeated atrial deflections with a consistent cycle length. Compare the atrial and ventricular rates. Flutter can have fixed or variable AV conduction."
     },
     {
       "id": "sph-A23247",
@@ -433,7 +483,8 @@
       "sourceRecordId": "A23247",
       "file": "/ecg-library/records/sph-A23247.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Look between QRS complexes in II, III, aVF and V1 for repeated atrial deflections with a consistent cycle length. Compare the atrial and ventricular rates. Flutter can have fixed or variable AV conduction."
     },
     {
       "id": "sph-A15066",
@@ -442,7 +493,8 @@
       "sourceRecordId": "A15066",
       "file": "/ecg-library/records/sph-A15066.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Look between QRS complexes in II, III, aVF and V1 for repeated atrial deflections with a consistent cycle length. Compare the atrial and ventricular rates. Flutter can have fixed or variable AV conduction."
     },
     {
       "id": "sph-A09221",
@@ -451,7 +503,8 @@
       "sourceRecordId": "A09221",
       "file": "/ecg-library/records/sph-A09221.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "In the long lead I strip, look for the subtle slurred foot just before the steep R wave. Early activation through an accessory pathway can cause this delta-like onset. PR and QRS duration are unavailable, so this is a subtle source-labeled case. Counting the visible QRS complexes gives a rate in the 70s, which disagrees with the automated estimate."
     },
     {
       "id": "sph-A19062",
@@ -460,7 +513,8 @@
       "sourceRecordId": "A19062",
       "file": "/ecg-library/records/sph-A19062.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Check for a slurred QRS onset across leads. This recording’s estimates show a short PR (96 ms) and wide QRS (188 ms), both supportive of pre-excitation when paired with a delta wave."
     },
     {
       "id": "sph-A24957",
@@ -469,7 +523,8 @@
       "sourceRecordId": "A24957",
       "file": "/ecg-library/records/sph-A24957.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Compare QRS onset across several leads and look for a slurred initial deflection close to the P wave. This is source-labeled ventricular pre-excitation. Without reliable automated intervals, use the grid to check PR and QRS width directly."
     },
     {
       "id": "acs-00810",
@@ -478,7 +533,8 @@
       "sourceRecordId": "00810",
       "file": "/ecg-library/records/acs-00810.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-03034",
@@ -487,7 +543,8 @@
       "sourceRecordId": "03034",
       "file": "/ecg-library/records/acs-03034.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-02404",
@@ -496,7 +553,8 @@
       "sourceRecordId": "02404",
       "file": "/ecg-library/records/acs-02404.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-05624",
@@ -505,7 +563,8 @@
       "sourceRecordId": "05624",
       "file": "/ecg-library/records/acs-05624.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-19446",
@@ -514,7 +573,8 @@
       "sourceRecordId": "19446",
       "file": "/ecg-library/records/acs-19446.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-00778",
@@ -523,7 +583,8 @@
       "sourceRecordId": "00778",
       "file": "/ecg-library/records/acs-00778.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-02484",
@@ -532,7 +593,8 @@
       "sourceRecordId": "02484",
       "file": "/ecg-library/records/acs-02484.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-13809",
@@ -541,7 +603,8 @@
       "sourceRecordId": "13809",
       "file": "/ecg-library/records/acs-13809.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect V1–V4 for anterior or septal J-point changes and compare the inferior leads for reciprocal depression. The source identifies proximal LAD involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-00808",
@@ -550,7 +613,8 @@
       "sourceRecordId": "00808",
       "file": "/ecg-library/records/acs-00808.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-16741",
@@ -559,7 +623,8 @@
       "sourceRecordId": "16741",
       "file": "/ecg-library/records/acs-16741.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-00968",
@@ -568,7 +633,8 @@
       "sourceRecordId": "00968",
       "file": "/ecg-library/records/acs-00968.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-13797",
@@ -577,7 +643,8 @@
       "sourceRecordId": "13797",
       "file": "/ecg-library/records/acs-13797.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-00876",
@@ -586,7 +653,8 @@
       "sourceRecordId": "00876",
       "file": "/ecg-library/records/acs-00876.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-00944",
@@ -595,7 +663,8 @@
       "sourceRecordId": "00944",
       "file": "/ecg-library/records/acs-00944.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-08182",
@@ -604,7 +673,8 @@
       "sourceRecordId": "08182",
       "file": "/ecg-library/records/acs-08182.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-18093",
@@ -613,7 +683,8 @@
       "sourceRecordId": "18093",
       "file": "/ecg-library/records/acs-18093.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect II, III and aVF for inferior J-point changes and compare I and aVL for reciprocal depression. The source identifies proximal RCA involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-03885",
@@ -622,7 +693,8 @@
       "sourceRecordId": "03885",
       "file": "/ecg-library/records/acs-03885.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect I, aVL, V5 and V6 for lateral changes and V1–V3 for a possible posterior mirror pattern. The source identifies proximal LCx involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-17579",
@@ -631,7 +703,8 @@
       "sourceRecordId": "17579",
       "file": "/ecg-library/records/acs-17579.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect I, aVL, V5 and V6 for lateral changes and V1–V3 for a possible posterior mirror pattern. The source identifies proximal LCx involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-08059",
@@ -640,7 +713,8 @@
       "sourceRecordId": "08059",
       "file": "/ecg-library/records/acs-08059.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect I, aVL, V5 and V6 for lateral changes and V1–V3 for a possible posterior mirror pattern. The source identifies proximal LCx involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-11710",
@@ -649,7 +723,8 @@
       "sourceRecordId": "11710",
       "file": "/ecg-library/records/acs-11710.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect I, aVL, V5 and V6 for lateral changes and V1–V3 for a possible posterior mirror pattern. The source identifies proximal LCx involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-19609",
@@ -658,7 +733,8 @@
       "sourceRecordId": "19609",
       "file": "/ecg-library/records/acs-19609.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect I, aVL, V5 and V6 for lateral changes and V1–V3 for a possible posterior mirror pattern. The source identifies proximal LCx involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-11797",
@@ -667,7 +743,8 @@
       "sourceRecordId": "11797",
       "file": "/ecg-library/records/acs-11797.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect I, aVL, V5 and V6 for lateral changes and V1–V3 for a possible posterior mirror pattern. The source identifies proximal LCx involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "acs-08720",
@@ -676,7 +753,8 @@
       "sourceRecordId": "08720",
       "file": "/ecg-library/records/acs-08720.json",
       "reviewStatus": "source-labeled",
-      "leadCount": 12
+      "leadCount": 12,
+      "explanation": "Inspect I, aVL, V5 and V6 for lateral changes and V1–V3 for a possible posterior mirror pattern. The source identifies proximal LCx involvement. Use that as context and verify the ECG findings independently."
     },
     {
       "id": "vfdb-420-1440",

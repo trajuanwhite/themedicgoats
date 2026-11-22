@@ -105,6 +105,8 @@
       if(option.textContent===round.answer)option.dataset.result="correct";
       else if(option===button)option.dataset.result="incorrect";
      }
+     const explanation=get("ecg-explanation");
+     if(explanation)feedback.after(explanation);
      viewer.classList.remove("ecg-quiz-unanswered");
      if(round.monitor)renderMonitor(displayedRaw);
      next.hidden=false;
@@ -139,6 +141,8 @@
    if(loading||!quizMode||!await saveRating())return;
    quizMode=false;
    quiz.hidden=true;
+   const explanation=get("ecg-explanation");
+   if(explanation)get("clinical-record-source").after(explanation);
    viewer.classList.remove("ecg-quiz-unanswered","ecg-quiz-no-tracing");
    get("ecg-browse-controls").hidden=false;
    browse.setAttribute("aria-pressed","true");
@@ -194,7 +198,7 @@
   panel.hidden=false;
  }
  try{
-  const response=await fetch("/ecg-library/manifest.json?v=1",{cache:"no-store"});
+  const response=await fetch("/ecg-library/manifest.json?v=2",{cache:"no-store"});
   if(!response.ok)throw Error("Library index unavailable");
   const manifest=await response.json();
   if(manifest.schemaVersion!=="1.0"||!Array.isArray(manifest.records))throw Error("Unsupported library manifest");
@@ -307,6 +311,12 @@
    else window.MedicECGReference.loadObject(raw);
    document.getElementById("clinical-twelve-lead").hidden=monitor;
    document.getElementById("clinical-monitor").hidden=!monitor;
+   const explanation=get("ecg-explanation");
+   if(explanation){
+    const note=typeof record.explanation==="string"?record.explanation:"";
+    get("ecg-explanation-text").textContent=note;
+    explanation.hidden=!note;
+   }
    const source=document.getElementById("clinical-record-source");
    source.textContent=record.reviewStatus==="source-labeled"?
     raw.source.citation+" · "+raw.source.license+" · Source label":"";
