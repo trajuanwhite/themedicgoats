@@ -35,5 +35,5 @@
 .ecg-quiz button[data-result="correct"]{background:#e3f0e6;color:#244f33;border-color:#6e9b79}
 .ecg-quiz button[data-result="incorrect"]{background:#f9e6e2;color:#762f28;border-color:#bb776f}
 .simulator-modes button:focus-visible,.ecg-quiz button:focus-visible{outline:3px solid #3175a5;outline-offset:2px}
-.ecg-quiz-unanswered #ecg-measurements,.ecg-quiz-unanswered #ecg-st-jpoint,.ecg-quiz-unanswered #clinical-record-source{display:none}
-.ecg-quiz-no-tracing #clinical-twelve-lead,.ecg-quiz-no-tracing #clinical-monitor{display:none}
+.ecg-quiz-unanswered #clinical-record-source{display:none}
+.ecg-quiz-no-tracing #ecg-measurements,.ecg-quiz-no-tracing #clinical-twelve-lead,.ecg-quiz-no-tracing #clinical-monitor{display:none}
