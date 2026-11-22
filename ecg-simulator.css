@@ -1,0 +1,27 @@
+.ecg-simulator{max-width:1200px;margin:auto;padding:32px 20px 70px}
+.ecg-simulator h1{font-size:clamp(34px,6vw,64px);line-height:1.05;margin:12px 0}
+.ecg-simulator p{line-height:1.55;overflow-wrap:anywhere}
+.simulator-viewer{margin-top:24px;padding:clamp(12px,3vw,24px);min-width:0}
+.library-selector,.ecg-measurements{margin:14px 0;padding:12px 14px;border:1px solid #decdbb;border-radius:12px;background:#faf5ef}
+.library-selector p{margin:8px 0 0;font-size:13px}
+.library-picker{position:relative;margin-top:8px}
+.library-picker summary,.library-grid button{padding:11px 14px;border:1px solid #cbbdae;border-radius:10px;background:#fff8f0;font:inherit;color:#39291e;cursor:pointer;overflow-wrap:anywhere}
+.library-picker summary{font-weight:700}
+.library-grid{position:absolute;z-index:10;box-sizing:border-box;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:min(55vh,26rem);overflow:auto;padding:8px;background:#faf5ef;border:1px solid #cbbdae;border-radius:10px;box-shadow:0 8px 20px #39291e26}
+.library-grid button{text-align:left;min-width:0;min-height:44px}
+.library-grid button[aria-pressed="true"],.reference-cell[aria-pressed="true"]{border-color:#875b39;background:#f3e4d2}
+.ecg-measurements dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:0 0 8px}
+.ecg-measurements dt,.reference-meta,.rhythm-section p{font-size:13px;color:#655244}
+.ecg-measurements dd{margin:3px 0 0;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.ecg-layout-scroll,.rhythm-scroll{overflow-x:auto;overscroll-behavior-x:contain}
+.reference-grid{min-width:640px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.reference-cell,.rhythm-strip{min-width:0;border:1px solid #ecd2d0;border-radius:10px;overflow:hidden;background:#fffafa}
+.reference-cell{padding:0;text-align:left;cursor:pointer}
+.reference-cell strong,.rhythm-strip strong{display:block;padding:6px 10px;font-size:12px;color:#624a42}
+.reference-cell svg,.rhythm-strip svg{display:block;width:100%;height:auto}
+.rhythm-section{margin-top:16px;border-top:1px solid #e5d8d1;padding-top:12px}
+.rhythm-strip{min-width:640px;margin-top:8px}
+.rhythm-strip path{fill:none;stroke:#663e3b;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.rhythm-strip line{stroke:#c48951;stroke-width:1.8}
+.reference-meta:empty{display:none}
+@media(max-width:520px){.library-grid{grid-template-columns:1fr}}

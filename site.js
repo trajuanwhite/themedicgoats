@@ -87,12 +87,12 @@ function trainingHub(){
  app.innerHTML=`
  <section class="page-heading"><div class="kicker">THE MEDIC GOATS • TRAINING</div><h1>Training that goes<br>deeper than memorization.</h1><p>Explore interactive clinical education built to connect the physiology to the decisions we make in the field.</p></section>
  <section class="card" style="padding:clamp(22px,5vw,46px);background:#181512;color:#fff;border-color:#40382f;margin:24px 0">
-  <div class="kicker" style="color:#d9bda0">CARDIOLOGY • FIRST TRAINING LAB</div>
+  <div class="kicker" style="color:#d9bda0">CARDIOLOGY</div>
   <h2 style="font-size:clamp(30px,5vw,54px);margin:12px 0">ECG Lab</h2>
-  <p style="color:#ddd0c2;max-width:660px;line-height:1.65">Follow the heart's electrical conduction through an interactive ECG timeline. Our first foundation build is live, with expanded 12-lead and 3D simulation tools planned.</p>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:23px"><a class="btn" style="background:#e4c6a5;border-color:#e4c6a5;color:#211811" href="/training/ecg-lab">Open ECG Lab →</a><span style="align-self:center;font-size:12px;font-weight:850;letter-spacing:.08em;color:#e0c8ae">FOUNDATION V0.1</span></div>
+  <p style="color:#ddd0c2;max-width:660px;line-height:1.65">Explore cardiac conduction, the electrical axis, and reciprocal changes with interactive models and quizzes.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:23px"><a class="btn" style="background:#e4c6a5;border-color:#e4c6a5;color:#211811" href="/training/ecg-lab">Open ECG Lab →</a></div>
  </section>
- <div class="grid" style="margin-top:18px"><article class="card"><div class="kicker">BUILDING NEXT</div><h3>12-Lead ECG Simulation</h3><p class="muted">Validated lead relationships, authentic waveforms, and electrophysiology-driven teaching.</p></article><article class="card"><div class="kicker">KEEP PRACTICING</div><h3>Rapid Challenges & Brain Exercises</h3><p class="muted">All your existing Medic Goats games, solo and multiplayer.</p><a class="btn" href="/games">Explore Games →</a></article></div>
+ <div class="grid" style="margin-top:18px"><article class="card"><h3>12-Lead ECG Simulator</h3><p class="muted">Practice with clinical 12-leads and monitor rhythms. Review QRS axis, PR interval, and other measurements where available.</p><a class="btn" href="/training/ecg-simulator">Open ECG Simulator →</a></article><article class="card"><div class="kicker">KEEP PRACTICING</div><h3>Rapid Challenges & Brain Exercises</h3><p class="muted">All your existing Medic Goats games, solo and multiplayer.</p><a class="btn" href="/games">Explore Games →</a></article></div>
  <p class="muted" style="font-size:13px;margin-top:22px">Teaching While Learning. These tools are for education, not clinical diagnosis or patient care.</p>`;
 }
 function training(){

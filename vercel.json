@@ -9,6 +9,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/training/ecg-simulator",
+      "destination": "/ecg-simulator.html"
+    },
+    {
       "source": "/training/ecg-lab",
       "destination": "/ecg-lab.html"
     },
