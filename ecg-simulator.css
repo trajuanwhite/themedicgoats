@@ -37,3 +37,11 @@
 .simulator-modes button:focus-visible,.ecg-quiz button:focus-visible{outline:3px solid #3175a5;outline-offset:2px}
 .ecg-quiz-unanswered #clinical-record-source{display:none}
 .ecg-quiz-no-tracing #ecg-measurements,.ecg-quiz-no-tracing #clinical-twelve-lead,.ecg-quiz-no-tracing #clinical-monitor{display:none}
+.ecg-feedback{margin-top:16px;padding:12px 14px;border:1px solid #decdbb;border-radius:12px;background:#faf5ef}
+.ecg-feedback summary{cursor:pointer;font-weight:700}
+.ecg-feedback fieldset{border:0;padding:0;margin:12px 0}
+.ecg-feedback fieldset label{display:inline-block;margin:6px 14px 0 0}
+.ecg-feedback #ecg-feedback-details label{display:block;margin-bottom:10px}
+.ecg-feedback select,.ecg-feedback textarea{display:block;width:min(100%,460px);padding:8px;font:inherit}
+.ecg-feedback button{padding:8px 12px;border:1px solid #cbbdae;border-radius:8px;background:#fff8f0;color:#39291e;font:inherit;cursor:pointer}
+.ecg-feedback p:empty,.ecg-quiz-unanswered #ecg-feedback{display:none}

@@ -306,6 +306,7 @@
     choice.textContent=record.title;
    }
    status.textContent="";
+   viewer.dispatchEvent(new CustomEvent("ecg-recording-selected",{detail:{id:record.id,monitor}}));
    return true;
   }catch(e){
    status.textContent=quizMode?"Could not load the tracing.":"Could not open "+record.title+".";
