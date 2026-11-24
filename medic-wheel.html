@@ -9,15 +9,18 @@
 <style>
 :root{--bg:#f4f1eb;--paper:#fff;--ink:#1d1915;--muted:#766c61;--brown:#825b39;--brown2:#65452e;--border:#e1d8ce;--green:#35684f}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}header{display:flex;align-items:center;justify-content:space-between;padding:19px max(18px,calc((100vw - 1120px)/2));border-bottom:1px solid var(--border);background:#f8f5f0}header a{font-size:13px;letter-spacing:.07em;font-weight:900;color:var(--ink);text-decoration:none}.back{color:var(--brown);letter-spacing:0}main{max-width:1100px;margin:auto;padding:26px 16px 60px}.tag{font-size:11px;color:var(--brown);font-weight:900;letter-spacing:.16em;text-transform:uppercase}h1{font-size:clamp(36px,7vw,62px);letter-spacing:-.06em;line-height:1;margin:8px 0}p{line-height:1.5} .intro{color:var(--muted);margin:7px 0 23px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:18px}.panel{background:var(--paper);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 10px 25px #4230210a}.turn-banner{background:#f3e9dc;border-radius:12px;padding:11px 15px;margin-bottom:14px;font-weight:900;color:var(--brown2);text-align:center}.turn-banner.cpu{background:#e5eee8;color:#23543a}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.stat{background:#f7f2eb;border-radius:13px;padding:10px 16px;flex:1;min-width:110px}.stat small{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}.stat strong{font-size:22px}.clue{border-radius:14px;background:#f3e9dc;padding:14px 17px;margin:16px 0}.clue span{color:var(--brown2);font-size:11px;font-weight:900;letter-spacing:.1em}.clue strong{display:block;margin-top:5px;font-size:19px}.board{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;min-height:154px;padding:15px 4px;background:#e9e2d7;border-radius:16px}.word{display:inline-flex;gap:4px;white-space:nowrap;margin:4px 6px}.tile{height:50px;width:clamp(26px,4.3vw,39px);border-radius:7px;background:#fff;border:2px solid #b7a998;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:900}.tile.blank{background:#d0c1ad;border-color:#d0c1ad}.keys{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin:17px 0}.keys button{width:38px;height:39px;padding:0;border:1px solid #d3c5b6;border-radius:9px;background:#f7f3ee;font-weight:900;color:var(--brown2);cursor:pointer}.keys button:disabled{opacity:.25;cursor:default}.keys button.vowel{background:#e8f0e9;border-color:#b8d4c2}.controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center}.btn{border:0;border-radius:11px;padding:12px 17px;background:var(--brown);color:#fff;font-weight:850;font-size:14px;cursor:pointer}.btn.secondary{background:#eee5da;color:var(--brown2)}.btn:disabled{opacity:.4;cursor:default}.status{min-height:46px;margin:15px 0 0;color:var(--brown2);font-weight:750;text-align:center}.clue{height:156px;min-height:156px;max-height:156px;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px}.clue .category-label{font-size:11px}.clue #category{font-size:clamp(20px,4vw,26px);text-align:center;line-height:1.15}.clue.spinning #category,.clue.spinning .category-label{display:none}.prize-spinner{display:none;align-items:center;justify-content:center;flex-direction:column;position:relative;width:100%;height:150px;min-height:0}.clue.spinning .prize-spinner{display:flex}.prize-wheel{position:relative;flex:none;width:116px;height:116px;border-radius:50%;border:5px solid #e8d6b4;box-shadow:0 2px 7px #0003;background:conic-gradient(#e5ba69 0deg 45deg,#8eab97 45deg 90deg,#d28c77 90deg 135deg,#b5a3c5 135deg 180deg,#e0c577 180deg 225deg,#8cb2b4 225deg 270deg,#bd9757 270deg 315deg,#b8796e 315deg 360deg);transition:transform 3.2s cubic-bezier(.12,.72,.13,1);will-change:transform}.prize-wheel:after{content:"";position:absolute;inset:40%;border:3px solid #eacb8a;background:radial-gradient(circle at 30% 25%,#aa8960,#554336 70%);border-radius:50%;box-shadow:0 1px 3px #0008;z-index:2}.wheel-number{position:absolute;left:var(--x);top:var(--y);font-size:9px;font-weight:950;color:#272018;text-shadow:0 1px 1px #fffc;white-space:nowrap;transform:translate(-50%,-50%) rotate(var(--counter-rotation,0deg));transition:transform 3.2s cubic-bezier(.12,.72,.13,1);will-change:transform}.wheel-peg{position:absolute;left:var(--x);top:var(--y);width:5px;height:5px;transform:translate(-50%,-50%);border-radius:50%;background:#fff7df;border:1px solid #9d7445;box-shadow:0 1px 2px #0007}.prize-pointer{position:absolute;z-index:2;top:5px;left:50%;transform:translateX(-50%);border-left:9px solid transparent;border-right:9px solid transparent;border-top:19px solid #33251d;filter:drop-shadow(0 1px 1px #0005)}.clue .spin-result{font-size:13px;font-weight:900;margin-top:3px;min-height:18px;line-height:18px;color:var(--brown2)}@media(prefers-reduced-motion:reduce){.prize-wheel{transition-duration:.01s}}.spin-result{margin-top:8px;color:var(--brown2)}.rules{font-size:13px;color:var(--muted);line-height:1.6}.rules strong{color:var(--ink)}.spin-overlay{position:fixed;inset:0;z-index:90;background:#24170fc9;display:none;align-items:center;justify-content:center;padding:18px}.spin-overlay.show{display:flex}.spin-popup{background:#fff;border-radius:24px;padding:23px 22px 27px;width:min(100%,390px);text-align:center;box-shadow:0 24px 80px #0005}.spin-popup h2{margin:7px 0;font-size:27px;letter-spacing:-.035em}body.wheel-active{overflow:hidden}.modal{position:fixed;inset:0;background:#201711ae;z-index:20;display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-card{background:#fff;border-radius:19px;padding:24px;width:min(100%,450px)}.modal-card h2{margin:0 0 10px}.modal-card input{display:block;width:100%;padding:13px 14px;margin:14px 0;border-radius:10px;border:1px solid #bfb2a4;font:inherit;text-transform:uppercase}.modal-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}.difficulty-picker{display:flex;gap:7px;margin:10px 0 7px}.difficulty-picker button{flex:1;border:1px solid var(--border);border-radius:10px;background:#f7f2eb;color:var(--brown2);font-size:13px;font-weight:900;padding:11px 7px;cursor:pointer}.difficulty-picker button.active{background:var(--brown);border-color:var(--brown);color:#fff}.difficulty-picker button:focus-visible{outline:3px solid var(--green);outline-offset:2px}.difficulty-info{font-size:12px;color:var(--muted);line-height:1.5;margin:4px 0 15px}.voice-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 14px}.voice-status{font-size:12px;color:var(--muted);flex:1;min-width:130px}.voice-btn.listening{background:var(--green);color:#fff;animation:micPulse 1.5s ease-in-out infinite}@keyframes micPulse{50%{box-shadow:0 0 0 6px #35684f22}}.end{background:#eef2eb;border:1px solid #bfd5c5;border-radius:14px;padding:18px;margin:14px 0;display:none}.end.show{display:block}footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}@media(max-width:850px){.layout{grid-template-columns:1fr}.panel{padding:16px}.tile{height:43px;font-size:20px}.word{margin:3px}.keys button{width:35px;height:37px}}@media(prefers-reduced-motion:reduce){.wheel{transition-duration:.01s}}
+
+.decision-clock{margin:0 0 10px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums;color:var(--brown,#825b39)}.decision-clock[hidden]{display:none}.decision-clock.urgent{color:#a62920}
 </style></head>
 <body><header><a href="/">THE MEDIC GOATS</a><a class="back" href="/#games">← All Games</a></header>
-<main><div class="tag">EMS KNOWLEDGE • WORD PUZZLES</div><h1>Wheel of Medicine</h1><a href="/medic-wheel-multiplayer.html?new=1" style="display:inline-block;background:#825b39;color:white;padding:13px 18px;border-radius:12px;font-weight:850;text-decoration:none;margin:8px 0 3px">MULTIPLAYER · Host or Join →</a><p class="intro">Spin for points. Guess consonants, buy vowels, and solve medical mysteries.</p>
+<main><div class="tag">EMS KNOWLEDGE • WORD PUZZLES</div><h1>Wheel of Medicine</h1><a href="/medic-wheel-multiplayer.html?new=1" style="display:inline-block;background:#825b39;color:white;padding:13px 18px;border-radius:12px;font-weight:850;text-decoration:none;margin:8px 0 3px">MULTIPLAYER · Host or Join →</a><p class="intro">Spin for points. Guess consonants, buy vowels, and solve medical mysteries. You have 30 seconds to act before your turn passes.</p>
 <div class="layout"><section class="panel">
 <div class="turn-banner" id="turnBanner" aria-live="polite">YOUR TURN</div>
 <div class="stats"><div class="stat"><small>Round</small><strong id="round">1</strong></div><div class="stat"><small>Your round bank</small><strong id="bank">$0</strong></div><div class="stat"><small>Your total</small><strong id="total">$0</strong></div><div class="stat"><small>CPU round bank</small><strong id="cpuBank">$0</strong></div><div class="stat"><small>CPU total</small><strong id="cpuTotal">$0</strong></div></div>
 <div class="clue" id="categoryCard"><span class="category-label">CATEGORY</span><strong id="category">Loading category…</strong><div class="prize-spinner" id="prizeSpinner"><div class="prize-pointer"></div><div class="prize-wheel" id="prizeWheel" aria-label="Spinning prize wheel"></div><div class="spin-result" id="spinPrize" aria-live="polite"></div></div></div>
 <div class="board" id="board" aria-label="Medical word puzzle"></div>
 <div class="end" id="end"><strong id="endText"></strong><p id="explanation"></p><button class="btn" id="next">Next Puzzle →</button></div>
+<div class="decision-clock" id="decisionClock" role="timer" aria-label="Decision time remaining" hidden></div>
 <div class="keys" id="keys" aria-label="Letter choices"></div>
 <div class="controls" id="controls"><button class="btn" id="spin">Spin</button><button class="btn secondary" id="buy">Buy Vowel · $250</button><button class="btn secondary" id="solve">Solve Puzzle</button></div>
 <p class="status" id="status" role="status" aria-live="polite"></p>
@@ -155,6 +158,29 @@ const puzzles=[
 const slices=[500,650,800,350,"BANKRUPT",450,900,"LOSE TURN"],vowels="AEIOU",alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const $=id=>document.getElementById(id);
 let gameOrder=[],index=0,puzzle=null,used=new Set(),bank=0,total=0,cpuBank=0,cpuTotal=0,cpuTurn=false,gameEpoch=0,mode="spin",value=0,angle=0,spinning=false,done=false,cpuDifficulty="medium";
+const decisionDuration=30000;
+let decisionDeadline=0,decisionTimer;
+function updateDecisionClock(){
+ const clock=$("decisionClock");
+ clock.hidden=!decisionDeadline;
+ if(clock.hidden)return;
+ const seconds=Math.max(0,Math.ceil((decisionDeadline-performance.now())/1000));
+ clock.textContent=seconds+"s to choose";
+ clock.classList.toggle("urgent",seconds<=5);
+}
+function setDecisionClock(active){
+ clearTimeout(decisionTimer);
+ decisionDeadline=active?performance.now()+decisionDuration:0;
+ if(active)decisionTimer=setTimeout(checkDecisionTime,decisionDuration);
+ updateDecisionClock();
+}
+function checkDecisionTime(){
+ if(!decisionDeadline||performance.now()<decisionDeadline)return true;
+ closeModal();
+ passTurn("Time’s up! You lost your turn.");
+ return false;
+}
+setInterval(updateDecisionClock,200);
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function pickOrder(){gameOrder=shuffle([...Array(puzzles.length).keys()]);index=0}
 function message(s){$("status").textContent=s}
@@ -172,7 +198,7 @@ document.querySelectorAll("[data-difficulty]").forEach(b=>b.addEventListener("cl
  message("CPU difficulty set to "+cpuDifficulty.toUpperCase()+".");
 }));
 function queueCpu(delay){const epoch=gameEpoch;const wait=delay===undefined?cpuSettings[cpuDifficulty].pause:delay;setTimeout(()=>{if(epoch===gameEpoch&&cpuTurn&&!done&&!spinning)cpuPlay()},wait)}
-function passTurn(reason){if(done)return;cpuTurn=!cpuTurn;mode="spin";message(reason+" "+(cpuTurn?"CPU's turn.":"Your turn."));render();if(cpuTurn)queueCpu()}
+function passTurn(reason){if(done)return;cpuTurn=!cpuTurn;mode="spin";setDecisionClock(!cpuTurn);message(reason+" "+(cpuTurn?"CPU's turn.":"Your turn."));render();if(cpuTurn)queueCpu()}
 function cpuPickLetter(options,accuracy){
  const common="RSTLNCDHMPGBFVKJWQXZEAOUI";
  const scored=options.map(ch=>({ch,score:([...puzzle[2]].filter(c=>c===ch).length*8)+(common.length-common.indexOf(ch))*0.09+Math.random()*3}));
@@ -218,11 +244,11 @@ function render(){
  $("solve").disabled=done||cpuTurn||spinning;
  $("end").classList.toggle("show",done);$("controls").style.display=done?"none":"flex";$("keys").style.display=done?"none":"flex";
 }
-function load(){gameEpoch++;if(index>=gameOrder.length){pickOrder()}puzzle=puzzles[gameOrder[index]];bank=0;cpuBank=0;cpuTurn=false;used=new Set();mode="spin";value=0;spinning=false;done=false;$("spinPrize").textContent="";$("categoryCard").classList.remove("spinning");$("end").classList.remove("show");message("Spin the wheel, or solve if you already know it.");render()}
-function complete(success,winner="player"){done=true;gameEpoch++;mode="done";if(success){if(winner==="cpu"){cpuTotal+=cpuBank;$("endText").textContent="CPU solved it! CPU banks $"+cpuBank.toLocaleString()+"."}else{total+=bank;$("endText").textContent="You solved it! You banked $"+bank.toLocaleString()+"."}}else{$("endText").textContent="Round complete"}$("explanation").textContent=puzzle[2]+" — "+puzzle[3];render()}
+function load(){closeModal();setDecisionClock(true);gameEpoch++;if(index>=gameOrder.length){pickOrder()}puzzle=puzzles[gameOrder[index]];bank=0;cpuBank=0;cpuTurn=false;used=new Set();mode="spin";value=0;spinning=false;done=false;$("spinPrize").textContent="";$("categoryCard").classList.remove("spinning");$("end").classList.remove("show");message("Spin the wheel, or solve if you already know it.");render()}
+function complete(success,winner="player"){done=true;setDecisionClock(false);gameEpoch++;mode="done";if(success){if(winner==="cpu"){cpuTotal+=cpuBank;$("endText").textContent="CPU solved it! CPU banks $"+cpuBank.toLocaleString()+"."}else{total+=bank;$("endText").textContent="You solved it! You banked $"+bank.toLocaleString()+"."}}else{$("endText").textContent="Round complete"}$("explanation").textContent=puzzle[2]+" — "+puzzle[3];render()}
 function checkDone(){let letters=puzzle[2].replace(/[^A-Z]/g,"");if([...letters].every(x=>used.has(x))){complete(true,cpuTurn?"cpu":"player");return true}return false}
 function guess(ch,byCpu=false){
- if(done||spinning||used.has(ch)||cpuTurn!==byCpu)return;
+ if(done||spinning||used.has(ch)||cpuTurn!==byCpu||(!byCpu&&!checkDecisionTime()))return;
  const isVowel=vowels.includes(ch);
  if(isVowel&&mode!=="vowel"||!isVowel&&mode!=="consonant")return;
  if(isVowel){if((cpuTurn?cpuBank:bank)<250)return;if(cpuTurn)cpuBank-=250;else bank-=250}
@@ -232,6 +258,7 @@ function guess(ch,byCpu=false){
  if(!isVowel&&count){if(cpuTurn)cpuBank+=count*value;else bank+=count*value}
  if(checkDone())return;
  if(!count){passTurn(actor+" guessed "+ch+" — no matches.");return}
+ if(!cpuTurn)setDecisionClock(true);
  mode="spin";
  message(actor+" found "+count+" "+ch+(count===1?"":"s")+(isVowel?".":" for $"+(count*value).toLocaleString()+"."));
  render();
@@ -258,7 +285,8 @@ function startSlotAnimation(finalIndex){const wheel=$("prizeWheel");const normal
  wheel.getBoundingClientRect();requestAnimationFrame(()=>requestAnimationFrame(()=>{wheel.style.transform="rotate("+wheelRotation+"deg)";wheel.style.setProperty("--counter-rotation",(-wheelRotation)+"deg")}));
 }
 function spin(byCpu=false){
- if(done||spinning||mode==="consonant"||cpuTurn!==byCpu)return;
+ if(done||spinning||mode==="consonant"||cpuTurn!==byCpu||(!byCpu&&!checkDecisionTime()))return;
+ setDecisionClock(false);
  const epoch=gameEpoch;mode="spin";spinning=true;
  $("categoryCard").classList.add("spinning");$("spinPrize").textContent="Spinning…";render();
  const i=Math.floor(Math.random()*slices.length);startSlotAnimation(i);
@@ -273,6 +301,7 @@ function spin(byCpu=false){
     passTurn(actor+" hit LOSE TURN!");
   }else{
     value=outcome;mode="consonant";
+    if(!cpuTurn)setDecisionClock(true);
     message((cpuTurn?"CPU is choosing":"Choose")+" a consonant. Each match is worth $"+outcome+".");
     render();
     if(cpuTurn){
@@ -289,7 +318,7 @@ function spin(byCpu=false){
  },3300)
 }
 
-$("spin").onclick=()=>spin(false);$("buy").onclick=()=>{if(!cpuTurn&&bank>=250&&!spinning&&mode!=="consonant"&&!done){mode="vowel";message("Pick one vowel ($250).");render()}};
+$("spin").onclick=()=>spin(false);$("buy").onclick=()=>{if(!cpuTurn&&bank>=250&&!spinning&&mode!=="consonant"&&!done&&checkDecisionTime()){mode="vowel";message("Pick one vowel ($250).");render()}};
 const SpeechRecognitionAPI=window.SpeechRecognition||window.webkitSpeechRecognition;
 let recognizer=null,recognizing=false;
 function voiceStatus(message){$("voiceStatus").textContent=message}
@@ -322,10 +351,10 @@ $("speakAnswer").onclick=()=>{
  r.onend=()=>{if(recognizer!==r)return;stopListening();if($("answer").value.trim())voiceStatus("Review your spoken answer, then select Submit Answer.");else voiceStatus("Tap Speak Answer to try again.");};
  try{r.start()}catch(e){stopListening();voiceStatus("Microphone couldn't start. Try again or type your answer.")}
 };
-$("solve").onclick=()=>{if(done||cpuTurn||spinning)return;stopListening();$("modal").classList.add("show");$("answer").value="";if(SpeechRecognitionAPI)voiceStatus("Tap the microphone to dictate your answer.");$("answer").focus()};
+$("solve").onclick=()=>{if(done||cpuTurn||spinning||!checkDecisionTime())return;stopListening();$("modal").classList.add("show");$("answer").value="";if(SpeechRecognitionAPI)voiceStatus("Tap the microphone to dictate your answer.");$("answer").focus()};
 function closeModal(){stopListening();$("modal").classList.remove("show")}
 $("cancel").onclick=closeModal;
-$("solveForm").onsubmit=e=>{e.preventDefault();const a=$("answer").value.toUpperCase().trim().replace(/[^A-Z]/g,"");const correct=puzzle[2].replace(/[^A-Z]/g,"");closeModal();if(a===correct){complete(true)}else{bank=Math.max(0,bank-250);passTurn("Incorrect solution. You lost up to $250.")}};
+$("solveForm").onsubmit=e=>{e.preventDefault();if(done||cpuTurn||spinning||!checkDecisionTime())return;const a=$("answer").value.toUpperCase().trim().replace(/[^A-Z]/g,"");const correct=puzzle[2].replace(/[^A-Z]/g,"");closeModal();if(a===correct){complete(true)}else{bank=Math.max(0,bank-250);passTurn("Incorrect solution. You lost up to $250.")}};
 $("next").onclick=()=>{index++;load()};$("restart").onclick=()=>{total=0;cpuTotal=0;gameEpoch++;pickOrder();wheelRotation=0;$("prizeWheel").style.transition="none";$("prizeWheel").style.transform="rotate(0deg)";$("prizeWheel").style.setProperty("--counter-rotation","0deg");$("prizeWheel").offsetWidth;$("prizeWheel").style.transition="";$("categoryCard").classList.remove("spinning");load()};
 $("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 makePrizeWheel();updateDifficulty();pickOrder();load();
