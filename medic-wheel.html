@@ -16,10 +16,11 @@
 <main><div class="tag">EMS KNOWLEDGE • WORD PUZZLES</div><h1>Wheel of Medicine</h1><a href="/medic-wheel-multiplayer.html?new=1" style="display:inline-block;background:#825b39;color:white;padding:13px 18px;border-radius:12px;font-weight:850;text-decoration:none;margin:8px 0 3px">MULTIPLAYER · Host or Join →</a><p class="intro">Spin for points. Guess consonants, buy vowels, and solve medical mysteries. You have 30 seconds to act before your turn passes.</p>
 <div class="layout"><section class="panel">
 <div class="turn-banner" id="turnBanner" aria-live="polite">YOUR TURN</div>
+<p id="activeRewards" class="status" hidden></p>
 <div class="stats"><div class="stat"><small>Round</small><strong id="round">1</strong></div><div class="stat"><small>Your round bank</small><strong id="bank">$0</strong></div><div class="stat"><small>Your total</small><strong id="total">$0</strong></div><div class="stat"><small>CPU round bank</small><strong id="cpuBank">$0</strong></div><div class="stat"><small>CPU total</small><strong id="cpuTotal">$0</strong></div></div>
 <div class="clue" id="categoryCard"><span class="category-label">CATEGORY</span><strong id="category">Loading category…</strong><div class="prize-spinner" id="prizeSpinner"><div class="prize-pointer"></div><div class="prize-wheel" id="prizeWheel" aria-label="Spinning prize wheel"></div><div class="spin-result" id="spinPrize" aria-live="polite"></div></div></div>
 <div class="board" id="board" aria-label="Medical word puzzle"></div>
-<div class="end" id="end"><strong id="endText"></strong><p id="explanation"></p><button class="btn" id="next">Next Puzzle →</button></div>
+<div class="end" id="end"><strong id="endText"></strong><p id="explanation"></p><p id="roundReward" role="status"></p><button class="btn" id="next">Next Puzzle →</button></div>
 <div class="decision-clock" id="decisionClock" role="timer" aria-label="Decision time remaining" hidden></div>
 <div class="keys" id="keys" aria-label="Letter choices"></div>
 <div class="controls" id="controls"><button class="btn" id="spin">Spin</button><button class="btn secondary" id="buy">Buy Vowel · $250</button><button class="btn secondary" id="solve">Solve Puzzle</button></div>
@@ -198,7 +199,22 @@ document.querySelectorAll("[data-difficulty]").forEach(b=>b.addEventListener("cl
  message("CPU difficulty set to "+cpuDifficulty.toUpperCase()+".");
 }));
 function queueCpu(delay){const epoch=gameEpoch;const wait=delay===undefined?cpuSettings[cpuDifficulty].pause:delay;setTimeout(()=>{if(epoch===gameEpoch&&cpuTurn&&!done&&!spinning)cpuPlay()},wait)}
-function passTurn(reason){if(done)return;cpuTurn=!cpuTurn;mode="spin";setDecisionClock(!cpuTurn);message(reason+" "+(cpuTurn?"CPU's turn.":"Your turn."));render();if(cpuTurn)queueCpu()}
+const rewards={player:{shield:0,skip:0},cpu:{shield:0,skip:0}};
+function awardReward(winner){
+ switch(Math.floor(Math.random()*3)){
+ case 0: rewards[winner].skip++;return "Skip a Turn";
+ case 1: rewards[winner].shield+=3;return "Bankruptcy Protection (3 spins)";
+ default:
+  if(winner==="cpu")cpuTotal+=500;else total+=500;
+  return "$500 Bonus";
+ }
+}
+function passTurn(reason){if(done)return;
+ const reward=rewards[cpuTurn?"cpu":"player"];
+ if(reward.skip){
+  reward.skip--;
+  reason+=" "+(cpuTurn?"Your turn was skipped.":"CPU's turn was skipped.");
+ }else cpuTurn=!cpuTurn;mode="spin";setDecisionClock(!cpuTurn);message(reason+" "+(cpuTurn?"CPU's turn.":"Your turn."));render();if(cpuTurn)queueCpu()}
 function cpuPickLetter(options,accuracy){
  const common="RSTLNCDHMPGBFVKJWQXZEAOUI";
  const scored=options.map(ch=>({ch,score:([...puzzle[2]].filter(c=>c===ch).length*8)+(common.length-common.indexOf(ch))*0.09+Math.random()*3}));
@@ -233,6 +249,14 @@ function cpuPlay(){
  spin(true);
 }
 function render(){
+ const active=[];
+ for(const [player,reward] of Object.entries(rewards)){
+  const label=player==="cpu"?"CPU":"You";
+  if(reward.shield)active.push(label+" · Protection: "+reward.shield+" spins");
+  if(reward.skip)active.push(label+" · Turn skips: "+reward.skip);
+ }
+ $("activeRewards").textContent=active.join(" | ");
+ $("activeRewards").hidden=!active.length;
  $("round").textContent=index+1;$("bank").textContent="$"+bank.toLocaleString();$("total").textContent="$"+total.toLocaleString();$("cpuBank").textContent="$"+cpuBank.toLocaleString();$("cpuTotal").textContent="$"+cpuTotal.toLocaleString();$("turnBanner").textContent=cpuTurn?"CPU TURN":"YOUR TURN";$("turnBanner").classList.toggle("cpu",cpuTurn);
  $("category").textContent=puzzle[0];
  const words=puzzle[2].split(" ");$("board").innerHTML="";
@@ -245,7 +269,7 @@ function render(){
  $("end").classList.toggle("show",done);$("controls").style.display=done?"none":"flex";$("keys").style.display=done?"none":"flex";
 }
 function load(){closeModal();setDecisionClock(true);gameEpoch++;if(index>=gameOrder.length){pickOrder()}puzzle=puzzles[gameOrder[index]];bank=0;cpuBank=0;cpuTurn=false;used=new Set();mode="spin";value=0;spinning=false;done=false;$("spinPrize").textContent="";$("categoryCard").classList.remove("spinning");$("end").classList.remove("show");message("Spin the wheel, or solve if you already know it.");render()}
-function complete(success,winner="player"){done=true;setDecisionClock(false);gameEpoch++;mode="done";if(success){if(winner==="cpu"){cpuTotal+=cpuBank;$("endText").textContent="CPU solved it! CPU banks $"+cpuBank.toLocaleString()+"."}else{total+=bank;$("endText").textContent="You solved it! You banked $"+bank.toLocaleString()+"."}}else{$("endText").textContent="Round complete"}$("explanation").textContent=puzzle[2]+" — "+puzzle[3];render()}
+function complete(success,winner="player"){done=true;setDecisionClock(false);gameEpoch++;mode="done";if(success){if(winner==="cpu"){cpuTotal+=cpuBank;$("endText").textContent="CPU solved it! CPU banks $"+cpuBank.toLocaleString()+"."}else{total+=bank;$("endText").textContent="You solved it! You banked $"+bank.toLocaleString()+"."}}else{$("endText").textContent="Round complete"}$("roundReward").textContent=success?(winner==="cpu"?"CPU earned ":"You earned ")+awardReward(winner):"";$("explanation").textContent=puzzle[2]+" — "+puzzle[3];render()}
 function checkDone(){let letters=puzzle[2].replace(/[^A-Z]/g,"");if([...letters].every(x=>used.has(x))){complete(true,cpuTurn?"cpu":"player");return true}return false}
 function guess(ch,byCpu=false){
  if(done||spinning||used.has(ch)||cpuTurn!==byCpu||(!byCpu&&!checkDecisionTime()))return;
@@ -289,12 +313,19 @@ function spin(byCpu=false){
  setDecisionClock(false);
  const epoch=gameEpoch;mode="spin";spinning=true;
  $("categoryCard").classList.add("spinning");$("spinPrize").textContent="Spinning…";render();
+ const reward=rewards[byCpu?"cpu":"player"];
+ const protectedSpin=reward.shield>0;
+ if(protectedSpin)reward.shield--;
  const i=Math.floor(Math.random()*slices.length);startSlotAnimation(i);
  setTimeout(()=>{
   if(epoch!==gameEpoch)return;
   spinning=false;const outcome=slices[i];$("spinPrize").textContent=slotLabel(outcome);
   const actor=cpuTurn?"CPU":"You";
-  if(outcome==="BANKRUPT"){
+  if(outcome==="BANKRUPT"&&protectedSpin){
+    message(actor+" used Bankruptcy Protection and kept the turn and round bank.");
+    if(cpuTurn)queueCpu();else setDecisionClock(true);
+    render();
+  }else if(outcome==="BANKRUPT"){
     if(cpuTurn)cpuBank=0;else bank=0;
     passTurn(actor+" hit BANKRUPT!");
   }else if(outcome==="LOSE TURN"){
@@ -355,7 +386,7 @@ $("solve").onclick=()=>{if(done||cpuTurn||spinning||!checkDecisionTime())return;
 function closeModal(){stopListening();$("modal").classList.remove("show")}
 $("cancel").onclick=closeModal;
 $("solveForm").onsubmit=e=>{e.preventDefault();if(done||cpuTurn||spinning||!checkDecisionTime())return;const a=$("answer").value.toUpperCase().trim().replace(/[^A-Z]/g,"");const correct=puzzle[2].replace(/[^A-Z]/g,"");closeModal();if(a===correct){complete(true)}else{bank=Math.max(0,bank-250);passTurn("Incorrect solution. You lost up to $250.")}};
-$("next").onclick=()=>{index++;load()};$("restart").onclick=()=>{total=0;cpuTotal=0;gameEpoch++;pickOrder();wheelRotation=0;$("prizeWheel").style.transition="none";$("prizeWheel").style.transform="rotate(0deg)";$("prizeWheel").style.setProperty("--counter-rotation","0deg");$("prizeWheel").offsetWidth;$("prizeWheel").style.transition="";$("categoryCard").classList.remove("spinning");load()};
+$("next").onclick=()=>{index++;load()};$("restart").onclick=()=>{for(const reward of Object.values(rewards)){reward.shield=0;reward.skip=0}total=0;cpuTotal=0;gameEpoch++;pickOrder();wheelRotation=0;$("prizeWheel").style.transition="none";$("prizeWheel").style.transform="rotate(0deg)";$("prizeWheel").style.setProperty("--counter-rotation","0deg");$("prizeWheel").offsetWidth;$("prizeWheel").style.transition="";$("categoryCard").classList.remove("spinning");load()};
 $("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 makePrizeWheel();updateDifficulty();pickOrder();load();
 </script></body></html>
