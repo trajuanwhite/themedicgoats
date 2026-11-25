@@ -30,7 +30,7 @@ h1{font-size:clamp(30px,4vw,46px);margin:5px 0 4px}
 @media(min-width:741px){.clues{max-height:var(--layout-budget,500px);overflow:auto;overscroll-behavior:contain}}
 @media(max-width:740px){.layout{grid-template-columns:1fr}.grid{width:min(100%,calc(var(--cols)*34px + var(--cols)*1px + 5px));}.clues{max-height:none}.stat{min-width:80px}.stat strong{font-size:16px}}
 @media(max-height:600px) and (min-width:741px){main{margin-top:5px}.tag,main>p{display:none}h1{font-size:28px}.toolbar{margin:5px 0}.layout .panel{padding:7px}}
-</style></head><body><main><nav><a href="/games">← Games</a></nav><div class="tag">MEDICAL WORD GAMES</div><h1>Medic Crosswords<span>.</span></h1><p>Race to claim the most words, or solve the board on your own against the clock.</p><div class="toolbar"><label for="playMode">Mode</label><select id="playMode"><option value="solo">Solo</option><option value="cpu">Solo vs CPU</option><option value="friends">Solo vs Friends</option></select><label for="topic">Category</label><select id="topic"><option value="-1">Mixed medicine</option><option value="0">Airway</option><option value="1">Cardiology</option><option value="2">Trauma</option><option value="3">Pharmacology</option><option value="4">Neurology</option><option value="5">Medical Emergencies</option></select><label for="level">Difficulty</label><select id="level"><option value="6">Easy</option><option value="8" selected>Medium</option><option value="10">Hard</option></select><button class="primary" id="new">New Puzzle</button></div><section class="panel race-panel" id="friendsPanel" hidden>
+</style></head><body><main><nav><a href="/games">← Games</a></nav><div class="tag">MEDICAL WORD GAMES</div><h1>Medic Crosswords<span>.</span></h1><p>Race to claim the most words, or solve the board on your own against the clock.</p><div class="toolbar"><label for="playMode">Mode</label><select id="playMode"><option value="" disabled selected>Select mode</option><option value="solo">Solo</option><option value="cpu">Solo vs CPU</option><option value="friends">Solo vs Friends</option></select><label for="topic">Category</label><select id="topic"><option value="" disabled selected>Select category</option><option value="-1">Mixed medicine</option><option value="0">Airway</option><option value="1">Cardiology</option><option value="2">Trauma</option><option value="3">Pharmacology</option><option value="4">Neurology</option><option value="5">Medical Emergencies</option></select><label for="level">Difficulty</label><select id="level"><option value="" disabled selected>Select difficulty</option><option value="6">Easy</option><option value="8">Medium</option><option value="10">Hard</option></select><button class="primary" id="new" disabled>Start Game</button></div><section class="panel race-panel" id="friendsPanel" hidden>
 <div class="actions" id="roomSetup">
 <label>Your name<input id="raceName" maxlength="24" autocomplete="nickname"></label>
 <label>Room code<input id="raceCode" maxlength="6" inputmode="numeric" autocomplete="off"></label>
@@ -39,7 +39,7 @@ h1{font-size:clamp(30px,4vw,46px);margin:5px 0 4px}
 <div class="actions" id="roomLobby" hidden>
 <strong id="roomTitle"></strong><button id="copyRace">Copy Invite</button><button class="primary" id="startRace">Start Race</button><button id="leaveRace">Leave Room</button>
 </div><p id="roomStatus" role="status"></p></section>
-<div id="gameArea"><div class="race-score" id="raceScore" hidden></div><div class="stats"><div class="stat"><small>Time</small><strong id="time">0:00</strong></div><div class="stat"><small>Words solved</small><strong id="progress">0 / 0</strong></div><div class="stat" id="hintStat"><small>Hints used</small><strong id="hints">0</strong></div></div><div class="layout"><section class="panel"><div class="clue-current" aria-live="polite"><strong id="currentLabel">Select a clue</strong><span id="currentClue"></span></div><div id="grid" class="grid" aria-label="Crossword puzzle"></div><div class="actions"><button id="check">Check Puzzle</button><button id="hint">Reveal Letter</button><button id="clear">Clear Puzzle</button></div><p id="status" role="status"></p></section><section class="panel clues"><div><h2>Across</h2><div id="across"></div></div><div><h2>Down</h2><div id="down"></div></div></section></div></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+<div id="gameArea" hidden><div class="race-score" id="raceScore" hidden></div><div class="stats"><div class="stat"><small>Time</small><strong id="time">0:00</strong></div><div class="stat"><small>Words solved</small><strong id="progress">0 / 0</strong></div><div class="stat" id="hintStat"><small>Hints used</small><strong id="hints">0</strong></div></div><div class="layout"><section class="panel"><div class="clue-current" aria-live="polite"><strong id="currentLabel">Select a clue</strong><span id="currentClue"></span></div><div id="grid" class="grid" aria-label="Crossword puzzle"></div><div class="actions"><button id="check">Check Puzzle</button><button id="hint">Reveal Letter</button><button id="clear">Clear Puzzle</button></div><p id="status" role="status"></p></section><section class="panel clues"><div><h2>Across</h2><div id="across"></div></div><div><h2>Down</h2><div id="down"></div></div></section></div></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 const banks=[["Airway",[["EPIGLOTTIS","Flap that helps protect the laryngeal inlet during swallowing."],["TRACHEA","Windpipe."],["LARYNX","Structure containing the vocal cords."],["SUCTION","Removal of airway secretions using negative pressure."],["APNEA","Absence of breathing."],["HYPOXIA","Inadequate oxygen availability at the tissue level."],["CARINA","Point where the trachea divides into the main bronchi."],["GLOTTIS","Opening between the vocal folds."],["CAPNOGRAPHY","Graphical measurement of exhaled carbon dioxide."],["STRIDOR","Harsh sound associated with upper airway narrowing."],["CYANOSIS","Bluish discoloration associated with increased deoxygenated hemoglobin."],["ALVEOLI","Tiny air sacs where gas exchange occurs."]]],["Cardiology",[["ATRIOVENTRICULAR","Relating to the atria and ventricles."],["SYSTOLE","Phase of ventricular contraction."],["DIASTOLE","Phase of ventricular relaxation and filling."],["PERICARDIUM","Sac surrounding the heart."],["ASYSTOLE","Absence of discernible ventricular electrical activity."],["PRELOAD","Ventricular filling or stretch before contraction."],["AFTERLOAD","Load the ventricle must overcome to eject blood."],["ISCHEMIA","Inadequate blood supply relative to tissue demand."],["TACHYCARDIA","Abnormally fast heart rate."],["BRADYCARDIA","Abnormally slow heart rate."],["SEPTUM","Wall separating cardiac chambers."],["PURKINJE","Fibers that rapidly conduct impulses through ventricular myocardium."]]],["Trauma",[["HEMORRHAGE","Loss of blood from the vascular system."],["FRACTURE","Break in a bone."],["AVULSION","Injury in which tissue is torn away."],["CONTUSION","Bruise caused by blunt trauma."],["LACERATION","Tear or cut in tissue."],["TOURNIQUET","Device for controlling severe extremity bleeding."],["PELVIS","Bony ring supporting the trunk."],["HEMOTHORAX","Blood accumulating in the pleural space."],["SPLINT","Device used to stabilize an injured body part."],["CREPITUS","Crackling or grating sensation on examination."],["ABRASION","Superficial scraping injury."],["TAMPONADE","Impaired cardiac filling due to pressure from pericardial contents."]]],["Pharmacology",[["EPINEPHRINE","Adrenergic agonist used in anaphylaxis and cardiac arrest."],["NALOXONE","Opioid receptor antagonist."],["ADENOSINE","Drug that transiently slows AV nodal conduction."],["ATROPINE","Antimuscarinic drug used in selected symptomatic bradycardias."],["KETAMINE","Dissociative anesthetic with NMDA antagonist activity."],["ALBUTEROL","Beta two agonist bronchodilator."],["ASPIRIN","Antiplatelet drug that inhibits cyclooxygenase."],["FENTANYL","Potent synthetic opioid analgesic."],["MIDAZOLAM","Benzodiazepine used for sedation and seizure management."],["DILTIAZEM","Calcium channel blocker that slows AV nodal conduction."],["GLUCAGON","Hormone that raises blood glucose."],["LIDOCAINE","Local anesthetic and class IB antiarrhythmic."]]],["Neurology",[["ISCHEMIA","Insufficient blood supply relative to tissue demand."],["APHASIA","Impaired language production or comprehension."],["DYSARTHRIA","Difficulty articulating speech due to motor impairment."],["ATAXIA","Impaired coordination of movement."],["SEIZURE","Transient signs or symptoms from abnormal excessive neuronal activity."],["POSTICTAL","Period following a seizure."],["SYNCOPE","Transient loss of consciousness from global cerebral hypoperfusion."],["PUPIL","Opening in the iris."],["CEREBELLUM","Brain structure important for coordination and balance."],["HEMIPARESIS","Weakness on one side of the body."],["MENINGES","Protective membranes surrounding the brain and spinal cord."],["NEURON","Cell specialized for transmitting nervous system signals."]]],["Medical Emergencies",[["ANAPHYLAXIS","Serious systemic hypersensitivity reaction."],["HYPOGLYCEMIA","Abnormally low blood glucose."],["KETOACIDOSIS","Metabolic acidosis associated with excess ketone bodies."],["SEPSIS","Life-threatening organ dysfunction caused by a dysregulated response to infection."],["ECLAMPSIA","Seizures associated with preeclampsia."],["EMBOLISM","Vascular obstruction by material traveling through the bloodstream."],["EDEMA","Excess fluid in interstitial tissues."],["HYPERKALEMIA","Elevated blood potassium."],["HYPOVOLEMIA","Reduced circulating blood volume."],["DIALYSIS","Process used to remove solutes and excess fluid in kidney failure."],["HEMATEMESIS","Vomiting blood."],["MELENA","Black tarry stool associated with digested blood."]]]];
 const $=id=>document.getElementById(id),key=(r,c)=>r+','+c;
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -66,8 +66,10 @@ const db=window.supabase?.createClient('https://jjzjqjvdnaeuftptvmyw.supabase.co
 let mode='solo',finishTime=0,cpuTimer,room=null,pollTimer,generation=0,busy=false,polling=false,revision=0;
 let players=[],lastAttempt='';
 function startLocal(){
+ if(!setupReady())return;
  clearTimeout(cpuTimer);
  if(mode==='friends')return;
+ $('gameArea').hidden=false;$('new').textContent='New Puzzle';
  players=mode==='cpu'?[{name:'You'},{name:'CPU'}]:[];
  loadPuzzle(generatePuzzle());
  update();
@@ -213,7 +215,7 @@ async function refreshRoom(){
  finally{polling=false}
 }
 async function enterRoom(action){
- if(busy)return;
+ if(busy||(action==='host'&&!setupReady()))return;
  busy=true;
  const current=generation;
  try{
@@ -232,18 +234,21 @@ async function enterRoom(action){
  }catch(e){if(current===generation)$('roomStatus').textContent=e.message}
  finally{if(current===generation)busy=false}
 }
+function setupReady(){return !!($('playMode').value&&$('topic').value&&$('level').value)}
+function updateSetup(){const ready=setupReady();$('new').disabled=!ready;$('hostRace').disabled=!ready;}
 function changeMode(){
  generation++;room=null;busy=false;lastAttempt='';
  clearInterval(pollTimer);clearInterval(timer);clearTimeout(cpuTimer);
  mode=$('playMode').value;
  const friends=mode==='friends';
- $('friendsPanel').hidden=!friends;$('gameArea').hidden=friends;
+ $('friendsPanel').hidden=!friends;$('gameArea').hidden=true;
  $('roomSetup').hidden=false;$('roomLobby').hidden=true;$('roomStatus').textContent='';
  $('new').hidden=friends;
  $('copyRace').textContent='Copy Invite';
- if(!friends)startLocal();
+ $('new').textContent='Start Game';updateSetup();
 }
 $('playMode').onchange=changeMode;
+$('topic').onchange=$('level').onchange=()=>{if(mode!=='friends'&&!$('gameArea').hidden)changeMode();else updateSetup();};
 $('hostRace').onclick=()=>enterRoom('host');
 $('joinRace').onclick=()=>enterRoom('join');
 $('leaveRace').onclick=changeMode;
