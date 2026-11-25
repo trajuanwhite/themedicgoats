@@ -72,6 +72,41 @@ body:has(#gameArea[hidden]) #new{display:block;width:100%;padding:12px;font-size
 body:has(#gameArea[hidden]) #new:disabled{opacity:.55}
 body:has(#gameArea[hidden]) .race-panel{padding:16px 20px}
 @media(max-width:600px){body:has(#gameArea[hidden]) main{margin:12px auto 24px}body:has(#gameArea[hidden]) .lobby-hero{grid-template-columns:1fr 80px;gap:10px;padding:20px 16px}.cross-art{gap:2px}.cross-art span{font-size:9px;border-radius:2px}.hero-meta{gap:5px 10px;margin-top:12px}.lobby-hero p{font-size:12px}body:has(#gameArea[hidden]) .toolbar{padding:16px}body:has(#gameArea[hidden]) .mode-cards{grid-template-columns:1fr;gap:7px}.mode-cards button{display:grid;grid-template-columns:34px 1fr;column-gap:10px;row-gap:2px;padding:10px!important}.mode-icon{grid-row:span 2}.mode-cards small{grid-column:2}.setup-intro h2{font-size:18px}}
+
+/* Match the Medic Match visual system */
+:root{--bg:#f4f1eb;--ink:#17130f;--muted:#777065;--line:#dcd4c8;--paper:#ffffff;--brown:#17130f;--gold:#c78f30}
+body,body:has(#gameArea[hidden]){background:var(--bg);font-family:Inter,system-ui,sans-serif}
+h1 span,.lobby-hero h2 span{color:var(--gold)!important}
+.tag,.lobby-hero .eyebrow{color:var(--muted);letter-spacing:.18em;font-weight:900}
+body:has(#gameArea[hidden]) .lobby-hero{background:transparent;color:var(--ink);border-radius:0;padding:18px 0 22px;margin:12px 0 6px;grid-template-columns:minmax(0,1fr) 150px}
+.lobby-hero h2{font-size:clamp(38px,7vw,76px);letter-spacing:-.065em;line-height:1;margin:12px 0}
+.lobby-hero p{color:var(--muted);line-height:1.6}
+.hero-meta{color:var(--muted);letter-spacing:.04em}
+.cross-art{transform:none;max-width:142px;background:var(--ink);padding:7px;border-radius:12px;background-image:radial-gradient(#ffffff0d 1px,transparent 1px);background-size:12px 12px}
+.cross-art span{background:#f4f1eb;color:var(--ink)}
+.cross-art span.blank{background:transparent}
+.cross-art span.accent{background:#d8b77b}
+body:has(#gameArea[hidden]) .toolbar{background:#fff9;border:1px solid var(--line);box-shadow:none;border-radius:16px}
+.mode-cards button{background:#fff;border:1px solid var(--line)}
+.mode-cards button:hover{border-color:var(--ink)}
+.mode-cards button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff;box-shadow:none}
+.mode-icon{background:#f4f1eb;color:var(--ink)}
+.mode-cards button[aria-pressed=true] .mode-icon{background:#ffffff18;color:#eadcc6}
+.mode-cards small,.setup-foot{color:var(--muted)}
+.mode-cards button[aria-pressed=true] small{color:#e1d8cb}
+body:has(#gameArea[hidden]) .setup-fields select{background:white}
+.setup-fields label>span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:850;color:var(--muted)}
+button.primary{background:var(--ink);color:white}
+button:focus-visible,select:focus-visible,input:focus-visible{outline-color:var(--gold)}
+.stats{gap:0;border:1px solid var(--line);border-radius:12px;background:#fff9;overflow:hidden}
+.stat{background:transparent;border:0;border-right:1px solid var(--line);border-radius:0}
+.stat:last-child{border-right:0}
+.stat small{font-size:10px;letter-spacing:.10em;text-transform:uppercase;font-weight:850}
+.grid,.block{background:var(--ink)}
+.cell{background:#fff}
+.cell.active,.clue-current,.clues button.active{background:#f0e7d7}
+.cell.selected{background:#d8b77b}
+@media(max-width:600px){body:has(#gameArea[hidden]) .lobby-hero{grid-template-columns:minmax(0,1fr) 80px;padding:12px 0 16px}.lobby-hero h2{font-size:clamp(32px,7vw,48px)}.cross-art{padding:4px}}
 </style></head><body><main><nav><a href="/games">← Games</a></nav><div class="tag">MEDICAL WORD GAMES</div><h1>Medic Crosswords<span>.</span></h1><p>Race to claim the most words, or solve the board on your own against the clock.</p><section class="lobby-hero" aria-label="Medic Crosswords introduction"><div><div class="eyebrow">The Medic Goats / Word Games</div><h2>Medic Crosswords<span style="color:#d6a66e">.</span></h2><p>Put your medical vocabulary to the test. Connect the clues, claim the words and sharpen your clinical knowledge.</p><div class="hero-meta"><span>500+ clues</span><span>6 clinical categories</span><span>3 ways to play</span></div></div><div class="cross-art" aria-hidden="true"><span class="blank">·</span><span class="blank">·</span><span class="">M</span><span class="blank">·</span><span class="blank">·</span><span class="blank">·</span><span class="accent">C</span><span class="">E</span><span class="">L</span><span class="accent">L</span><span class="blank">·</span><span class="blank">·</span><span class="accent">D</span><span class="blank">·</span><span class="blank">·</span><span class="accent">E</span><span class="">M</span><span class="">I</span><span class="accent">S</span><span class="blank">·</span><span class="blank">·</span><span class="blank">·</span><span class="">C</span><span class="blank">·</span><span class="blank">·</span></div></section><div class="toolbar"><div class="setup-intro"><h2>Set up your challenge</h2><p>Choose how you want to play, then customize your puzzle.</p></div><div class="mode-cards" role="group" aria-label="Choose game mode"><button type="button" data-mode="solo" aria-pressed="false"><span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20v-2a7 7 0 0 1 14 0v2"/></svg></span><strong>Solo</strong><small>Race against the clock.</small></button><button type="button" data-mode="cpu" aria-pressed="false"><span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="4"/><path d="M12 3v3M8 11h.01M16 11h.01M9 16h6"/></svg></span><strong>Solo vs CPU</strong><small>Best of five challenge.</small></button><button type="button" data-mode="friends" aria-pressed="false"><span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1"/></svg></span><strong>Solo vs Friends</strong><small>Compete in a live room.</small></button></div><label class="mode-native" for="playMode">Mode</label><select class="mode-native" id="playMode"><option value="" disabled selected>Select mode</option><option value="solo">Solo</option><option value="cpu">Solo vs CPU</option><option value="friends">Solo vs Friends</option></select><div class="setup-fields"><label><span>Category</span><select id="topic"><option value="" disabled selected>Select category</option><option value="-1">Mixed medicine</option><option value="0">Airway</option><option value="1">Cardiology</option><option value="2">Trauma</option><option value="3">Pharmacology</option><option value="4">Neurology</option><option value="5">Medical Emergencies</option></select></label><label><span>Difficulty</span><select id="level"><option value="" disabled selected>Select difficulty</option><option value="6">Easy</option><option value="8">Medium</option><option value="10">Hard</option></select></label></div><button class="primary" id="new" disabled>Start Game</button><p class="setup-foot" id="setupHelp" aria-live="polite">Choose a mode, category and difficulty to begin.</p></div><section class="panel race-panel" id="friendsPanel" hidden>
 <div class="actions" id="roomSetup">
 <label>Your name<input id="raceName" maxlength="24" autocomplete="nickname"></label>
