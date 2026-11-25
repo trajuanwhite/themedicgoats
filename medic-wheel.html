@@ -221,6 +221,28 @@ const puzzles=[
 const slices=[500,650,800,350,"BANKRUPT",450,900,"LOSE TURN"],vowels="AEIOU",alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const $=id=>document.getElementById(id);
 let gameOrder=[],index=0,puzzle=null,used=new Set(),bank=0,total=0,cpuBank=0,cpuTotal=0,cpuTurn=false,gameEpoch=0,mode="spin",value=0,angle=0,spinning=false,done=false,cpuDifficulty="medium";
+let toss=false,tossLocked=false,tossTimer=null,tossLetters=[],tossStart=0,tossCpuAt=0;
+function startToss(){
+ clearInterval(tossTimer);closeModal();setDecisionClock(false);gameEpoch++;
+ toss=true;tossLocked=false;done=false;cpuTurn=false;spinning=false;bank=0;cpuBank=0;mode="toss";index=0;
+ puzzle=puzzles[gameOrder.shift()];used=new Set();tossLetters=shuffle([...new Set(puzzle[2].replace(/[^A-Z]/g,""))]);
+ tossStart=performance.now();tossCpuAt=Math.max(1,Math.ceil(tossLetters.length*({easy:.9,medium:.7,hard:.45}[cpuDifficulty])));
+ message("Opening toss-up: first correct solution wins $1,000. One attempt only.");render();
+ tossTimer=setInterval(()=>{
+  if(!toss||done)return;
+  const n=Math.min(tossLetters.length,Math.floor((performance.now()-tossStart)/1500));
+  used=new Set(tossLetters.slice(0,n));render();
+  if(n>=tossCpuAt && n<tossLetters.length && Math.random()<({easy:.15,medium:.35,hard:.65}[cpuDifficulty]))finishToss("cpu");
+  else if(performance.now()-tossStart>=tossLetters.length*1500+3000)finishToss(null);
+ },1500);
+}
+function finishToss(winner){
+ if(!toss||done)return;clearInterval(tossTimer);closeModal();done=true;gameEpoch++;
+ if(winner==="player")total+=1000;else if(winner==="cpu")cpuTotal+=1000;
+ $("endText").textContent=winner==="player"?"You won the toss-up! +$1,000":winner==="cpu"?"CPU won the toss-up! +$1,000":"Toss-up complete — no winner.";
+ $("explanation").textContent=puzzle[2]+" — "+puzzle[3];$("roundReward").textContent="";
+ message("Continue to Round 1.");render();
+}
 const decisionDuration=30000;
 let decisionDeadline=0,decisionTimer;
 function updateDecisionClock(){
@@ -329,8 +351,11 @@ function render(){
  $("spin").disabled=done||cpuTurn||spinning||mode==="consonant";
  $("solve").disabled=done||cpuTurn||spinning;
  $("end").classList.toggle("show",done);$("controls").style.display=done?"none":"flex";$("keys").style.display=done?"none":"flex";
+ $("spin").style.display=toss?"none":"";$("buy").style.display=toss?"none":"";
+ $("next").textContent=toss?"Start Round 1 →":"Next Puzzle →";
+ if(toss){$("round").textContent="TOSS-UP";$("turnBanner").textContent="RAPID-FIRE TOSS-UP · $1,000";$("keys").style.display="none";$("solve").disabled=done||tossLocked;}
 }
-function load(){closeModal();setDecisionClock(true);gameEpoch++;if(index>=gameOrder.length){pickOrder()}puzzle=puzzles[gameOrder[index]];bank=0;cpuBank=0;cpuTurn=false;used=new Set();mode="spin";value=0;spinning=false;done=false;$("spinPrize").textContent="";$("categoryCard").classList.remove("spinning");$("end").classList.remove("show");message("Spin the wheel, or solve if you already know it.");render()}
+function load(){clearInterval(tossTimer);toss=false;closeModal();setDecisionClock(true);gameEpoch++;if(index>=gameOrder.length){pickOrder()}puzzle=puzzles[gameOrder[index]];bank=0;cpuBank=0;cpuTurn=false;used=new Set();mode="spin";value=0;spinning=false;done=false;$("spinPrize").textContent="";$("categoryCard").classList.remove("spinning");$("end").classList.remove("show");message("Spin the wheel, or solve if you already know it.");render()}
 function complete(success,winner="player"){done=true;setDecisionClock(false);gameEpoch++;mode="done";if(success){if(winner==="cpu"){cpuTotal+=cpuBank;$("endText").textContent="CPU solved it! CPU banks $"+cpuBank.toLocaleString()+"."}else{total+=bank;$("endText").textContent="You solved it! You banked $"+bank.toLocaleString()+"."}}else{$("endText").textContent="Round complete"}$("roundReward").textContent=success?(winner==="cpu"?"CPU earned ":"You earned ")+awardReward(winner):"";$("explanation").textContent=puzzle[2]+" — "+puzzle[3];render()}
 function checkDone(){let letters=puzzle[2].replace(/[^A-Z]/g,"");if([...letters].every(x=>used.has(x))){complete(true,cpuTurn?"cpu":"player");return true}return false}
 function guess(ch,byCpu=false){
@@ -444,11 +469,11 @@ $("speakAnswer").onclick=()=>{
  r.onend=()=>{if(recognizer!==r)return;stopListening();if($("answer").value.trim())voiceStatus("Review your spoken answer, then select Submit Answer.");else voiceStatus("Tap Speak Answer to try again.");};
  try{r.start()}catch(e){stopListening();voiceStatus("Microphone couldn't start. Try again or type your answer.")}
 };
-$("solve").onclick=()=>{if(done||cpuTurn||spinning||!checkDecisionTime())return;stopListening();$("modal").classList.add("show");$("answer").value="";if(SpeechRecognitionAPI)voiceStatus("Tap the microphone to dictate your answer.");$("answer").focus()};
+$("solve").onclick=()=>{if(done||cpuTurn||spinning||tossLocked&&toss||!checkDecisionTime())return;stopListening();$("modal").classList.add("show");$("answer").value="";if(SpeechRecognitionAPI)voiceStatus("Tap the microphone to dictate your answer.");$("answer").focus()};
 function closeModal(){stopListening();$("modal").classList.remove("show")}
 $("cancel").onclick=closeModal;
-$("solveForm").onsubmit=e=>{e.preventDefault();if(done||cpuTurn||spinning||!checkDecisionTime())return;const a=$("answer").value.toUpperCase().trim().replace(/[^A-Z]/g,"");const correct=puzzle[2].replace(/[^A-Z]/g,"");closeModal();if(a===correct){complete(true)}else{bank=Math.max(0,bank-250);passTurn("Incorrect solution. You lost up to $250.")}};
-$("next").onclick=()=>{index++;load()};$("restart").onclick=()=>{for(const reward of Object.values(rewards)){reward.shield=0;reward.skip=0}total=0;cpuTotal=0;gameEpoch++;pickOrder();wheelRotation=0;$("prizeWheel").style.transition="none";$("prizeWheel").style.transform="rotate(0deg)";$("prizeWheel").style.setProperty("--counter-rotation","0deg");$("prizeWheel").offsetWidth;$("prizeWheel").style.transition="";$("categoryCard").classList.remove("spinning");load()};
+$("solveForm").onsubmit=e=>{e.preventDefault();if(done||cpuTurn||spinning||!checkDecisionTime())return;const a=$("answer").value.toUpperCase().trim().replace(/[^A-Z]/g,"");const correct=puzzle[2].replace(/[^A-Z]/g,"");closeModal();if(toss){if(tossLocked)return;if(a===correct)finishToss("player");else{tossLocked=true;message("Incorrect — you are locked out of this toss-up.");render()}return}if(a===correct){complete(true)}else{bank=Math.max(0,bank-250);passTurn("Incorrect solution. You lost up to $250.")}};
+$("next").onclick=()=>{if(!toss)index++;load()};$("restart").onclick=()=>{for(const reward of Object.values(rewards)){reward.shield=0;reward.skip=0}total=0;cpuTotal=0;gameEpoch++;pickOrder();wheelRotation=0;$("prizeWheel").style.transition="none";$("prizeWheel").style.transform="rotate(0deg)";$("prizeWheel").style.setProperty("--counter-rotation","0deg");$("prizeWheel").offsetWidth;$("prizeWheel").style.transition="";$("categoryCard").classList.remove("spinning");startToss()};
 $("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
-makePrizeWheel();updateDifficulty();pickOrder();load();
+makePrizeWheel();updateDifficulty();pickOrder();startToss();
 </script></body></html>
