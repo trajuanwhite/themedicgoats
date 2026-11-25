@@ -162,10 +162,10 @@ function training(){
   <div class="feature-copy">
    <span class="eyebrow">MEDICAL TERMINOLOGY &amp; CLINICAL CLUES</span>
    <details class="rapid-collection-details" open>
-    <summary><span class="rapid-collection-heading"><strong>Medical Word Games</strong><small>Wheel of Medicine · Medic Mix</small></span><span class="rapid-collection-toggle" aria-hidden="true">⌄</span></summary>
+    <summary><span class="rapid-collection-heading"><strong>Medical Word Games</strong><small>Wheel of Medicine · Medic Crosswords</small></span><span class="rapid-collection-toggle" aria-hidden="true">⌄</span></summary>
     <div class="rapid-collection-list">
      <div class="rapid-collection-item"><div><h3>Wheel of Medicine</h3><p>Spin for cash, guess consonants, buy vowels, and solve EMS word puzzles.</p></div><a class="btn light" href="/medic-wheel.html" aria-label="Play Wheel of Medicine">Play</a></div>
-     <div class="rapid-collection-item"><div><h3>Medic Mix</h3><p>Unscramble a medical term before the other players.</p></div><a class="btn light" href="/medic-mix.html" aria-label="Play Medic Mix">Play</a></div>
+     <div class="rapid-collection-item"><div><h3>Medic Crosswords</h3><p>Solve interconnected medical clues across and down.</p></div><a class="btn light" href="/medic-mix.html" aria-label="Play Medic Crosswords">Play</a></div>
     </div>
    </details>
   </div>
