@@ -39,7 +39,7 @@ h1{font-size:clamp(30px,4vw,46px);margin:5px 0 4px}
 <div class="actions" id="roomLobby" hidden>
 <strong id="roomTitle"></strong><button id="copyRace">Copy Invite</button><button class="primary" id="startRace">Start Race</button><button id="leaveRace">Leave Room</button>
 </div><p id="roomStatus" role="status"></p></section>
-<div id="gameArea" hidden><div class="race-score" id="raceScore" hidden></div><div class="stats"><div class="stat"><small>Time</small><strong id="time">0:00</strong></div><div class="stat"><small>Words solved</small><strong id="progress">0 / 0</strong></div><div class="stat" id="hintStat"><small>Hints used</small><strong id="hints">0</strong></div></div><div class="layout"><section class="panel"><div class="clue-current" aria-live="polite"><strong id="currentLabel">Select a clue</strong><span id="currentClue"></span></div><div id="grid" class="grid" aria-label="Crossword puzzle"></div><div class="actions"><button id="check">Check Puzzle</button><button id="hint">Reveal Letter</button><button id="clear">Clear Puzzle</button></div><p id="status" role="status"></p></section><section class="panel clues"><div><h2>Across</h2><div id="across"></div></div><div><h2>Down</h2><div id="down"></div></div></section></div></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+<div id="gameArea" hidden><div class="race-score" id="seriesScore" hidden></div><button class="primary" id="nextRound" hidden>Next Round</button><div class="race-score" id="raceScore" hidden></div><div class="stats"><div class="stat"><small>Time</small><strong id="time">0:00</strong></div><div class="stat"><small>Words solved</small><strong id="progress">0 / 0</strong></div><div class="stat" id="hintStat"><small>Hints used</small><strong id="hints">0</strong></div></div><div class="layout"><section class="panel"><div class="clue-current" aria-live="polite"><strong id="currentLabel">Select a clue</strong><span id="currentClue"></span></div><div id="grid" class="grid" aria-label="Crossword puzzle"></div><div class="actions"><button id="check">Check Puzzle</button><button id="hint">Reveal Letter</button><button id="clear">Clear Puzzle</button></div><p id="status" role="status"></p></section><section class="panel clues"><div><h2>Across</h2><div id="across"></div></div><div><h2>Down</h2><div id="down"></div></div></section></div></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 const banks=[["Airway",[["EPIGLOTTIS","Flap that helps protect the laryngeal inlet during swallowing."],["TRACHEA","Windpipe."],["LARYNX","Structure containing the vocal cords."],["SUCTION","Removal of airway secretions using negative pressure."],["APNEA","Absence of breathing."],["HYPOXIA","Inadequate oxygen availability at the tissue level."],["CARINA","Point where the trachea divides into the main bronchi."],["GLOTTIS","Opening between the vocal folds."],["CAPNOGRAPHY","Graphical measurement of exhaled carbon dioxide."],["STRIDOR","Harsh sound associated with upper airway narrowing."],["CYANOSIS","Bluish discoloration associated with increased deoxygenated hemoglobin."],["ALVEOLI","Tiny air sacs where gas exchange occurs."]]],["Cardiology",[["ATRIOVENTRICULAR","Relating to the atria and ventricles."],["SYSTOLE","Phase of ventricular contraction."],["DIASTOLE","Phase of ventricular relaxation and filling."],["PERICARDIUM","Sac surrounding the heart."],["ASYSTOLE","Absence of discernible ventricular electrical activity."],["PRELOAD","Ventricular filling or stretch before contraction."],["AFTERLOAD","Load the ventricle must overcome to eject blood."],["ISCHEMIA","Inadequate blood supply relative to tissue demand."],["TACHYCARDIA","Abnormally fast heart rate."],["BRADYCARDIA","Abnormally slow heart rate."],["SEPTUM","Wall separating cardiac chambers."],["PURKINJE","Fibers that rapidly conduct impulses through ventricular myocardium."]]],["Trauma",[["HEMORRHAGE","Loss of blood from the vascular system."],["FRACTURE","Break in a bone."],["AVULSION","Injury in which tissue is torn away."],["CONTUSION","Bruise caused by blunt trauma."],["LACERATION","Tear or cut in tissue."],["TOURNIQUET","Device for controlling severe extremity bleeding."],["PELVIS","Bony ring supporting the trunk."],["HEMOTHORAX","Blood accumulating in the pleural space."],["SPLINT","Device used to stabilize an injured body part."],["CREPITUS","Crackling or grating sensation on examination."],["ABRASION","Superficial scraping injury."],["TAMPONADE","Impaired cardiac filling due to pressure from pericardial contents."]]],["Pharmacology",[["EPINEPHRINE","Adrenergic agonist used in anaphylaxis and cardiac arrest."],["NALOXONE","Opioid receptor antagonist."],["ADENOSINE","Drug that transiently slows AV nodal conduction."],["ATROPINE","Antimuscarinic drug used in selected symptomatic bradycardias."],["KETAMINE","Dissociative anesthetic with NMDA antagonist activity."],["ALBUTEROL","Beta two agonist bronchodilator."],["ASPIRIN","Antiplatelet drug that inhibits cyclooxygenase."],["FENTANYL","Potent synthetic opioid analgesic."],["MIDAZOLAM","Benzodiazepine used for sedation and seizure management."],["DILTIAZEM","Calcium channel blocker that slows AV nodal conduction."],["GLUCAGON","Hormone that raises blood glucose."],["LIDOCAINE","Local anesthetic and class IB antiarrhythmic."]]],["Neurology",[["ISCHEMIA","Insufficient blood supply relative to tissue demand."],["APHASIA","Impaired language production or comprehension."],["DYSARTHRIA","Difficulty articulating speech due to motor impairment."],["ATAXIA","Impaired coordination of movement."],["SEIZURE","Transient signs or symptoms from abnormal excessive neuronal activity."],["POSTICTAL","Period following a seizure."],["SYNCOPE","Transient loss of consciousness from global cerebral hypoperfusion."],["PUPIL","Opening in the iris."],["CEREBELLUM","Brain structure important for coordination and balance."],["HEMIPARESIS","Weakness on one side of the body."],["MENINGES","Protective membranes surrounding the brain and spinal cord."],["NEURON","Cell specialized for transmitting nervous system signals."]]],["Medical Emergencies",[["ANAPHYLAXIS","Serious systemic hypersensitivity reaction."],["HYPOGLYCEMIA","Abnormally low blood glucose."],["KETOACIDOSIS","Metabolic acidosis associated with excess ketone bodies."],["SEPSIS","Life-threatening organ dysfunction caused by a dysregulated response to infection."],["ECLAMPSIA","Seizures associated with preeclampsia."],["EMBOLISM","Vascular obstruction by material traveling through the bloodstream."],["EDEMA","Excess fluid in interstitial tissues."],["HYPERKALEMIA","Elevated blood potassium."],["HYPOVOLEMIA","Reduced circulating blood volume."],["DIALYSIS","Process used to remove solutes and excess fluid in kidney failure."],["HEMATEMESIS","Vomiting blood."],["MELENA","Black tarry stool associated with digested blood."]]]];
 const $=id=>document.getElementById(id),key=(r,c)=>r+','+c;
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -64,9 +64,13 @@ $('new').onclick=startLocal;$('check').onclick=()=>{if(mode!=='solo'){submitWord
 const colors=['#e8c18b','#b9c5a5','#d6b8a1','#d7c4dd','#e9d69b','#a9cdc1'];
 const db=window.supabase?.createClient('https://jjzjqjvdnaeuftptvmyw.supabase.co','sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4');
 let mode='solo',finishTime=0,cpuTimer,room=null,pollTimer,generation=0,busy=false,polling=false,revision=0;
-let players=[],lastAttempt='';
-function startLocal(){
+let players=[],lastAttempt='',round=1,wins=[0,0],seriesOver=false;
+function showSeries(){ $('seriesScore').hidden=mode!=='cpu';if(mode==='cpu')$('seriesScore').textContent='Best of 5 · Round '+round+' / 5 · You '+wins[0]+' — '+wins[1]+' CPU'; }
+function resetSeries(){round=1;wins=[0,0];seriesOver=false;$('nextRound').hidden=true;showSeries();}
+$('nextRound').onclick=()=>{if(!finished||mode!=='cpu')return;if(seriesOver)resetSeries();else round++;startLocal(true)};
+function startLocal(continuing=false){
  if(!setupReady())return;
+ if(continuing!==true)resetSeries();$('nextRound').hidden=true;
  clearTimeout(cpuTimer);
  if(mode==='friends')return;
  $('gameArea').hidden=false;$('new').textContent='New Puzzle';
@@ -76,7 +80,7 @@ function startLocal(){
  $('check').textContent=mode==='solo'?'Check Puzzle':'Submit Word';
  $('hint').hidden=$('hintStat').hidden=mode!=='solo';
  $('raceScore').hidden=mode==='solo';
- if(mode==='cpu'){paintClaims();queueCpu()}
+ if(mode==='cpu'){$('new').textContent='Restart Match';showSeries();paintClaims();queueCpu()}
 }
 function queueCpu(){
  clearTimeout(cpuTimer);
@@ -131,6 +135,7 @@ function paintClaims(){
   const high=Math.max(...counts);
   const winners=players.filter((_,i)=>counts[i]===high).map(p=>p.name);
   $('status').textContent=(winners.length>1?'Tie: ':'Winner: ')+winners.join(' and ')+' · '+$('time').textContent;
+  if(mode==='cpu'){if(winners.length===1)wins[counts.indexOf(high)]++;seriesOver=Math.max(...wins)>=3||round>=5;showSeries();$('status').textContent+=(seriesOver?' · Match '+(wins[0]===wins[1]?'draw':(wins[0]>wins[1]?'winner: You':'winner: CPU')):' · Round complete');$('nextRound').textContent=seriesOver?'Play Again':'Next Round';$('nextRound').hidden=false;}
   $('status').className='win';
   for(const field of inputs.values())field.readOnly=true;
   $('check').disabled=$('clear').disabled=true;
@@ -239,7 +244,7 @@ function updateSetup(){const ready=setupReady();$('new').disabled=!ready;$('host
 function changeMode(){
  generation++;room=null;busy=false;lastAttempt='';
  clearInterval(pollTimer);clearInterval(timer);clearTimeout(cpuTimer);
- mode=$('playMode').value;
+ mode=$('playMode').value;resetSeries();
  const friends=mode==='friends';
  $('friendsPanel').hidden=!friends;$('gameArea').hidden=true;
  $('roomSetup').hidden=false;$('roomLobby').hidden=true;$('roomStatus').textContent='';
