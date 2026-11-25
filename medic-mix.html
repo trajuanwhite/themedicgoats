@@ -1,6 +1,17 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Medic Crosswords | The Medic Goats</title><style>
 :root{--ink:#31261f;--muted:#67564b;--paper:#fffbf5;--line:#e2d1c0;--brown:#75442d;--gold:#e8c18b}*{box-sizing:border-box}body{margin:0;background:#f4ece1;color:var(--ink);font-family:system-ui,sans-serif;line-height:1.5}main{width:min(100% - 24px,1080px);margin:24px auto 60px}nav{border-bottom:1px solid var(--line);padding-bottom:16px}nav a{color:inherit;text-decoration:none;font-weight:800}h1{font-size:clamp(36px,7vw,70px);letter-spacing:-.065em;line-height:1.05;margin:22px 0 8px}h1 span{color:#b38952}p{margin:0;color:var(--muted)}.tag{font-size:11px;letter-spacing:.15em;font-weight:850;color:var(--brown);margin-top:20px}.toolbar,.stats,.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.toolbar{margin:20px 0}.stats{margin-bottom:16px}.stat{flex:1;min-width:100px;background:var(--paper);border:1px solid var(--line);padding:10px 14px;border-radius:12px}.stat small{display:block;color:var(--muted)}.stat strong{font-size:22px;font-variant-numeric:tabular-nums}button,select{font:inherit;border-radius:9px;padding:10px 13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-weight:700}button{cursor:pointer}button.primary{background:var(--brown);color:white}button:disabled{opacity:.5;cursor:default}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #a95f32;outline-offset:2px}.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}.panel{border:1px solid var(--line);background:var(--paper);padding:clamp(10px,2.4vw,23px);border-radius:18px}.grid{display:grid;gap:1px;background:#392c24;padding:3px;border-radius:5px;width:100%;max-width:600px;margin:12px auto;touch-action:manipulation}.cell{position:relative;aspect-ratio:1;min-width:0;background:#fffdf8}.block{background:#392c24}.cell.active{background:#f7e1c0}.cell.selected{background:#eab96f}.cell.correct{background:#d7e8d6}.cell.wrong{background:#f5c9c0}.cell input{width:100%;height:100%;border:0;border-radius:0;background:transparent;text-align:center;padding:0;font-size:clamp(12px,3.6vw,25px);font-weight:800;color:var(--ink);text-transform:uppercase;outline:none}.num{position:absolute;top:0;left:2px;font-size:clamp(6px,1.45vw,10px);line-height:1.1;pointer-events:none}.clue-current{background:#f4e7d8;border-radius:10px;padding:10px 12px;min-height:65px}.clue-current strong{display:block;color:var(--brown);font-size:12px;text-transform:uppercase;letter-spacing:.05em}.clues h2{font-size:15px;letter-spacing:.07em;text-transform:uppercase;margin:8px 0}.clues button{display:block;width:100%;text-align:left;border:0;border-radius:6px;background:transparent;font-weight:500;padding:8px 7px;line-height:1.35}.clues button.active{background:#f4e7d8}.clues button.solved{color:#42704a}.clues button b{margin-right:6px}.actions{margin-top:12px}#status{margin-top:10px;min-height:24px;font-weight:650}#status.win{color:#32613d}@media(max-width:740px){.layout{grid-template-columns:1fr}.clues{display:grid;grid-template-columns:1fr 1fr;gap:12px}}@media(max-width:420px){.clues{grid-template-columns:1fr}.toolbar{gap:6px}.toolbar select,.toolbar button{padding:8px;font-size:13px}}
-</style></head><body><main><nav><a href="/games">← Games</a></nav><div class="tag">MEDICAL WORD GAMES</div><h1>Medic Crosswords<span>.</span></h1><p>Connect clinical knowledge, one letter at a time.</p><div class="toolbar"><label for="topic">Category</label><select id="topic"><option value="-1">Mixed medicine</option><option value="0">Airway</option><option value="1">Cardiology</option><option value="2">Trauma</option><option value="3">Pharmacology</option><option value="4">Neurology</option><option value="5">Medical Emergencies</option></select><label for="level">Difficulty</label><select id="level"><option value="6">Easy</option><option value="8" selected>Medium</option><option value="10">Hard</option></select><button class="primary" id="new">New Puzzle</button></div><div class="stats"><div class="stat"><small>Time</small><strong id="time">0:00</strong></div><div class="stat"><small>Words solved</small><strong id="progress">0 / 0</strong></div><div class="stat"><small>Hints used</small><strong id="hints">0</strong></div></div><div class="layout"><section class="panel"><div class="clue-current" aria-live="polite"><strong id="currentLabel">Select a clue</strong><span id="currentClue"></span></div><div id="grid" class="grid" aria-label="Crossword puzzle"></div><div class="actions"><button id="check">Check Puzzle</button><button id="hint">Reveal Letter</button><button id="clear">Clear Puzzle</button></div><p id="status" role="status"></p></section><section class="panel clues"><div><h2>Across</h2><div id="across"></div></div><div><h2>Down</h2><div id="down"></div></div></section></div></main><script>
+
+[hidden]{display:none!important}.race-panel{margin:0 0 16px}.race-panel .actions{margin-top:8px}.race-panel input{font:inherit;width:min(100%,160px);padding:10px;border:1px solid var(--line);border-radius:9px}.race-score{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.race-score span{padding:5px 10px;border-radius:7px;background:var(--owner);font-weight:750}.cell.claimed{background:var(--owners)}.clues button.claimed{border-left:5px solid var(--owner);font-weight:700}.race-panel label{display:inline-grid;gap:3px;font-size:14px}
+</style></head><body><main><nav><a href="/games">← Games</a></nav><div class="tag">MEDICAL WORD GAMES</div><h1>Medic Crosswords<span>.</span></h1><p>Race to claim the most words, or solve the board on your own against the clock.</p><div class="toolbar"><label for="playMode">Mode</label><select id="playMode"><option value="solo">Solo for Time</option><option value="cpu">Solo vs CPU</option><option value="friends">Solo vs Friends</option></select><label for="topic">Category</label><select id="topic"><option value="-1">Mixed medicine</option><option value="0">Airway</option><option value="1">Cardiology</option><option value="2">Trauma</option><option value="3">Pharmacology</option><option value="4">Neurology</option><option value="5">Medical Emergencies</option></select><label for="level">Difficulty</label><select id="level"><option value="6">Easy</option><option value="8" selected>Medium</option><option value="10">Hard</option></select><button class="primary" id="new">New Puzzle</button></div><section class="panel race-panel" id="friendsPanel" hidden>
+<div class="actions" id="roomSetup">
+<label>Your name<input id="raceName" maxlength="24" autocomplete="nickname"></label>
+<label>Room code<input id="raceCode" maxlength="6" inputmode="numeric" autocomplete="off"></label>
+<button class="primary" id="hostRace">Host Race</button><button id="joinRace">Join Race</button>
+</div>
+<div class="actions" id="roomLobby" hidden>
+<strong id="roomTitle"></strong><button id="copyRace">Copy Invite</button><button class="primary" id="startRace">Start Race</button><button id="leaveRace">Leave Room</button>
+</div><p id="roomStatus" role="status"></p></section>
+<div id="gameArea"><div class="race-score" id="raceScore" hidden></div><div class="stats"><div class="stat"><small>Time</small><strong id="time">0:00</strong></div><div class="stat"><small>Words solved</small><strong id="progress">0 / 0</strong></div><div class="stat" id="hintStat"><small>Hints used</small><strong id="hints">0</strong></div></div><div class="layout"><section class="panel"><div class="clue-current" aria-live="polite"><strong id="currentLabel">Select a clue</strong><span id="currentClue"></span></div><div id="grid" class="grid" aria-label="Crossword puzzle"></div><div class="actions"><button id="check">Check Puzzle</button><button id="hint">Reveal Letter</button><button id="clear">Clear Puzzle</button></div><p id="status" role="status"></p></section><section class="panel clues"><div><h2>Across</h2><div id="across"></div></div><div><h2>Down</h2><div id="down"></div></div></section></div></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 const banks=[["Airway",[["EPIGLOTTIS","Flap that helps protect the laryngeal inlet during swallowing."],["TRACHEA","Windpipe."],["LARYNX","Structure containing the vocal cords."],["SUCTION","Removal of airway secretions using negative pressure."],["APNEA","Absence of breathing."],["HYPOXIA","Inadequate oxygen availability at the tissue level."],["CARINA","Point where the trachea divides into the main bronchi."],["GLOTTIS","Opening between the vocal folds."],["CAPNOGRAPHY","Graphical measurement of exhaled carbon dioxide."],["STRIDOR","Harsh sound associated with upper airway narrowing."],["CYANOSIS","Bluish discoloration associated with increased deoxygenated hemoglobin."],["ALVEOLI","Tiny air sacs where gas exchange occurs."]]],["Cardiology",[["ATRIOVENTRICULAR","Relating to the atria and ventricles."],["SYSTOLE","Phase of ventricular contraction."],["DIASTOLE","Phase of ventricular relaxation and filling."],["PERICARDIUM","Sac surrounding the heart."],["ASYSTOLE","Absence of discernible ventricular electrical activity."],["PRELOAD","Ventricular filling or stretch before contraction."],["AFTERLOAD","Load the ventricle must overcome to eject blood."],["ISCHEMIA","Inadequate blood supply relative to tissue demand."],["TACHYCARDIA","Abnormally fast heart rate."],["BRADYCARDIA","Abnormally slow heart rate."],["SEPTUM","Wall separating cardiac chambers."],["PURKINJE","Fibers that rapidly conduct impulses through ventricular myocardium."]]],["Trauma",[["HEMORRHAGE","Loss of blood from the vascular system."],["FRACTURE","Break in a bone."],["AVULSION","Injury in which tissue is torn away."],["CONTUSION","Bruise caused by blunt trauma."],["LACERATION","Tear or cut in tissue."],["TOURNIQUET","Device for controlling severe extremity bleeding."],["PELVIS","Bony ring supporting the trunk."],["HEMOTHORAX","Blood accumulating in the pleural space."],["SPLINT","Device used to stabilize an injured body part."],["CREPITUS","Crackling or grating sensation on examination."],["ABRASION","Superficial scraping injury."],["TAMPONADE","Impaired cardiac filling due to pressure from pericardial contents."]]],["Pharmacology",[["EPINEPHRINE","Adrenergic agonist used in anaphylaxis and cardiac arrest."],["NALOXONE","Opioid receptor antagonist."],["ADENOSINE","Drug that transiently slows AV nodal conduction."],["ATROPINE","Antimuscarinic drug used in selected symptomatic bradycardias."],["KETAMINE","Dissociative anesthetic with NMDA antagonist activity."],["ALBUTEROL","Beta two agonist bronchodilator."],["ASPIRIN","Antiplatelet drug that inhibits cyclooxygenase."],["FENTANYL","Potent synthetic opioid analgesic."],["MIDAZOLAM","Benzodiazepine used for sedation and seizure management."],["DILTIAZEM","Calcium channel blocker that slows AV nodal conduction."],["GLUCAGON","Hormone that raises blood glucose."],["LIDOCAINE","Local anesthetic and class IB antiarrhythmic."]]],["Neurology",[["ISCHEMIA","Insufficient blood supply relative to tissue demand."],["APHASIA","Impaired language production or comprehension."],["DYSARTHRIA","Difficulty articulating speech due to motor impairment."],["ATAXIA","Impaired coordination of movement."],["SEIZURE","Transient signs or symptoms from abnormal excessive neuronal activity."],["POSTICTAL","Period following a seizure."],["SYNCOPE","Transient loss of consciousness from global cerebral hypoperfusion."],["PUPIL","Opening in the iris."],["CEREBELLUM","Brain structure important for coordination and balance."],["HEMIPARESIS","Weakness on one side of the body."],["MENINGES","Protective membranes surrounding the brain and spinal cord."],["NEURON","Cell specialized for transmitting nervous system signals."]]],["Medical Emergencies",[["ANAPHYLAXIS","Serious systemic hypersensitivity reaction."],["HYPOGLYCEMIA","Abnormally low blood glucose."],["KETOACIDOSIS","Metabolic acidosis associated with excess ketone bodies."],["SEPSIS","Life-threatening organ dysfunction caused by a dysregulated response to infection."],["ECLAMPSIA","Seizures associated with preeclampsia."],["EMBOLISM","Vascular obstruction by material traveling through the bloodstream."],["EDEMA","Excess fluid in interstitial tissues."],["HYPERKALEMIA","Elevated blood potassium."],["HYPOVOLEMIA","Reduced circulating blood volume."],["DIALYSIS","Process used to remove solutes and excess fluid in kidney failure."],["HEMATEMESIS","Vomiting blood."],["MELENA","Black tarry stool associated with digested blood."]]]];
 const $=id=>document.getElementById(id),key=(r,c)=>r+','+c;
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -9,12 +20,219 @@ function valid(a,r,c,d){let dr=d==='D'?1:0,dc=d==='A'?1:0;if(cells.has(key(r-dr,
 place(options.shift(),0,0,'A');while(words.length<target){let choice=null;for(let item of options){for(let cell of cells.values()){for(let i=0;i<item[0].length;i++){if(item[0][i]!==cell.ch)continue;for(let d of ['A','D']){let r=cell.r-(d==='D'?i:0),c=cell.c-(d==='A'?i:0),score=valid(item[0],r,c,d);if(score>0&&(!choice||score>choice.score))choice={item,r,c,d,score}}}}}if(!choice)break;place(choice.item,choice.r,choice.c,choice.d);options=options.filter(x=>x!==choice.item)}
 if(!best||words.length>best.words.length)best={cells,words};if(words.length===target)break}return best}
 let puzzle,selected=null,active=null,inputs=new Map(),hintCount=0,started=0,finished=false,timer=null;
-function newPuzzle(){let topic=Number($('topic').value),pool=topic<0?banks.flatMap(b=>b[1]):banks[topic][1];pool=[...new Map(pool.map(x=>[x[0],x])).values()];puzzle=build(pool,Number($('level').value));selected=null;active=null;hintCount=0;finished=false;started=Date.now();$('hints').textContent=0;$('status').textContent='';$('status').className='';$('hint').disabled=false;$('clear').disabled=false;$('check').disabled=false;render();clearInterval(timer);tick();timer=setInterval(tick,500)}
-function tick(){let sec=Math.floor((Date.now()-started)/1000);$('time').textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
-function render(){let {cells,words}=puzzle,rs=Array.from(cells.values(),v=>v.r),cs=Array.from(cells.values(),v=>v.c),minR=Math.min(...rs),maxR=Math.max(...rs),minC=Math.min(...cs),maxC=Math.max(...cs);let starts=[...new Set(words.map(w=>key(w.r,w.c)))].sort((a,b)=>{let [ar,ac]=a.split(',').map(Number),[br,bc]=b.split(',').map(Number);return ar-br||ac-bc});words.forEach(w=>w.num=starts.indexOf(key(w.r,w.c))+1);words.sort((a,b)=>a.num-b.num);$('grid').replaceChildren();$('grid').style.gridTemplateColumns='repeat('+(maxC-minC+1)+',minmax(0,1fr))';inputs=new Map();for(let r=minR;r<=maxR;r++)for(let c=minC;c<=maxC;c++){let k=key(r,c),v=cells.get(k),el=document.createElement('div');el.className='cell'+(v?'':' block');if(v){let i=document.createElement('input');i.maxLength=1;i.autocomplete='off';i.autocapitalize='characters';i.spellcheck=false;i.setAttribute('aria-label','Row '+(r-minR+1)+', column '+(c-minC+1));el.append(i);let n=starts.indexOf(k);if(n>=0){let s=document.createElement('span');s.className='num';s.textContent=n+1;el.append(s)}inputs.set(k,i);i.addEventListener('focus',()=>{let options=words.filter(w=>w.positions.includes(k));select(options.includes(active)?active:options[0],k,false)});i.addEventListener('click',()=>{let options=words.filter(w=>w.positions.includes(k));if(selected===k&&options.length>1)select(options.find(w=>w!==active),k,false)});i.addEventListener('input',()=>{i.value=i.value.toUpperCase().replace(/[^A-Z]/g,'').slice(-1);el.classList.remove('wrong','correct');if(i.value)advance(1);update()});i.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!i.value){e.preventDefault();advance(-1)}if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();let dr=e.key==='ArrowUp'?-1:e.key==='ArrowDown'?1:0,dc=e.key==='ArrowLeft'?-1:e.key==='ArrowRight'?1:0,next=key(r+dr,c+dc);if(inputs.has(next)){let w=words.find(w=>w.d===(dr?'D':'A')&&w.positions.includes(next));select(w||words.find(w=>w.positions.includes(next)),next,true)}}});i.addEventListener('paste',e=>{e.preventDefault();let letters=e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z]/g,'');let ix=active.positions.indexOf(k);for(let j=0;j<letters.length&&ix+j<active.positions.length;j++){let field=inputs.get(active.positions[ix+j]);field.value=letters[j];field.parentElement.classList.remove('correct','wrong')}update()})}$('grid').append(el)}
-for(let d of ['A','D']){let box=$(d==='A'?'across':'down');box.replaceChildren();for(let w of words.filter(w=>w.d===d)){let b=document.createElement('button');let n=document.createElement('b');n.textContent=w.num+'.';b.append(n,document.createTextNode(w.clue+' ('+w.answer.length+')'));b.onclick=()=>select(w,w.positions.find(k=>!inputs.get(k).value)||w.positions[0],true);w.button=b;box.append(b)}}select(words[0],words[0].positions[0],false);update()}
+function generatePuzzle(){let topic=Number($('topic').value),pool=topic<0?banks.flatMap(b=>b[1]):banks[topic][1];pool=[...new Map(pool.map(x=>[x[0],x])).values()];return build(pool,Number($('level').value))}
+function loadPuzzle(next){puzzle=next;lastAttempt='';selected=null;active=null;hintCount=0;finished=false;started=Date.now();$('hints').textContent=0;$('status').textContent='';$('status').className='';$('hint').disabled=false;$('clear').disabled=false;$('check').disabled=false;render();clearInterval(timer);tick();timer=setInterval(tick,500)}
+function tick(){let sec=Math.max(0,Math.floor(((finished?finishTime:Date.now())-started)/1000));$('time').textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}
+function render(){let {cells,words}=puzzle,rs=Array.from(cells.values(),v=>v.r),cs=Array.from(cells.values(),v=>v.c),minR=Math.min(...rs),maxR=Math.max(...rs),minC=Math.min(...cs),maxC=Math.max(...cs);let starts=[...new Set(words.map(w=>key(w.r,w.c)))].sort((a,b)=>{let [ar,ac]=a.split(',').map(Number),[br,bc]=b.split(',').map(Number);return ar-br||ac-bc});words.forEach(w=>w.num=starts.indexOf(key(w.r,w.c))+1);words.sort((a,b)=>a.num-b.num);$('grid').replaceChildren();$('grid').style.gridTemplateColumns='repeat('+(maxC-minC+1)+',minmax(0,1fr))';inputs=new Map();for(let r=minR;r<=maxR;r++)for(let c=minC;c<=maxC;c++){let k=key(r,c),v=cells.get(k),el=document.createElement('div');el.className='cell'+(v?'':' block');if(v){let i=document.createElement('input');i.maxLength=1;i.autocomplete='off';i.autocapitalize='characters';i.spellcheck=false;i.setAttribute('aria-label','Row '+(r-minR+1)+', column '+(c-minC+1));el.append(i);let n=starts.indexOf(k);if(n>=0){let s=document.createElement('span');s.className='num';s.textContent=n+1;el.append(s)}inputs.set(k,i);i.addEventListener('focus',()=>{let options=words.filter(w=>w.positions.includes(k));select(options.includes(active)?active:options.find(w=>w.owner==null)||options[0],k,false)});i.addEventListener('click',()=>{let options=words.filter(w=>w.positions.includes(k));if(selected===k&&options.filter(w=>w.owner==null).length>1)select(options.find(w=>w!==active&&w.owner==null),k,false)});i.addEventListener('input',()=>{i.value=i.value.toUpperCase().replace(/[^A-Z]/g,'').slice(-1);el.classList.remove('wrong','correct');update(true);if(i.value)advance(1)});i.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!i.value){e.preventDefault();advance(-1)}if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();let dr=e.key==='ArrowUp'?-1:e.key==='ArrowDown'?1:0,dc=e.key==='ArrowLeft'?-1:e.key==='ArrowRight'?1:0,next=key(r+dr,c+dc);if(inputs.has(next)){let w=words.find(w=>w.d===(dr?'D':'A')&&w.positions.includes(next));select(w||words.find(w=>w.positions.includes(next)),next,true)}}});i.addEventListener('paste',e=>{e.preventDefault();let letters=e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z]/g,'');let ix=active.positions.indexOf(k);for(let j=0;j<letters.length&&ix+j<active.positions.length;j++){let field=inputs.get(active.positions[ix+j]);if(field.readOnly)continue;field.value=letters[j];field.parentElement.classList.remove('correct','wrong')}update(true)})}$('grid').append(el)}
+for(let d of ['A','D']){let box=$(d==='A'?'across':'down');box.replaceChildren();for(let w of words.filter(w=>w.d===d)){let b=document.createElement('button');let n=document.createElement('b');n.textContent=w.num+'.';b.append(n,document.createTextNode(w.clue+' ('+w.answer.length+')'));b.onclick=()=>select(w,w.positions.find(k=>!inputs.get(k).value)||w.positions[0],true);w.button=b;box.append(b)}}select(words[0],words[0].positions[0],false)}
 function select(w,k,focus){if(!w)return;active=w;selected=k;for(let [p,i] of inputs){i.parentElement.classList.toggle('active',w.positions.includes(p));i.parentElement.classList.toggle('selected',p===k)}for(let v of puzzle.words)v.button?.classList.toggle('active',v===w);$('currentLabel').textContent=w.num+' '+(w.d==='A'?'Across':'Down')+' · '+w.answer.length+' letters';$('currentClue').textContent=w.clue;if(focus){let i=inputs.get(k);i.focus({preventScroll:true});i.select()}}
-function advance(n){if(!active)return;let ix=active.positions.indexOf(selected)+n;if(ix>=0&&ix<active.positions.length)select(active,active.positions[ix],true)}
-function update(){let solved=0;for(let w of puzzle.words){let ok=w.positions.every((k,i)=>inputs.get(k).value===w.answer[i]);w.button.classList.toggle('solved',ok);if(ok)solved++}$('progress').textContent=solved+' / '+puzzle.words.length;if(solved===puzzle.words.length&&!finished){finished=true;tick();clearInterval(timer);$('status').textContent='Puzzle complete! Great work. Time: '+$('time').textContent+' · Hints: '+hintCount;$('status').className='win';for(let i of inputs.values())i.readOnly=true;$('hint').disabled=true;$('clear').disabled=true;$('check').disabled=true}}
-$('new').onclick=newPuzzle;$('check').onclick=()=>{let wrong=0,empty=0;for(let [k,i] of inputs){let correct=i.value===puzzle.cells.get(k).ch;i.parentElement.classList.toggle('correct',correct);i.parentElement.classList.toggle('wrong',!!i.value&&!correct);if(!i.value)empty++;else if(!correct)wrong++}$('status').textContent=wrong+' incorrect letters · '+empty+' empty squares.';update()};$('hint').onclick=()=>{if(finished)return;let k=selected;if(!k||inputs.get(k).value===puzzle.cells.get(k).ch)k=active.positions.find(p=>inputs.get(p).value!==puzzle.cells.get(p).ch)||[...inputs.keys()].find(p=>inputs.get(p).value!==puzzle.cells.get(p).ch);if(!k)return;let i=inputs.get(k);i.value=puzzle.cells.get(k).ch;i.parentElement.classList.remove('wrong');i.parentElement.classList.add('correct');hintCount++;$('hints').textContent=hintCount;update()};$('clear').onclick=()=>{if(finished||!confirm('Clear all entered letters?'))return;for(let i of inputs.values()){i.value='';i.parentElement.classList.remove('correct','wrong')}update()};newPuzzle();
+function advance(n){if(!active)return;let ix=active.positions.indexOf(selected)+n;while(inputs.get(active.positions[ix])?.readOnly)ix+=n;if(ix>=0&&ix<active.positions.length)select(active,active.positions[ix],true)}
+function update(tryClaim=false){if(mode!=='solo'){if(tryClaim)submitWord(false);return}let solved=0;for(let w of puzzle.words){let ok=w.positions.every((k,i)=>inputs.get(k).value===w.answer[i]);w.button.classList.toggle('solved',ok);if(ok)solved++}$('progress').textContent=solved+' / '+puzzle.words.length;if(solved===puzzle.words.length&&!finished){finishTime=Date.now();finished=true;tick();clearInterval(timer);$('status').textContent='Puzzle complete! Great work. Time: '+$('time').textContent+' · Hints: '+hintCount;$('status').className='win';for(let i of inputs.values())i.readOnly=true;$('hint').disabled=true;$('clear').disabled=true;$('check').disabled=true}}
+$('new').onclick=startLocal;$('check').onclick=()=>{if(mode!=='solo'){submitWord(true);return}let wrong=0,empty=0;for(let [k,i] of inputs){let correct=i.value===puzzle.cells.get(k).ch;i.parentElement.classList.toggle('correct',correct);i.parentElement.classList.toggle('wrong',!!i.value&&!correct);if(!i.value)empty++;else if(!correct)wrong++}$('status').textContent=wrong+' incorrect letters · '+empty+' empty squares.';update()};$('hint').onclick=()=>{if(finished)return;let k=selected;if(!k||inputs.get(k).value===puzzle.cells.get(k).ch)k=active.positions.find(p=>inputs.get(p).value!==puzzle.cells.get(p).ch)||[...inputs.keys()].find(p=>inputs.get(p).value!==puzzle.cells.get(p).ch);if(!k)return;let i=inputs.get(k);i.value=puzzle.cells.get(k).ch;i.parentElement.classList.remove('wrong');i.parentElement.classList.add('correct');hintCount++;$('hints').textContent=hintCount;update()};$('clear').onclick=()=>{if(finished||!confirm('Clear all entered letters?'))return;for(let i of inputs.values()){if(i.readOnly)continue;i.value='';i.parentElement.classList.remove('correct','wrong')}update()};
+
+const colors=['#b9ddff','#f8c7bd','#c7e9bb','#e0cff6','#ffdf9f','#aee7de'];
+const db=window.supabase?.createClient('https://jjzjqjvdnaeuftptvmyw.supabase.co','sb_publishable_QPQY6u-wJBKULuaEgsG4lA_KiWCwhN4');
+let mode='solo',finishTime=0,cpuTimer,room=null,pollTimer,generation=0,busy=false,polling=false,revision=0;
+let players=[],lastAttempt='';
+function startLocal(){
+ clearTimeout(cpuTimer);
+ if(mode==='friends')return;
+ players=mode==='cpu'?[{name:'You'},{name:'CPU'}]:[];
+ loadPuzzle(generatePuzzle());
+ update();
+ $('check').textContent=mode==='solo'?'Check Puzzle':'Submit Word';
+ $('hint').hidden=$('hintStat').hidden=mode!=='solo';
+ $('raceScore').hidden=mode==='solo';
+ if(mode==='cpu'){paintClaims();queueCpu()}
+}
+function queueCpu(){
+ clearTimeout(cpuTimer);
+ if(finished)return;
+ const delay=Number($('level').value)===6?19000:Number($('level').value)===10?9000:14000;
+ cpuTimer=setTimeout(()=>{
+  const open=puzzle.words.filter(w=>w.owner==null);
+  if(mode!=='cpu'||finished||!open.length)return;
+  const word=open[Math.floor(Math.random()*open.length)];
+  word.owner=1;
+  $('status').textContent='CPU solved '+word.num+' '+(word.d==='A'?'Across':'Down')+'.';
+  paintClaims();
+  queueCpu();
+ },delay+Math.random()*4500);
+}
+function paintClaims(){
+ const counts=players.map(()=>0);
+ const shared=new Map();
+ for(const word of puzzle.words){
+  if(word.owner==null)continue;
+  counts[word.owner]++;
+  word.button.classList.add('claimed');
+  word.button.style.setProperty('--owner',colors[word.owner]);
+  word.button.setAttribute('aria-label',word.clue+' — solved by '+players[word.owner].name);
+  word.positions.forEach((k,i)=>{
+   const field=inputs.get(k);
+   field.value=word.answer[i];
+   field.readOnly=true;
+   field.parentElement.classList.remove('wrong','correct');
+   const owners=shared.get(k)||new Set();
+   owners.add(colors[word.owner]);
+   shared.set(k,owners);
+  });
+ }
+ for(const [k,owners] of shared){
+  const palette=[...owners],cell=inputs.get(k).parentElement;
+  cell.classList.add('claimed');
+  cell.style.setProperty('--owners',palette.length===1?palette[0]:
+   'linear-gradient(135deg,'+palette[0]+' 50%,'+palette[1]+' 50%)');
+ }
+ $('raceScore').hidden=false;
+ $('raceScore').replaceChildren(...players.map((p,i)=>{
+  const item=document.createElement('span');
+  item.style.setProperty('--owner',colors[i]);
+  item.textContent=p.name+' · '+counts[i];
+  return item;
+ }));
+ const solved=counts.reduce((a,b)=>a+b,0);
+ $('progress').textContent=solved+' / '+puzzle.words.length;
+ if(solved===puzzle.words.length&&!finished){
+  finishTime=Date.now();finished=true;tick();clearInterval(timer);clearTimeout(cpuTimer);
+  const high=Math.max(...counts);
+  const winners=players.filter((_,i)=>counts[i]===high).map(p=>p.name);
+  $('status').textContent=(winners.length>1?'Tie: ':'Winner: ')+winners.join(' and ')+' · '+$('time').textContent;
+  $('status').className='win';
+  for(const field of inputs.values())field.readOnly=true;
+  $('check').disabled=$('clear').disabled=true;
+ }
+}
+async function rpc(action,args={}){
+ if(!db)throw Error('Multiplayer is unavailable. Reload and try again.');
+ const {data,error}=await db.rpc('medic_crossword_race',{p_action:action,p_code:room?.code??null,p_token:room?.token??null,...args});
+ if(error)throw Error(error.message);
+ return data;
+}
+function roomPuzzle(entries){
+ const cells=new Map();
+ const words=entries.map((entry,id)=>{
+  const positions=[];
+  for(let i=0;i<entry.length;i++){
+   const r=entry.r+(entry.d==='D'?i:0),c=entry.c+(entry.d==='A'?i:0);
+   const k=key(r,c);
+   positions.push(k);cells.set(k,{r,c});
+  }
+  return {...entry,id,positions,owner:null,answer:' '.repeat(entry.length)};
+ });
+ return {cells,words};
+}
+function receive(state){
+ $('roomTitle').textContent='Room '+state.code;
+ $('roomStatus').textContent=state.started?'':state.players.map(p=>p.name).join(' · ');
+ $('startRace').hidden=state.me!==0||state.started;
+ $('startRace').disabled=state.players.length<2;
+ players=state.players;
+ if(!state.started)return;
+ if(!room.started){
+  room.started=true;
+  $('gameArea').hidden=false;
+  loadPuzzle(roomPuzzle(state.entries));
+  $('hint').hidden=$('hintStat').hidden=true;
+  $('check').textContent='Submit Word';
+ }
+ if(finished)return;
+ started=Date.now()-state.elapsedMs;
+ for(const word of puzzle.words){
+  const entry=state.entries[word.id];
+  if(entry.owner!=null){word.owner=entry.owner;word.answer=entry.answer}
+ }
+ paintClaims();
+}
+async function submitWord(explicit){
+ if(finished||!active||busy)return;
+ const word=active;
+ if(word.owner!=null){if(explicit)$('status').textContent='That word has already been claimed.';return}
+ const guess=word.positions.map(k=>inputs.get(k).value).join('');
+ if(guess.length!==word.positions.length){
+  if(explicit)$('status').textContent='Fill in the selected word first.';
+  return;
+ }
+ const attempt=word.num+word.d+':'+guess;
+ if(!explicit&&attempt===lastAttempt)return;
+ lastAttempt=attempt;
+ if(mode==='cpu'){
+  if(guess===word.answer){
+   word.owner=0;$('status').textContent='Word claimed!';paintClaims();
+  }else $('status').textContent='Try another answer.';
+  return;
+ }
+ if(!room?.started)return;
+ busy=true;revision++;
+ const current=generation;
+ try{
+  const state=await rpc('claim',{p_word:word.id,p_guess:guess});
+  if(current!==generation)return;
+  receive(state);
+  if(!state.ended)$('status').textContent=state.outcome==='correct'?'Word claimed!':
+   state.outcome==='taken'?'That word was already claimed.':'Try another answer.';
+ }catch(e){if(current===generation){lastAttempt='';$('status').textContent=e.message}}
+ finally{if(current===generation){busy=false;if(lastAttempt)submitWord(false)}}
+}
+async function refreshRoom(){
+ if(!room||busy||polling)return;
+ polling=true;const current=generation,version=revision;
+ try{const state=await rpc('state');if(current===generation&&version===revision)receive(state)}
+ catch(e){if(current===generation)$('roomStatus').textContent=e.message}
+ finally{polling=false}
+}
+async function enterRoom(action){
+ if(busy)return;
+ busy=true;
+ const current=generation;
+ try{
+  const args={p_name:$('raceName').value.trim()};
+  if(action==='host')args.p_entries=generatePuzzle().words.map(({r,c,d,clue,answer})=>({r,c,d,clue,answer}));
+  else{
+   args.p_code=$('raceCode').value.trim();
+   if(!/^\d{6}$/.test(args.p_code))throw Error('Enter the six-digit room code.');
+  }
+  const state=await rpc(action,args);
+  if(current!==generation)return;
+  room={code:state.code,token:state.token,started:false};
+  $('roomSetup').hidden=true;$('roomLobby').hidden=false;
+  receive(state);
+  pollTimer=setInterval(refreshRoom,750);
+ }catch(e){if(current===generation)$('roomStatus').textContent=e.message}
+ finally{if(current===generation)busy=false}
+}
+function changeMode(){
+ generation++;room=null;busy=false;lastAttempt='';
+ clearInterval(pollTimer);clearInterval(timer);clearTimeout(cpuTimer);
+ mode=$('playMode').value;
+ const friends=mode==='friends';
+ $('friendsPanel').hidden=!friends;$('gameArea').hidden=friends;
+ $('roomSetup').hidden=false;$('roomLobby').hidden=true;$('roomStatus').textContent='';
+ $('new').hidden=friends;
+ $('copyRace').textContent='Copy Invite';
+ if(!friends)startLocal();
+}
+$('playMode').onchange=changeMode;
+$('hostRace').onclick=()=>enterRoom('host');
+$('joinRace').onclick=()=>enterRoom('join');
+$('leaveRace').onclick=changeMode;
+$('startRace').onclick=async()=>{
+ if(busy)return;
+ busy=true;revision++;const current=generation;
+ try{const state=await rpc('start');if(current===generation)receive(state)}
+ catch(e){if(current===generation)$('roomStatus').textContent=e.message}
+ finally{if(current===generation)busy=false}
+};
+$('copyRace').onclick=async()=>{
+ const invite=new URL(location.href);
+ invite.searchParams.set('race',room.code);
+ try{await navigator.clipboard.writeText(invite.href);$('copyRace').textContent='Invite Copied'}
+ catch{$('roomStatus').textContent='Share room code '+room.code;}
+};
+const invite=new URLSearchParams(location.search).get('race');
+if(/^\d{6}$/.test(invite||'')){
+ $('playMode').value='friends';$('raceCode').value=invite;
+}
+changeMode();
+
 </script></body></html>
