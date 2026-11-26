@@ -128,6 +128,7 @@ function startRound() {
 function startRecall() {
   round = { phase: 'recall', number: round.number, roster: round.roster, position: 0 };
   sync();
+  render();
 }
 
 function normalize(value) {
