@@ -7,6 +7,18 @@ const categories = {
   'Food and Drinks': ['Pizza', 'Burger', 'Taco', 'Hot dog', 'Ice cream', 'Popcorn', 'Carrot', 'Cookie', 'Donut', 'Fries', 'Egg', 'Soda', 'Sandwich', 'Pancake', 'Pretzel', 'Cupcake']
 };
 
+const drawingColors = {
+  Black: '#25221c',
+  Red: '#c62d38',
+  Orange: '#e47416',
+  Yellow: '#e7bb16',
+  Green: '#268344',
+  Blue: '#2262bc',
+  Purple: '#8044aa',
+  Brown: '#795035'
+};
+let drawingColor = drawingColors.Black;
+
 const game = document.querySelector('#game');
 const status = document.querySelector('#status');
 const inviteRoom = new URL(location.href).searchParams.get('room');
@@ -217,17 +229,37 @@ function paint(canvas, strokes) {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   const plot = ([x, y]) => [x * canvas.width, y * canvas.height];
-  for (const stroke of strokes) {
+  for (const { color, points } of strokes) {
+    ctx.strokeStyle = color;
     ctx.beginPath();
-    ctx.moveTo(...plot(stroke[0]));
-    ctx.lineTo(stroke[0][0] * canvas.width + 0.01, stroke[0][1] * canvas.height);
-    for (const point of stroke.slice(1)) ctx.lineTo(...plot(point));
+    const [x, y] = plot(points[0]);
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 0.01, y);
+    for (const point of points.slice(1)) ctx.lineTo(...plot(point));
     ctx.stroke();
   }
 }
 
 function draw(index, ends) {
-  if (!show('draw' + round.number + ':' + index, '<div class="prompt"><h2 id="item"></h2><span id="clock"></span></div><p id="progress"></p><canvas width="640" height="480" aria-label="Drawing canvas"></canvas><div class="row"><button id="clear">Clear sketch</button></div>')) return;
+  const key = 'draw' + round.number + ':' + index;
+  if (screen === key) return;
+  const swatches = Object.entries(drawingColors).map(([label, color]) =>
+    `<button type="button" class="swatch" data-color="${color}" style="--ink:${color}" aria-label="${label}" title="${label}" aria-pressed="${color === drawingColor}"></button>`
+  ).join('');
+  show(key, `
+    <div class="prompt"><h2 id="item"></h2><span id="clock"></span></div><p id="progress"></p>
+    <div class="palette" role="group" aria-label="Drawing colors">${swatches}</div>
+    <canvas width="640" height="480" aria-label="Drawing canvas"></canvas>
+    <div class="row"><button id="clear">Clear sketch</button></div>`);
+  const palette = game.querySelector('.palette');
+  palette.onclick = event => {
+    const color = event.target.dataset.color;
+    if (!color || Date.now() + clockOffset >= ends) return;
+    drawingColor = color;
+    for (const button of palette.querySelectorAll('button')) {
+      button.setAttribute('aria-pressed', button.dataset.color === color);
+    }
+  };
   game.querySelector('#item').textContent = round.items[index];
   game.querySelector('#progress').textContent = `${round.category} · ${index + 1} of 12`;
   const canvas = game.querySelector('canvas');
@@ -236,14 +268,14 @@ function draw(index, ends) {
   let pointer, stroke;
   function add(event) {
     const bounds = canvas.getBoundingClientRect();
-    stroke.push([(event.clientX - bounds.left) / bounds.width, (event.clientY - bounds.top) / bounds.height]);
+    stroke.points.push([(event.clientX - bounds.left) / bounds.width, (event.clientY - bounds.top) / bounds.height]);
     paint(canvas, strokes);
   }
   canvas.onpointerdown = event => {
     if (pointer !== undefined || Date.now() + clockOffset >= ends) return;
     pointer = event.pointerId;
     canvas.setPointerCapture(pointer);
-    stroke = [];
+    stroke = { color: drawingColor, points: [] };
     strokes.push(stroke);
     add(event);
   };
